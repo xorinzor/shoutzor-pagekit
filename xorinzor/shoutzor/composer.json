@@ -1,0 +1,22 @@
+{
+    "name": "xorinzor/shoutzor",
+    "type": "pagekit-extension",
+    "version": "0.1.0",
+    "title": "Shoutzor",
+    "description": "A system written to play music at (private) events like a LAN-Party with optional user interaction",
+    "license": "GNU GPL v3.0",
+    "authors": [
+        {
+            "name": "Jorin Vermeulen",
+            "email": "me@jorinvermeulen.com",
+            "homepage": "http://jorinvermeulen.com"
+        }
+    ],
+    "extra": {
+        "icon": "icon.png",
+        "scripts": "scripts.php"
+    },
+    "archive": {
+        "exclude": ["node_modules"]
+    }
+}
