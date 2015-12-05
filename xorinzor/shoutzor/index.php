@@ -155,7 +155,7 @@ return [
             'icon' => 'shoutzor:icon.png',
 
             // URL this menu item links to
-            'url' => '@shoutzor',
+            'url' => '@shoutzor/admin',
 
             // Optional: Expression to check if menu item is active on current url
             // 'active' => '@hello*'
