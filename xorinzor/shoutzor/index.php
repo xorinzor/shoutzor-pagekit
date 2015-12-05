@@ -221,6 +221,14 @@ return [
 
         'shoutzor: manage liquidsoap settings' => [
             'title' => 'Manage Shoutzor Liquidsoap Service Settings'
+        ],
+
+        'shoutzor: upload files' => [
+            'title' => 'Upload files to shoutzor'
+        ],
+
+        'shoutzor: add requests' => [
+            'title' => 'Make requests for the shoutzor playlist'
         ]
 
     ],
