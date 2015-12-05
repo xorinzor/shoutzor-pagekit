@@ -55,13 +55,15 @@ return [
             'name' => '@shoutzor',
 
             // Label to display in the backend
-            'label' => 'Shoutzor',
+            'label' => 'Dashboard',
 
             // The controller for this node. Each controller action will be mounted
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController',
 
             // A unique node that cannot be deleted, resides in "Not Linked" by default
-            'protected' => true
+            'protected' => true,
+
+            'active' => '@shoutzor'
             
         ],
 
@@ -77,7 +79,27 @@ return [
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::visualizerAction',
 
             // A unique node that cannot be deleted, resides in "Not Linked" by default
-            'protected' => true
+            'protected' => true,
+
+            'active' => '@shoutzor/visualizer'
+
+        ],
+
+        'shoutzor/uploadmanager' => [
+
+            // The name of the node route
+            'name' => '@shoutzor/uploadmanager',
+
+            // Label to display in the backend
+            'label' => 'Upload manager',
+
+            // The controller for this node. Each controller action will be mounted
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::uploadManagerAction',
+
+            // A unique node that cannot be deleted, resides in "Not Linked" by default
+            'protected' => true,
+
+            'active' => '@shoutzor/uploadmanager'
 
         ]
 
@@ -133,7 +155,7 @@ return [
             'icon' => 'shoutzor:icon.png',
 
             // URL this menu item links to
-            'url' => '@shoutzor/admin',
+            'url' => '@shoutzor',
 
             // Optional: Expression to check if menu item is active on current url
             // 'active' => '@hello*'

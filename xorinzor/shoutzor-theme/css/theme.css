@@ -1,3 +1,43 @@
-body {
+.uk-search-field {
+    background: #FFF;
+    width: 200px;
+}
+
+/* Focus + Active */
+.uk-search-field:focus,
+.uk-search.uk-active .uk-search-field {
+    width: 280px;
+}
+
+#main-navbar-content {
+    padding-left: 5px;
+}
+
+html {
     background: #EEE url('../images/background.png') repeat;
+}
+
+body {
+}
+
+.uploaded-content-list .uk-overlay-panel {
+    padding: 9px;
+}
+
+.uploaded-content-list .uk-overlay-panel {
+    background: rgba(51, 51, 51, 0.4);
+}
+
+.uploaded-content-list .uk-overlay-panel > h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 15px;
+}
+
+.uploaded-content-list .uk-overlay-panel > p {
+    font-size: 12px;
+    line-height: 13px;
+    margin: 0;
+    padding: 0;
 }

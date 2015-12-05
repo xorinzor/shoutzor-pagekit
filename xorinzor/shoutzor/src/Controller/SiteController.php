@@ -33,6 +33,19 @@ class SiteController
         ];
     }
 
+    /**
+     * @Route("/uploadmanager")
+     */
+    public function uploadManagerAction()
+    {
+        return [
+            '$view' => [
+                'title' => 'Upload Manager',
+                'name' => 'shoutzor:views/uploadmanager.php'
+            ]
+        ];
+    }
+
     public function redirectAction()
     {
         return App::response()->redirect('@shoutzor/greet', ['name' => 'Someone']);
