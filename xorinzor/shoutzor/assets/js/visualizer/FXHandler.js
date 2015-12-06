@@ -4,8 +4,8 @@
 var FXHandler = function() {
 
 	var shaderTime = 0;
-	var screenW = 800;
-	var screenH = 600;
+	var screenW = 1920;
+	var screenH = 1080;
 	var blurriness = 3;
 
 	function init(){
@@ -24,7 +24,7 @@ var FXHandler = function() {
 		renderComposer = new THREE.EffectComposer( VizHandler.getRenderer(),renderTarget);
 		renderPass = new THREE.RenderPass( VizHandler.getScene(), VizHandler.getCamera() );
 		copyPass = new THREE.ShaderPass( THREE.CopyShader );
-		bloomPass = new THREE.BloomPass(3,12,2.0,512  );
+		bloomPass = new THREE.BloomPass(3,12,2.0,512);
 		renderComposer.addPass( renderPass );
 		renderComposer.addPass( bloomPass );
 		renderComposer.addPass( copyPass );
@@ -53,7 +53,6 @@ var FXHandler = function() {
 		blendPass.uniforms[ 'amount' ].value = 0;
 		blendComposer.addPass( blendPass );
 
-
 		//PASSES ON FINAL OUTPUT
 		filmPass = new THREE.ShaderPass( THREE.FilmShader );
 		filmPass.uniforms[ "grayscale" ].value = 0;
@@ -65,17 +64,12 @@ var FXHandler = function() {
 		badTVPass.uniforms[ "distortion" ].value = 0;
 		badTVPass.uniforms[ "distortion2" ].value = 0;
 
-		//mirrorPass = new THREE.ShaderPass( THREE.MirrorShader );
-		//mirrorPass.uniforms[ "side" ].value =2;
-
 		rgbPass = new THREE.ShaderPass( THREE.RGBShiftShader );
 
-		//blendComposer.addPass( mirrorPass );
 		blendComposer.addPass( badTVPass );
 		blendComposer.addPass( rgbPass );
 		blendComposer.addPass( filmPass );
 		filmPass.renderToScreen = true;
-		
 	}
 
 	function onBeat(){

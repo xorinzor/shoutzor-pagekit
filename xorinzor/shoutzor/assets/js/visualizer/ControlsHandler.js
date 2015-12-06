@@ -28,7 +28,7 @@ var ControlsHandler = function() {
 	};
 
 	var fxParams = {
-		glow: 1.0
+		glow: 0.1
 	};
 
 	function init(){
@@ -58,15 +58,7 @@ var ControlsHandler = function() {
 		f6.add(vizParams, 'fullSize').listen().onChange(VizHandler.onResize).name("Full Size");
 		//f5.open();
 
-
-		// var f6 = gui.addFolder('Bloom');
-		// for (var propertyName in bloomParams) {
-		// 	f6.add(bloomParams,propertyName)
-		// }
-
-		AudioHandler.onUseMic();
 		AudioHandler.onUseSample();
-		AudioHandler.onShowDebug();
 
 	}
 

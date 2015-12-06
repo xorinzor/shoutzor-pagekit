@@ -50,16 +50,16 @@ var WhiteRing = function() {
 		var textGeom = new THREE.TextGeometry( "Shoutz0r", 
 		{
 			size: 555, 
-			height: 1, 
+			height: 30,
 			curveSegments: 3,
 			font: "helvetiker", 
 			weight: "bold", 
 			style: "normal",
 			bevelThickness: 1, 
-			bevelSize: 0, 
+			bevelSize: 1,
 			bevelEnabled: false,
 			material: 0, 
-			extrudeMaterial: 1
+			extrudeMaterial: 0
 		});
 		// font: helvetiker, gentilis, droid sans, droid serif, optimer
 		// weight: normal, bold
@@ -75,27 +75,13 @@ var WhiteRing = function() {
 		groupHolder.add(textMesh);
 		shapes.push(textMesh);
 
-
-/*		//empty tri
-		geometry = new THREE.RingGeometry( radius*.6,radius, 3,1, 0, Math.PI*2) ;
-		mesh = new THREE.Mesh( geometry, material );
-		groupHolder.add( mesh );
-		shapes.push(mesh);
-
-		//empty circ
-		 geometry = new THREE.RingGeometry( radius*.6,radius, 24,1, 0, Math.PI*2) ;
-		 mesh = new THREE.Mesh( geometry, material );
-		 groupHolder.add( mesh );
-		 shapes.push(mesh);
-*/
 		shapesCount = shapes.length;
-
 	}
 
 	function showNewShape() {
 
 		//random rotation
-		groupHolder.rotation.z = Math.random()*Math.PI;
+		groupHolder.rotation.z = 0;
 
 		//hide shapes
 		for (var i = 0; i <= shapesCount-1;i++){
@@ -112,7 +98,7 @@ var WhiteRing = function() {
 	}
 
 	function update() {
-		groupHolder.rotation.z += 0.01; 
+		groupHolder.rotation.z = 0.01;
 		var gotoScale = AudioHandler.getVolume()*1.2 + .1;
 		scl += (gotoScale - scl)/3;
 		groupHolder.scale.x = groupHolder.scale.y = groupHolder.scale.z = scl;

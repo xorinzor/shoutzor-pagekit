@@ -131,8 +131,10 @@ var AudioHandler = function() {
 
 		initSound();
 
+		useStreamSource();
+
 		// Load asynchronously
-		var request = new XMLHttpRequest();
+/*		var request = new XMLHttpRequest();
 		request.open("GET", ControlsHandler.audioParams.sampleURL, true);
 		request.responseType = "arraybuffer";
 
@@ -149,7 +151,7 @@ var AudioHandler = function() {
 
 
 		};
-		request.send();
+		request.send();*/
 
 	}
 
@@ -170,16 +172,42 @@ var AudioHandler = function() {
 		debugCtx.clearRect(0, 0, debugW, debugH);
 	}
 
-	function onUseMic(){
-
-		if (ControlsHandler.audioParams.useMic){
+	function useStreamSource(){
 			ControlsHandler.audioParams.useSample = false;
-			getMicInput();
-		}else{
-			stopSound();
-		}
+
+			// define other variables
+
+			var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+			var audioStreamSource = document.querySelector('audio');
+
+			audioContext = audioCtx;
+
+			source = audioContext.createBufferSource();
+			analyser = audioContext.createAnalyser();
+			analyser.fftSize = 1024;
+			analyser.smoothingTimeConstant = 0.3;
+
+			/*audio.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+			audio.onloadedmetadata = function(e) {
+				audio.play();
+				audio.muted = 'true';
+			};*/
+
+			// Create a MediaStreamAudioSourceNode
+			// Feed the HTMLMediaElement into it
+			var audio = new Audio();
+			audio.src = 'http://shoutzor.jorinvermeulen.com:8000/shoutzor.ogg'; /*'';Five Finger Death Punch - Wrong Side Side of Heaven HD.mp3*/
+			audio.controls = true;
+			audio.loop = true;
+			audio.autoplay = true;
+			audio.crossOrigin = "anonymous";
+
+			var source = audioCtx.createMediaElementSource(audio);
+			source.connect(analyser);
+			isPlayingAudio = true;
+
 	}
-	
+
 	function onUseSample(){
 		if (ControlsHandler.audioParams.useSample){
 			loadSampleAudio();          
@@ -511,7 +539,6 @@ var AudioHandler = function() {
 	return {
 		onMP3Drop: onMP3Drop,
 		onShowDebug:onShowDebug,
-		onUseMic:onUseMic,
 		onUseSample:onUseSample,
 		update:update,
 		init:init,

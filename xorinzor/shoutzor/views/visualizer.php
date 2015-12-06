@@ -36,6 +36,8 @@
     </head>
 
     <body>
+        <audio src="http://shoutzor.jorinvermeulen.com:8000/shoutzor.ogg" autoplay="true"></audio>
+
         <div id="preloader"></div>
 
         <div id="viz" style="top: 0px; left: 0;"></div>
