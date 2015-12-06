@@ -101,6 +101,24 @@ return [
 
             'active' => '@shoutzor/uploadmanager'
 
+        ],
+
+        'shoutzor/search' => [
+
+            // The name of the node route
+            'name' => '@shoutzor/search',
+
+            // Label to display in the backend
+            'label' => 'Search',
+
+            // The controller for this node. Each controller action will be mounted
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::searchAction',
+
+            // A unique node that cannot be deleted, resides in "Not Linked" by default
+            'protected' => true,
+
+            'active' => '@shoutzor/search'
+
         ]
 
     ],

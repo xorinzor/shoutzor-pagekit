@@ -46,6 +46,19 @@ class SiteController
         ];
     }
 
+    /**
+     * @Route("/search")
+     */
+    public function searchAction()
+    {
+        return [
+            '$view' => [
+                'title' => 'Search',
+                'name' => 'shoutzor:views/search.php'
+            ]
+        ];
+    }
+
     public function redirectAction()
     {
         return App::response()->redirect('@shoutzor/greet', ['name' => 'Someone']);

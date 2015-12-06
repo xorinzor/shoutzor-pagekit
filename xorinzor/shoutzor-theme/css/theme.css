@@ -9,6 +9,36 @@
     width: 280px;
 }
 
+.uk-button-primary {
+    background-color: #FF3D00;
+}
+
+.uk-button-primary:hover {
+    background-color: #DD2C00;
+}
+
+.uk-button-dark {
+    background-color: #333;
+    color: #FFF;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.1);
+}
+
+.uk-nav-side > li.uk-active > a {
+    background-color: #FF3D00;
+}
+
+.uk-nav-side > li.uk-active:hover > a {
+    background-color: #DD2C00;
+}
+
+.uk-link, a {
+    color: #FF3D00;
+}
+
+.uk-link:hover, a:hover {
+    color: #DD2C00;
+}
+
 #main-navbar-content {
     padding-left: 5px;
 }

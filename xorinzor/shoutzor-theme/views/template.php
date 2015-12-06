@@ -23,14 +23,15 @@
                 <a class="uk-navbar-brand uk-width-medium-1-5 uk-hidden-small" href="<?= $view->url()->get() ?>">Shoutzor</a>
 
                 <div class="uk-navbar-content" id="main-navbar-content">
-                    <form class="uk-search uk-margin-remove uk-display-inline-block" data-uk-search>
-                        <input class="uk-search-field" type="search" placeholder="search">
+                    <form class="uk-search uk-margin-remove uk-display-inline-block" action="<?= $view->url('@shoutzor/search') ?>" method="GET" data-uk-search>
+                        <input class="uk-search-field" type="search" placeholder="search" name="q">
                     </form>
                 </div>
 
                 <div class="uk-navbar-flip">
                     <div class="uk-navbar-content">
                         <a href="#" class="uk-button uk-button-primary">Upload</a>
+                        <a href="#" class="uk-button uk-button-dark">Logout</a>
                     </div>
                 </div>
 
