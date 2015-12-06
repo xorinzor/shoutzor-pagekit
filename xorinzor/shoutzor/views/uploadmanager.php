@@ -89,5 +89,23 @@
                 </div>
             </div>
         </li>
+        <li>
+            <div class="uploaded-item">
+                <p><div class="uk-badge uk-badge-danger">Error</div> <strong>Ghosts 'n Stuff</strong> - Deadmau5</p>
+
+                <div class="uk-progress uk-progress-danger">
+                    <div class="uk-progress-bar" style="width: 100%;">An error occured while processing, please try again</div>
+                </div>
+            </div>
+        </li>
+        <li>
+            <div class="uploaded-item">
+                <p><div class="uk-badge uk-badge-danger">Exists</div> <strong>Ghosts 'n Stuff</strong> - Deadmau5</p>
+
+                <div class="uk-progress uk-progress-danger">
+                    <div class="uk-progress-bar" style="width: 100%;">This song has already been uploaded</div>
+                </div>
+            </div>
+        </li>
     </ul>
 </div>

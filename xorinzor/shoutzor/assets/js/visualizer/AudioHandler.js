@@ -138,6 +138,7 @@ var AudioHandler = function() {
 
 		request.onload = function() {
 
+			startSound();
 
 			audioContext.decodeAudioData(request.response, function(buffer) {
 				audioBuffer = buffer;
@@ -154,7 +155,7 @@ var AudioHandler = function() {
 
 	function startSound() {
 		source.buffer = audioBuffer;
-		source.loop = true;
+		source.loop = false;
 		source.start(0.0);
 		isPlayingAudio = true;
 		//startViz();

@@ -12,7 +12,7 @@ var ControlsHandler = function() {
 		beatDecayRate:0.97,
 		bpmMode: false,
 		bpmRate:0,
-		sampleURL: "Traced.mp3"
+		sampleURL: "http://shoutzor.jorinvermeulen.com:8000/shoutzor.ogg"
 	};
 
 	var vizParams = {
