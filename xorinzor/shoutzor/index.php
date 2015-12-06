@@ -49,21 +49,21 @@ return [
      */
     'nodes' => [
 
-        'shoutzor' => [
+        'shoutzor/home' => [
 
             // The name of the node route
-            'name' => '@shoutzor',
+            'name' => '@shoutzor/home',
 
             // Label to display in the backend
             'label' => 'Dashboard',
 
             // The controller for this node. Each controller action will be mounted
-            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController',
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::indexAction',
 
             // A unique node that cannot be deleted, resides in "Not Linked" by default
             'protected' => true,
 
-            'active' => '@shoutzor'
+            'active' => '@shoutzor/home'
             
         ],
 
