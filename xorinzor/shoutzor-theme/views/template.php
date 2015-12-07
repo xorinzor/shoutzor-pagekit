@@ -30,8 +30,9 @@
 
                 <div class="uk-navbar-flip">
                     <div class="uk-navbar-content">
-                        <a href="#" class="uk-button uk-button-primary">Upload</a>
-                        <a href="#" class="uk-button uk-button-dark">Logout</a>
+                        <a href="<?= $view->url('@shoutzor/uploadmanager'); ?>" class="uk-button uk-button-primary"><i class="uk-icon-volume-up"></i> Listen to Shoutzor</a>
+                        <a href="<?= $view->url('@shoutzor/uploadmanager'); ?>" class="uk-button uk-button-primary"><i class="uk-icon-upload"></i> Upload</a>
+                        <a href="#" class="uk-button uk-button-dark"><i class="uk-icon-power-off"></i> Logout</a>
                     </div>
                 </div>
 
