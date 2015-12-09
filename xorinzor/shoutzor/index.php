@@ -63,6 +63,8 @@ return [
             // A unique node that cannot be deleted, resides in "Not Linked" by default
             'protected' => true,
 
+            'frontpage' => true,
+
             'active' => '@shoutzor/home'
             
         ],
@@ -273,9 +275,6 @@ return [
 
         'view.scripts' => function ($event, $scripts) {
             $scripts->register('shoutzor-settings', 'shoutzor:app/bundle/settings.js', '~extensions');
-            $scripts->register('shoutzor-link', 'shoutzor:app/bundle/link.js', '~panel-link');
-            $scripts->register('shoutzor-dashboard', 'shoutzor:app/bundle/dashboard.js', '~dashboard');
-
         }
 
     ]

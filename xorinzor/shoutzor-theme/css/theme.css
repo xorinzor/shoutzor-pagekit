@@ -39,6 +39,11 @@
     color: #DD2C00;
 }
 
+.uk-placeholder-large {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
 #main-navbar-content {
     padding-left: 5px;
 }

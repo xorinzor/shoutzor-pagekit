@@ -3,6 +3,7 @@
 namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
+use Xorinzor\Shoutzor\Model\Music;
 
 class SiteController
 {
@@ -11,11 +12,16 @@ class SiteController
      */
     public function indexAction()
     {
+        $uploaded = Music::where('1=1')->orderBy('created', 'DESC')->related(['artist', 'user'])->limit(8)->get();
+        $requested = Music::where('amount_requested > 0')->orderBy('amount_requested', 'DESC')->related(['artist', 'user'])->limit(8)->get();
+
         return [
             '$view' => [
-                'title' => 'Dashboard',
+                'title' => __('Dashboard'),
                 'name' => 'shoutzor:views/index.php'
-            ]
+            ],
+            'uploaded' => $uploaded,
+            'requested' => $requested
         ];
     }
 
@@ -26,7 +32,7 @@ class SiteController
     {
         return [
             '$view' => [
-                'title' => 'Visualizer',
+                'title' => __('Visualizer'),
                 'name' => 'shoutzor:views/visualizer.php',
                 'layout' => false
             ]
@@ -34,15 +40,46 @@ class SiteController
     }
 
     /**
-     * @Route("/uploadmanager")
+     * @Route("/uploadmanager", methods="GET")
      */
     public function uploadManagerAction()
     {
+
+        $uploads = Music::where(['uploader_id = ?'], [App::user()->id])->orderBy('status', 'ASC')->related(['artist', 'user'])->get();
+
         return [
             '$view' => [
-                'title' => 'Upload Manager',
+                'title' => __('Upload Manager'),
                 'name' => 'shoutzor:views/uploadmanager.php'
-            ]
+            ],
+
+            'uploads' => $uploads
+        ];
+    }
+
+    /**
+     * @Route("/uploadmanager", methods="POST", name="uploadmanager/upload")
+     */
+    public function uploadAction($file = null)
+    {
+        App::module('shoutzor')->config('allow_uploads');
+
+        $file = App::request()->files->get('file');
+
+        if ($file === null || !$file->isValid()) {
+            App::abort(400, __('No file uploaded.'));
+        }
+
+        $result = json_encode(array('result' => false));
+
+        return [
+            '$view' => [
+                'title' => __('Upload Result'),
+                'name' => 'shoutzor:views/uploadresult.php',
+                'layout' => false
+            ],
+
+            'result' => $result
         ];
     }
 

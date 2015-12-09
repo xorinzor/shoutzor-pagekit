@@ -2,35 +2,42 @@
 
 <?php $view->style('uikit-progress', 'theme:css/components/progress.almost-flat.min.css'); ?>
 <?php $view->style('uikit-upload', 'theme:css/components/upload.almost-flat.min.css'); ?>
+<?php $view->style('uikit-upload-formfile', 'theme:css/components/form-file.almost-flat.min.css'); ?>
 <?php $view->style('uikit-placeholder', 'theme:css/components/placeholder.almost-flat.min.css'); ?>
 
 <?php $view->script('uikit-upload-script', 'theme:js/components/upload.min.js', ['jquery', 'uikit-script']) ?>
 
-<div id="upload-drop" class="uk-placeholder uk-text-center">
-    <i class="uk-icon-cloud-upload uk-icon-medium uk-text-muted uk-margin-small-right"></i> Drop your file here or <a class="uk-form-file">Select a file<input class="uk-hidden" id="upload-select" type="file"></a>
+<div id="upload-drop" class="uk-placeholder uk-placeholder-large uk-text-center">
+    <i class="uk-icon-cloud-upload uk-icon-medium uk-text-muted uk-margin-small-right"></i> Drop your file(s) here or <a class="uk-form-file">Select a file<input id="upload-select" type="file"></a>
 </div>
 
-<script>
-
+<script type="text/javascript">
     $(function(){
-
         var settings    = {
+                action: '<?= $view->url('@shoutzor/uploadmanager'); ?>', // upload url
+                single: true,
+                params: {},
+                type: 'json',
+                allow : '*.(mp3|mkv|avi|flv)', // allow only audio and video files
 
-                action: '/shoutzor/upload', // upload url
-
-                allow : '*.(mp3)', // allow only audio and video files
+                notallowed: function(file, settings) {
+                    //When an non-allowed file is beeing uploaded
+                },
 
                 loadstart: function() {
                     //Run this when the upload plugin has loaded
                 },
 
                 progress: function(percent) {
-            //        percent = Math.ceil(percent);
-            //        bar.css("width", percent+"%").text(percent+"%");
+                    //percent = Math.ceil(percent);
+                    //bar.css("width", percent+"%").text(percent+"%");
+                },
+
+                complete: function(reponse, xhr) {
+
                 },
 
                 allcomplete: function(response) {
-
                     /*bar.css("width", "100%").text("100%");
 
                     setTimeout(function(){
@@ -44,7 +51,6 @@
         var select = UIkit.uploadSelect($("#upload-select"), settings),
             drop   = UIkit.uploadDrop($("#upload-drop"), settings);
     });
-
 </script>
 
 <div class="uk-panel uk-panel-box">
@@ -52,8 +58,13 @@
         <p>Upload progress</p>
     </div>
 
-<ul class="uk-list uk-list-line">
-        <li>
+    <ul class="uk-list uk-list-line">
+        <li><p>You have no remaining uploads</p></li>
+
+        <?php foreach($uploads as $upload): ?>
+        <?php endforeach; ?>
+
+<!--        <li>
             <div class="uploaded-item">
                 <p><strong>Ghosts 'n Stuff</strong> - Deadmau5</p>
 
@@ -106,6 +117,6 @@
                     <div class="uk-progress-bar" style="width: 100%;">This song has already been uploaded</div>
                 </div>
             </div>
-        </li>
+        </li>-->
     </ul>
 </div>
