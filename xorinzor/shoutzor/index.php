@@ -66,7 +66,7 @@ return [
             'frontpage' => true,
 
             'active' => '@shoutzor/home'
-            
+
         ],
 
         'shoutzor/visualizer' => [
@@ -264,7 +264,21 @@ return [
      */
     'config' => [
 
-        'default' => 'World'
+        'search' => [
+            'results_per_page' => 10,
+            'max_results_per_page' => 20
+        ],
+
+        'shoutzor' => [
+            'enable_uploads' => 2
+        ],
+
+        'visualizer' => [
+            'enabled' => 1,
+        ],
+
+        'liquidsoap' => [
+        ]
 
     ],
 

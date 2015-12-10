@@ -58,9 +58,9 @@ class SiteController
     }
 
     /**
-     * @Route("/uploadmanager", methods="POST", name="uploadmanager/upload")
+     * @Route("/uploadmanager", methods="POST")
      */
-    public function uploadAction($file = null)
+    public function uploadAction()
     {
         App::module('shoutzor')->config('allow_uploads');
 
@@ -70,17 +70,9 @@ class SiteController
             App::abort(400, __('No file uploaded.'));
         }
 
-        $result = json_encode(array('result' => false));
+        $result = array('result' => false);
 
-        return [
-            '$view' => [
-                'title' => __('Upload Result'),
-                'name' => 'shoutzor:views/uploadresult.php',
-                'layout' => false
-            ],
-
-            'result' => $result
-        ];
+        return $result;
     }
 
     /**

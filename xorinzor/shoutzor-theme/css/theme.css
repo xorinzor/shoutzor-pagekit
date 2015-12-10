@@ -1,3 +1,11 @@
+.uk-navbar-brand {
+    padding: 2px 35px 0;
+}
+
+.uk-navbar-brand::before {
+    content: none;
+}
+
 .uk-search-field {
     background: #FFF;
     width: 200px;
@@ -42,6 +50,10 @@
 .uk-placeholder-large {
     padding-top: 30px;
     padding-bottom: 30px;
+}
+
+#upload-drop.uk-placeholder {
+    margin-top: 0px;
 }
 
 #main-navbar-content {

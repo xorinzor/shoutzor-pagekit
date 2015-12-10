@@ -1,4 +1,5 @@
 # Shoutzor Module
+![Shoutzor-logo](./shoutzor-logo.png)
 
 The Shoutzor Module - Requires the Shoutzor Theme to function as intended.
 
