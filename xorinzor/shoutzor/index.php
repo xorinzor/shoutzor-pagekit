@@ -144,10 +144,10 @@ return [
             ]
         ],
 
-        '/shoutzor/playlist' => [
-            'name' => '@shoutzor/admin/playlist',
+        '/shoutzor/audio' => [
+            'name' => '@shoutzor/admin/audio',
             'controller' => [
-                'Xorinzor\\Shoutzor\\Controller\\PlaylistController'
+                'Xorinzor\\Shoutzor\\Controller\\AudioController'
             ]
         ],
 
@@ -203,11 +203,11 @@ return [
             'access' => 'shoutzor: manage visualizer settings'
         ],
 
-        'shoutzor: playlist' => [
+        'shoutzor: audio' => [
             'parent' => 'shoutzor',
-            'label' => 'Playlist',
-            'url' => '@shoutzor/admin/playlist',
-            'access' => 'shoutzor: manage playlist settings'
+            'label' => 'Audio',
+            'url' => '@shoutzor/admin/audio',
+            'access' => 'shoutzor: manage audio settings'
         ],
 
         'shoutzor: liquidsoap' => [
@@ -235,8 +235,8 @@ return [
             'title' => 'Manage Shoutzor Visualizer Settings'
         ],
 
-        'shoutzor: manage playlist settings' => [
-            'title' => 'Manage Shoutzor Playlist Settings'
+        'shoutzor: manage audio settings' => [
+            'title' => 'Manage Shoutzor Audio Settings'
         ],
 
         'shoutzor: manage liquidsoap settings' => [
@@ -270,7 +270,8 @@ return [
         ],
 
         'shoutzor' => [
-            'enable_uploads' => 2
+            'upload' => 3,
+            'request' => 2
         ],
 
         'visualizer' => [
@@ -278,6 +279,69 @@ return [
         ],
 
         'liquidsoap' => [
+            'stdout' => [
+                'wrapper' => false,
+                'shoutzor' => false
+            ],
+
+            'logpath' => [
+                'wrapper' => '/dev/null',
+                'shoutzor' => '/dev/null'
+            ],
+
+            'telnet' => [
+                'wrapper' => false,
+                'shoutzor' => false
+            ],
+
+            'socket' => [
+                'wrapper' => true,
+                'shoutzor' => true
+            ],
+
+            'socketpath' => [
+                'wrapper' => '/tmp/wrapperSocket',
+                'shoutzor' => '/tmp/shoutzorSocket'
+            ],
+
+            'socketpermission' => 511,
+
+            'bitrate' => 192,
+
+            'errortext' => "Shoutzor is experiencing technical difficulties, please stand by",
+
+            'stream' => [
+                'input' => [
+                    'mount' => 'streaminput',
+                    'port' => 1337,
+                    'password' => 'replaceme'
+                ],
+
+                'output' => [
+                    'host'      => 'localhost',
+                    'mount'     => 'shoutzor',
+                    'port'      => 8000,
+                    'password'  => 'replaceme'
+                ],
+
+                'video' => [
+                    'width' => 1920,
+                    'height' => 1080,
+                    'fps' => 60,
+                    'logo' => [
+                        'width' => 434,
+                        'height' => 97,
+                        'path' => "../shoutzor-christmas-logo-small.png"
+                    ]
+                ]
+            ],
+
+            'jingles' => '',
+
+            'handler' => [
+                'blank' => "http://localhost/liquidsoap/autofix/",
+                'nexttrack' => "http://localhost/liquidsoap/getnexttrack/"
+            ]
         ]
 
     ],
