@@ -31,18 +31,45 @@ stream_bitrate = 192
 
 stream_video_logo_width = 434
 stream_video_logo_height = 97
-stream_video_logo = "../shoutzor-christmas-logo-small.png"
+stream_video_logo = "../images/shoutzor-christmas-logo-small.png"
 
-stream_input_mount = "streaminput"
+stream_input_mount = "streaminput.ogg"
 stream_input_port = 1337
-stream_input_password = "G2QRV2qcawEtgy5wbhr5HEG4sF5WFRDcDEZFaWD3w"
+stream_input_password = "passwd"
 
 stream_output_host = "localhost"
-stream_output_mount = "shoutzor"
+stream_output_mount = "shoutzor.ogg"
 stream_output_port = 8000
-stream_output_password = "JH4ii2CTLbzJLBOb099k"
+stream_output_password = "vledder"
 
 shoutzor_jingles_playlist_path = "/home/shoutzor/jingles.pls"
 
 shoutzor_blank_handler_url = "http://localhost/liquidsoap/autofix/"
 shoutzor_nexttrack_handler_url = "http://localhost/liquidsoap/getnexttrack/"
+
+ignore(log_stdout_enabled_wrapper)
+ignore(log_stdout_enabled_shoutzor)
+ignore(log_file_path_wrapper)
+ignore(log_file_path_shoutzor)
+ignore(enable_telnet_wrapper)
+ignore(enable_telnet_shoutzor)
+ignore(enable_socket_wrapper)
+ignore(enable_socket_shoutzor)
+ignore(socket_path_wrapper)
+ignore(socket_path_shoutzor)
+ignore(socket_file_permission)
+ignore(shoutzor_error_text)
+ignore(stream_bitrate)
+ignore(stream_video_logo_width)
+ignore(stream_video_logo_height)
+ignore(stream_video_logo)
+ignore(stream_input_mount)
+ignore(stream_input_port)
+ignore(stream_input_password)
+ignore(stream_output_host)
+ignore(stream_output_mount)
+ignore(stream_output_port)
+ignore(stream_output_password)
+ignore(shoutzor_jingles_playlist_path)
+ignore(shoutzor_blank_handler_url)
+ignore(shoutzor_nexttrack_handler_url)
