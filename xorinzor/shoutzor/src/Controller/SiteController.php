@@ -12,8 +12,8 @@ class SiteController
      */
     public function indexAction()
     {
-        $uploaded = Music::where('1=1')->orderBy('created', 'DESC')->related(['artist', 'user'])->limit(8)->get();
-        $requested = Music::where('amount_requested > 0')->orderBy('amount_requested', 'DESC')->related(['artist', 'user'])->limit(8)->get();
+        $uploaded = Music::where(['status = :finished'], ['finished' => Music::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->limit(8)->get();
+        $requested = Music::where(['amount_requested > 0 AND status = :finished'], ['finished' => Music::STATUS_FINISHED])->orderBy('amount_requested', 'DESC')->related(['artist', 'user'])->limit(8)->get();
 
         return [
             '$view' => [
@@ -45,7 +45,7 @@ class SiteController
     public function uploadManagerAction()
     {
 
-        $uploads = Music::where(['uploader_id = ?'], [App::user()->id])->orderBy('status', 'ASC')->related(['artist', 'user'])->get();
+        $uploads = Music::where(['uploader_id = :uploader AND status != :finished'], ['uploader' => App::user()->id, 'finished' => Music::STATUS_FINISHED])->orderBy('status', 'ASC')->related(['artist', 'user'])->get();
 
         return [
             '$view' => [
@@ -58,33 +58,37 @@ class SiteController
     }
 
     /**
-     * @Route("/uploadmanager", methods="POST")
+     * @Route("/search", methods="GET")
+     * @Request({"q":"string"})
      */
-    public function uploadAction()
+    public function searchAction($q = "")
     {
-        App::module('shoutzor')->config('allow_uploads');
-
-        $file = App::request()->files->get('file');
-
-        if ($file === null || !$file->isValid()) {
-            App::abort(400, __('No file uploaded.'));
+        if(empty($q)) {
+            return [
+                '$view' => [
+                    'title' => 'Search',
+                    'name' => 'shoutzor:views/search_error.php'
+                ]
+            ];
         }
+        $query = Music::where(['status = :finished AND (title LIKE :search OR filename LIKE :search)'], ['finished' => Music::STATUS_FINISHED, 'search' => "%{$q}%"])
+                ->orderBy('created', 'DESC');
 
-        $result = array('result' => false);
+        $total = $query->count();
 
-        return $result;
-    }
+        $results = $query->related(['artist'])
+                ->limit(10)
+                ->get();
 
-    /**
-     * @Route("/search")
-     */
-    public function searchAction()
-    {
         return [
             '$view' => [
                 'title' => 'Search',
                 'name' => 'shoutzor:views/search.php'
-            ]
+            ],
+
+            'searchterm' => htmlspecialchars($q),
+            'total' => $total,
+            'results' => $results
         ];
     }
 

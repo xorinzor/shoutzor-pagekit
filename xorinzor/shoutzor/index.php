@@ -156,6 +156,13 @@ return [
             'controller' => [
                 'Xorinzor\\Shoutzor\\Controller\\LiquidsoapController'
             ]
+        ],
+
+        '/shoutzor/api' => [
+            'name' => '@shoutzor/api',
+            'controller' => [
+                'Xorinzor\\Shoutzor\\Controller\\MusicApiController'
+            ]
         ]
 
     ],
@@ -325,13 +332,14 @@ return [
                 ],
 
                 'video' => [
+                    'placeholder' => 'placeholder.ogg',
                     'width' => 1920,
                     'height' => 1080,
                     'fps' => 60,
                     'logo' => [
                         'width' => 434,
                         'height' => 97,
-                        'path' => "../shoutzor-christmas-logo-small.png"
+                        'path' => "../images/shoutzor-christmas-logo-small.png"
                     ]
                 ]
             ],

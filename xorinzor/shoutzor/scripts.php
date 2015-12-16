@@ -23,8 +23,10 @@ return [
                 $table->addColumn('title', 'string', ['length' => 255, 'default' => '']);
                 $table->addColumn('artist_id', 'integer', ['unsigned' => true, 'length' => 10]);
                 $table->addColumn('filename', 'text', ['length' => 1000, 'default' => '']);
+                $table->addColumn('parsed_filename', 'text', ['length' => 1000, 'default' => '']);
                 $table->addColumn('uploader_id', 'integer', ['unsigned' => true, 'length' => 10]);
                 $table->addColumn('is_video', 'boolean', ['default' => false]);
+                $table->addColumn('thumbnail', 'text', ['length' => 1000, 'default' => '']);
                 $table->addColumn('status', 'boolean', ['length' => 1, 'default' => '0']);
                 $table->addColumn('created', 'datetime');
                 $table->setPrimaryKey(['id']);

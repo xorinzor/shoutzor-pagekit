@@ -25,6 +25,9 @@ class Music implements \JsonSerializable{
     /* an error occured during any of the previous steps */
     const STATUS_ERROR = 3;
 
+    /* This song has already been uploaded */
+    const STATUS_DUPLICATE = 4;
+
     /** @Column(type="integer") @Id */
     public $id;
 
@@ -42,6 +45,15 @@ class Music implements \JsonSerializable{
 
     /** @Column(type="boolean") */
     public $is_video;
+
+    /** @Column(type="integer") */
+    public $status;
+
+    /** @Column(type="datetime") */
+    public $created;
+
+    /** @Column(type="integer") */
+    public $amount_requested;
 
     /**
      * @BelongsTo(targetEntity="Xorinzor\Shoutzor\Model\Artist", keyFrom="artist_id")

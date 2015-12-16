@@ -52,7 +52,7 @@
     padding-bottom: 30px;
 }
 
-#upload-drop.uk-placeholder {
+#upload-rules {
     margin-top: 0px;
 }
 
@@ -87,4 +87,18 @@ body {
     line-height: 13px;
     margin: 0;
     padding: 0;
+}
+
+.search-result {
+
+}
+
+.search-result figure.uk-overlay {
+    float: left;
+    margin-right: 10px;
+}
+
+.search-result figure.uk-overlay img {
+    height: 100px;
+    max-height: 100px;
 }

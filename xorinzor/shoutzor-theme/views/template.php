@@ -39,7 +39,7 @@
 
             <nav class="uk-navbar uk-margin-large-bottom">
                 <a class="uk-navbar-brand uk-width-medium-1-5 uk-hidden-small" href="<?= $view->url()->get() ?>">
-                    <img src="<?= $view->url()->getStatic('theme:images/shoutzor-logo-small.png'); ?>" alt="shoutz0r logo" />
+                    <img src="<?= $view->url()->getStatic('theme:images/shoutzor-christmas-logo-small.png'); ?>" alt="shoutz0r logo" />
                 </a>
 
                 <div class="uk-navbar-content" id="main-navbar-content">
@@ -50,14 +50,13 @@
 
                 <div class="uk-navbar-flip">
                     <div class="uk-navbar-content">
-                        <a href="<?= $view->url('@shoutzor/uploadmanager'); ?>" class="uk-button uk-button-primary"><i class="uk-icon-volume-up"></i> Listen to Shoutzor</a>
-                        <a href="<?= $view->url('@shoutzor/uploadmanager'); ?>" class="uk-button uk-button-primary"><i class="uk-icon-upload"></i> Upload</a>
-                        <a href="#" class="uk-button uk-button-dark"><i class="uk-icon-power-off"></i> Logout</a>
+                        <a href="<?= $view->url('@shoutzor/uploadmanager'); ?>" class="uk-button uk-button-primary"><i class="uk-icon-upload"></i> Upload Music / Videos</a>
+                        <a href="<?= $view->url('@user/logout') ?>" class="uk-button uk-button-dark"><i class="uk-icon-power-off"></i> Logout</a>
                     </div>
                 </div>
 
                 <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
-                <div class="uk-navbar-brand uk-navbar-center uk-visible-small">Brand</div>
+                <div class="uk-navbar-brand uk-navbar-center uk-visible-small">Shoutz0r</div>
             </nav>
 
             <div class="uk-grid">

@@ -11,15 +11,7 @@
         <ul class="uk-thumbnav uploaded-content-list uk-grid-width-small-1-2 uk-grid-width-medium-1-4">
             <?php foreach($uploaded as $item): ?>
                 <li>
-                    <figure class="uk-overlay">
-                        <img src="http://placehold.it/350x203">
-                        <figcaption class="uk-overlay-panel">
-                            <h3><?= $item->title ?></h3>
-                            <?php if($item->artist): ?>
-                                <p><?= $item->artist->name ?></p>
-                            <?php endif; ?>
-                        </figcaption>
-                    </figure>
+                    <?= $view->render('shoutzor:views/elements/list-item.php', ['item' => $item]); ?>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -37,15 +29,7 @@
         <ul class="uk-thumbnav uploaded-content-list uk-grid-width-small-1-2 uk-grid-width-medium-1-4">
             <?php foreach($requested as $item): ?>
                 <li>
-                    <figure class="uk-overlay">
-                        <img src="http://placehold.it/350x203">
-                        <figcaption class="uk-overlay-panel">
-                            <h3><?= $item->title ?></h3>
-                            <?php if($item->artist): ?>
-                                <p><?= $item->artist->name ?></p>
-                            <?php endif; ?>
-                        </figcaption>
-                    </figure>
+                    <?= $view->render('shoutzor:views/elements/list-item.php', ['item' => $item]); ?>
                 </li>
             <?php endforeach; ?>
         </ul>

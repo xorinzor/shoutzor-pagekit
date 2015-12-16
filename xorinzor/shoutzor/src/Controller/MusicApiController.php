@@ -1,6 +1,6 @@
 <?php
 
-namespace Pagekit\Blog\Controller;
+namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
 use Xorinzor\Shoutzor\Model\Music;
@@ -16,40 +16,59 @@ class MusicApiController
      */
     public function indexAction($filter = [], $page = 0)
     {
-        $query  = Music::query();
-        $filter = array_merge(array_fill_keys(['search', 'is_video', 'order', 'limit'], ''), $filter);
+        return array();
+    }
 
-        extract($filter, EXTR_SKIP);
+    /**
+     * @Route("/upload", methods="POST")
+     */
+    public function uploadAction()
+    {
+        //Make sure file uploads are enabled
+        $allowed = App::module('shoutzor')->config('allow_uploads');
 
-        $query->where(['status' => Music::STATUS_FINISHED]);
+        //Todo check if user has permission to upload a file
 
-        if($is_video) {
-            $query->where(['is_video' => 1]);
+        $file = App::request()->files->get('musicfile');
+
+        if ($file === null) {
+            App::abort(400, __('No file uploaded.'));
         }
 
-        if ($search) {
-            $query->where(function ($query) use ($search) {
-                $query->orWhere(['title LIKE :search', 'filename LIKE :search'], ['search' => "%{$search}%"]);
-            });
+        if($file->isValid()) {
+            //Todo store file, add to database table, return JSON object with ID for status-tracking
         }
 
-        if (!preg_match('/^(date|title|comment_count)\s(asc|desc)$/i', $order, $order)) {
-            $order = [1 => 'date', 2 => 'desc'];
+
+        //Prevent Divide by zero error
+        $filesize = ($file->getClientSize() == 0) ? 1 : $file->getClientSize();
+
+        $result = array(
+            'id' => 0, //todo replace with Mysql insert ID
+            'filename' => $file->getClientOriginalName(),
+            'size' => $filesize / (1024 * 1024), //Filesize in MB
+            'isValid' => $file->isValid()
+        );
+
+        $result = array('result' => true, 'info' => $result);
+
+        return $result;
+    }
+
+    /**
+     * @Route("/request", methods="POST", requirements={"id"="\d+"})
+     * @Request({"id": "int"})
+     */
+    public function requestAction($id = 0)
+    {
+        //Check if the ID is invalid or the music item is not found
+        if (!$id || !$music = Music::find($id)) {
+            App::abort(404, __('Music not found.'));
         }
 
-        $limit = (int) $limit ?: App::module('shoutzor')->config('search.results_per_page');
+        //Music item is found, continue ($music now contains the item).
 
-        //Make sure limit doesn't exceed our maximum (let's not overload the database)
-        if($limit > App::module('shoutzor')->config('search.max_results_per_page')) {
-            $limit = App::module('shoutzor')->config('search.max_results_per_page');
-        }
 
-        $count = $query->count();
-        $pages = ceil($count / $limit);
-        $page  = max(0, min($pages - 1, $page));
-
-        $results = array_values($query->offset($page * $limit)->related('artist', 'user')->limit($limit)->orderBy($order[1], $order[2])->get());
-
-        return compact('results', 'pages', 'count');
+        return array();
     }
 }
