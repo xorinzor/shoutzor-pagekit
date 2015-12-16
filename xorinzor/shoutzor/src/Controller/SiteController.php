@@ -45,7 +45,7 @@ class SiteController
     public function uploadManagerAction()
     {
 
-        $uploads = Music::where(['uploader_id = :uploader AND status != :finished'], ['uploader' => App::user()->id, 'finished' => Music::STATUS_FINISHED])->orderBy('status', 'ASC')->related(['artist', 'user'])->get();
+        $uploads = Music::where(['uploader_id = :uploader AND status != :finished'], ['uploader' => App::user()->id, 'finished' => Music::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->get();
 
         return [
             '$view' => [

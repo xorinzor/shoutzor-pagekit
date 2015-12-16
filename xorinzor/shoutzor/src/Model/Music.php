@@ -11,7 +11,7 @@ use Pagekit\Database\ORM\ModelTrait;
  */
 class Music implements \JsonSerializable{
 
-    use ModelTrait, DataModelTrait;
+    use ModelTrait;
 
     /* song pending processing */
     const STATUS_UPLOADED = 0;
