@@ -15,6 +15,7 @@ port=8000
 password="hackme"
 
 vlc "$file" \
+--intf dummy vcd:// \
 --loop \
 --quiet \
 --width 1920 --height 1080 \

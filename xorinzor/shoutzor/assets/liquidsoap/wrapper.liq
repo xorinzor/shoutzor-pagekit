@@ -16,8 +16,8 @@ set("decoder.file_extensions.gstreamer",["ogg"])
 offline_source = single("../images/placeholder.ogg")
 
 #input from the shoutzor script
-#live_source = input.harbor(stream_input_mount, port=stream_input_port, password=stream_input_password)
-live_source = input.http(autostart=true,"http://localhost:8000/vlc.ogg")
+live_source = input.harbor(stream_input_mount, port=stream_input_port, password=stream_input_password)
+#live_source = input.http(autostart=true,"http://localhost:8000/vlc.ogg")
 
 video_input = fallback(track_sensitive=false, [live_source, offline_source])
 

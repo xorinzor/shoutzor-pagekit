@@ -47,43 +47,39 @@ def metadatahandler(m)
 	system("curl #{shoutzor_nexttrack_handler_url} > /dev/null &")
 end
 
-#jingles
-jingles = playlist(conservative=true, mode="randomize", shoutzor_jingles_playlist_path)
-
-#tell the script this source contains the jingles
-jingles = map_metadata(append_type, jingles)
-
 #Requester input
 input = request.queue(id="shoutzorqueue")
+#input = playlist("playlist.pls")
 
 # Attach a skip command to the source input:
 add_skip_command(input)
 
 #Attach a on_metadata handler
-input = on_metadata(metadatahandler, input)
-
-#add Jingles to the main source
-input = fallback([delay(840., jingles), input])
+video_input = on_metadata(metadatahandler, drop_audio(input))
 
 #apply crossfade of 5 seconds
-input = smart_crossfade(start_next=7., fade_in=5., fade_out=5., conservative=true, input)
+#audio_input = smart_crossfade(start_next=7., fade_in=5., fade_out=5., conservative=true, drop_video(input))
+audio_input = drop_video(input)
 
 #give control over the channels
-input = mix(id="sound", [input])
+audio_input = mix(id="sound", [audio_input])
 
 #when no audio is detected for longer as 10 seconds, the blank_handler will kick in
-video_request = on_blank(max_blank=10., blank_handler, input)
+audio_input = on_blank(max_blank=10., blank_handler, audio_input)
 
 #merge both into a video output
-result = fallback(track_sensitive=false, [video_fallback, video_request])
+video_result = add([video_fallback, video_input])
 
-clock.assign_new(sync=false,[result])
+result = mux_audio(audio=audio_input, drop_audio(video_result))
+
+clock.assign_new(sync=false, [result])
 
 #stream output to the wrapper (THIS IS NOT YET TO THE PUBLIC STREAM, CHECK WRAPPER.LIQ)
 output.icecast(
   format="video/mpegts",
   %gstreamer(audio="lamemp3enc", video="x264enc", muxer="mpegtsmux", channels=2),
-  mount="/" ^ stream_input_mount,
+  mount="/#{stream_input_mount}",
+  icy_metadata="false",
   id="toWrapper",
   host="localhost", port=stream_input_port, password=stream_input_password,
-  input)
+  result)
