@@ -22,6 +22,7 @@ socket_path_shoutzor = "/home/shoutzor/shoutzorSocket"
 socket_file_permission = 511
 
 shoutzor_error_text = "Shoutzor is experiencing technical difficulties, please stand by"
+shoutzor_fallback_video = "../images/placeholder.ogg"
 
 stream_video_width = 1920
 stream_video_height = 1080
