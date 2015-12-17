@@ -29,6 +29,7 @@ return [
                 $table->addColumn('thumbnail', 'text', ['length' => 1000, 'default' => '']);
                 $table->addColumn('status', 'boolean', ['length' => 1, 'default' => '0']);
                 $table->addColumn('created', 'datetime');
+                $table->addColumn('amount_requested', 'integer', ['unsigned' => true, 'length' => 10]);
                 $table->setPrimaryKey(['id']);
                 $table->addIndex(array('artist_id'), 'artist_index');
                 $table->addIndex(array('uploader_id'), 'uploader_index');
@@ -40,9 +41,14 @@ return [
 
     /*
      * Enable hook
-     *
      */
     'enable' => function ($app) {
+    },
+
+    /*
+     * Disable hook
+     */
+    'disable' => function ($app) {
     },
 
     /*
