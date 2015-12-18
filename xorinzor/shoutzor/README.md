@@ -19,14 +19,6 @@ then run:<br />
 `sudo make`<br>
 `sudo make install`<br />
 <br />
-`cd ..`<br />
-`sudo apt-get build-dep liquidsoap`<br>
-`sudo apt-get source liquidsoap`<br>
-`cd liquidsoap-&lt;VERSION&gt;`<br>
-`sudo ./configure`<br>
-`sudo make`<br>
-`sudo make install`<br />
-<br />
 `sudo apt-get install gstreamer1.0*`
 
 # Credits

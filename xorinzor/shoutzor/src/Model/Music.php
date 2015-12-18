@@ -3,7 +3,6 @@
 namespace Xorinzor\Shoutzor\Model;
 
 use Pagekit\Application as App;
-use Pagekit\System\Model\DataModelTrait;
 use Pagekit\Database\ORM\ModelTrait;
 
 /**

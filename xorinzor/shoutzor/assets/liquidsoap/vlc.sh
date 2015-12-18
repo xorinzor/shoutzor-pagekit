@@ -2,6 +2,8 @@
 
 file="../images/placeholder.ogg"
 logo="../images/shoutzor-christmas-logo-small.png"
+telnetport = 4212
+telnetpassword = "hackme"
 transparency=255 #0 = fully transparent, 255 = fully opaque
 threads=4
 vcodec=theo
@@ -15,7 +17,11 @@ port=8000
 password="hackme"
 
 vlc "$file" \
---intf dummy vcd:// \
+--ttl 12 \
+--one-instance \
+--intf telnet \
+--telnet-port $telnetport \
+--telnet-password $telnetpassword \
 --loop \
 --quiet \
 --width 1920 --height 1080 \
