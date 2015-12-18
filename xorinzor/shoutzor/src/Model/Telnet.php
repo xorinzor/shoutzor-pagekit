@@ -2,6 +2,8 @@
 
 namespace Xorinzor\Shoutzor\Model;
 
+use \Exception;
+
 /**
  * Telnet class
  *

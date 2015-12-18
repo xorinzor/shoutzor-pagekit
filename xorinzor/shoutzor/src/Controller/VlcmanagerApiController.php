@@ -89,7 +89,7 @@ class VlcmanagerApiController
     protected function ensureLocalhost()
     {
         return true;
-        
+
         $whitelist = array(
             '127.0.0.1',
             '::1'
