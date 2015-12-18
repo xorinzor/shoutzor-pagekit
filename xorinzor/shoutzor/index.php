@@ -272,6 +272,8 @@ return [
      */
     'config' => [
 
+        'root_path' => dirname(__FILE__),
+
         'search' => [
             'results_per_page' => 10,
             'max_results_per_page' => 20
@@ -283,22 +285,23 @@ return [
         ],
 
         'visualizer' => [
-            'enabled' => 1,
+            'enabled' => 0,
         ],
 
         'vlc' => [
-            'bitrate' => 192,
+            'transcoding' => [
+                'bitrate' => 192,
+                'threads' => 4,
+                'acodec' => 'vorbisenc',
+                'vcodec' => 'theoraenc',
+                'videoquality' => 10,
+                'audioquality' => 10
+            ],
 
             'stream' => [
-                'input' => [
-                    'mount' => 'streaminput',
-                    'port' => 1337,
-                    'password' => 'replaceme'
-                ],
-
                 'output' => [
                     'host'      => 'localhost',
-                    'mount'     => 'shoutzor',
+                    'mount'     => 'shoutzor.ogg',
                     'port'      => 8000,
                     'password'  => 'replaceme'
                 ],
@@ -309,8 +312,9 @@ return [
                     'height' => 1080,
                     'fps' => 60,
                     'logo' => [
-                        'width' => 434,
-                        'height' => 97,
+                        'x' => 5,
+                        'y' => 5,
+                        'transparency' => 255,
                         'path' => "../images/shoutzor-christmas-logo-small.png"
                     ]
                 ]

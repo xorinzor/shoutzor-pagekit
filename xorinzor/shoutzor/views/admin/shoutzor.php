@@ -12,6 +12,14 @@
     </div>
 
     <div class="uk-form-row">
+        <label class="uk-form-label">{{ 'Shoutzor module root' | trans }}</label>
+        <div class="uk-form-controls">
+            <input type="text" class="uk-form-width-large" v-model="config.root_path" />
+            <span class="uk-form-help-inline">The path to the shoutzor module root</span>
+        </div>
+    </div>
+
+    <div class="uk-form-row">
         <label class="uk-form-label">{{ 'Allow uploads' | trans }}</label>
         <div class="uk-form-controls">
             <select name="allow_uploads" class="uk-form-select" v-model="config.shoutzor.upload">

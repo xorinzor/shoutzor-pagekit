@@ -99,6 +99,75 @@ class VlcApiController
     }
 
     /**
+     * Rebuilds the VLC script with the config parameters as provided in the admin panel
+     */
+    protected function buildVlcConfig() {
+        try {
+            $config = App::module('shoutzor')->config['vlc'];
+
+            $settings = array(
+                'placeholder' => $config['stream']['video']['placeholder'],
+                'logo' => $config['stream']['video']['logo']['path'],
+                'logo_transparency' => $config['stream']['video']['logo']['transparency'],
+                'logo_x_pos' => $config['stream']['video']['logo']['x'],
+                'logo_y_pos' => $config['stream']['video']['logo']['y'],
+                'telnetport' => $config['telnet']['port'],
+                'telnetpassword' => $config['telnet']['password'],
+                'threads' => $config['transcoding']['threads'],
+                'vcodec' => $config['transcoding']['vcodec'],
+                'acodec' => $config['transcoding']['acodec'],
+                'videoquality' => $config['transcoding']['videoquality'],
+                'audioquality' => $config['transcoding']['audioquality'],
+                'bitrate' => $config['transcoding']['bitrate'],
+                'width' => $config['video']['width'],
+                'height' => $config['video']['height'],
+                'output_destination' => $config['output']['host'],
+                'output_port' => $config['output']['port'],
+                'output_mount' => $config['output']['mount'],
+                'output_password' => $config['output']['password']
+            );
+
+            $command_template = <<<EOT
+        vlc "\$placeholder" \\
+        --ttl 12 \\
+        --one-instance \\
+        --intf telnet \\
+        --telnet-port \$telnetport \\
+        --telnet-password \$telnetpassword \\
+        --loop \\
+        --quiet \\
+        --sout-theora-quality=\$videoquality \\
+        --sout-vorbis-quality=\$audioquality \\
+        --sout "#transcode{sfilter=logo{file='\$logo',x=\$logo_x_pos,y=\$logo_y_pos,transparency=\$logo_transparency},deinterlace,hq,threads=\$threads,vcodec=\$vcodec,acodec=\$acodec,ab=\$bitrate,channels=2,width=\$width,height=\$height}:std{access=shout,mux=ogg,dst=source:\$output_password@\$output_destination:\$output_port/\$output_mount}" --sout-keep
+EOT;
+
+            $script = '';
+
+            //Add the configuration options
+            foreach($settings as $setting=>$value) {
+                $script .= $setting . '=' . $value . PHP_EOl;
+            }
+
+            //Add the template for the command to the script
+            $script .= $command_template;
+
+            $path = $this->getPath(App::module('shoutzor')->config('root_path')) . 'scripts/vlc.sh';
+
+            if (!is_writable($path)) {
+                throw new Exception(__('Cannot edit VLC.sh file at ' . $path . ', Permission denied.'));
+            }
+
+            //Write to the script
+            file_put_contents($path, $script, LOCK_EX);
+
+            return array('result' => true);
+
+        } catch(Exception $e) {
+            App::abort(400, $e->getMessage());
+        }
+    }
+
+    /**
      * Connect to the VLC Telnet interface
      */
     protected function connectToTelnet() {
@@ -113,6 +182,10 @@ class VlcApiController
     {
         $root = strtr(App::path(), '\\', '/');
         $path = $this->normalizePath($root.'/'.App::request()->get('root').'/'.App::request()->get('path').'/'.$path);
+
+        if(substr($path, -1) !== '/') {
+            $path .= '/';
+        }
 
         return 0 === strpos($path, $root) ? $path : false;
     }
