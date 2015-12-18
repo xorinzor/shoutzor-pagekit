@@ -18,3 +18,14 @@ destination="localhost"
 port=8000
 password="hackme"
 
+vlc "$placeholder" \
+--ttl 12 \
+--one-instance \
+--intf telnet \
+--telnet-port $telnetport \
+--telnet-password $telnetpassword \
+--loop \
+--quiet \
+--sout-theora-quality=$videoquality \
+--sout-vorbis-quality=$audioquality \
+--sout "#transcode{sfilter=logo{file='$logo',x=$logo_x_pos,y=$logo_y_pos,transparency=$logo_transparency},deinterlace,hq,threads=$threads,vcodec=$vcodec,acodec=$acodec,ab=$bitrate,channels=2,width=$width,height=$height}:std{access=shout,mux=ogg,dst=source:$output_password@$output_destination:$output_port/$output_mount}" --sout-keep
