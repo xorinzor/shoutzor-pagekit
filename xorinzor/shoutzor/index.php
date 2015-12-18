@@ -151,17 +151,18 @@ return [
             ]
         ],
 
-        '/shoutzor/liquidsoap' => [
-            'name' => '@shoutzor/admin/liquidsoap',
+        '/shoutzor/vlc' => [
+            'name' => '@shoutzor/admin/vlc',
             'controller' => [
-                'Xorinzor\\Shoutzor\\Controller\\LiquidsoapController'
+                'Xorinzor\\Shoutzor\\Controller\\VlcController'
             ]
         ],
 
         '/shoutzor/api' => [
             'name' => '@shoutzor/api',
             'controller' => [
-                'Xorinzor\\Shoutzor\\Controller\\MusicApiController'
+                'Xorinzor\\Shoutzor\\Controller\\MusicApiController',
+                'Xorinzor\\Shoutzor\\Controller\\VlcApiController'
             ]
         ]
 
@@ -217,11 +218,11 @@ return [
             'access' => 'shoutzor: manage audio settings'
         ],
 
-        'shoutzor: liquidsoap' => [
+        'shoutzor: vlc' => [
             'parent' => 'shoutzor',
-            'label' => 'LiquidSoap',
-            'url' => '@shoutzor/admin/liquidsoap',
-            'access' => 'shoutzor: manage liquidsoap settings'
+            'label' => 'VLC',
+            'url' => '@shoutzor/admin/vlc',
+            'access' => 'shoutzor: manage vlc settings'
         ]
 
     ],
@@ -246,8 +247,8 @@ return [
             'title' => 'Manage Shoutzor Audio Settings'
         ],
 
-        'shoutzor: manage liquidsoap settings' => [
-            'title' => 'Manage Shoutzor Liquidsoap Service Settings'
+        'shoutzor: manage vlc settings' => [
+            'title' => 'Manage Shoutzor VLC Service Settings'
         ],
 
         'shoutzor: upload files' => [
@@ -285,37 +286,8 @@ return [
             'enabled' => 1,
         ],
 
-        'liquidsoap' => [
-            'stdout' => [
-                'wrapper' => false,
-                'shoutzor' => false
-            ],
-
-            'logpath' => [
-                'wrapper' => '/dev/null',
-                'shoutzor' => '/dev/null'
-            ],
-
-            'telnet' => [
-                'wrapper' => false,
-                'shoutzor' => false
-            ],
-
-            'socket' => [
-                'wrapper' => true,
-                'shoutzor' => true
-            ],
-
-            'socketpath' => [
-                'wrapper' => '/tmp/wrapperSocket',
-                'shoutzor' => '/tmp/shoutzorSocket'
-            ],
-
-            'socketpermission' => 511,
-
+        'vlc' => [
             'bitrate' => 192,
-
-            'errortext' => "Shoutzor is experiencing technical difficulties, please stand by",
 
             'stream' => [
                 'input' => [
@@ -344,11 +316,9 @@ return [
                 ]
             ],
 
-            'jingles' => '',
-
-            'handler' => [
-                'blank' => "http://localhost/liquidsoap/autofix/",
-                'nexttrack' => "http://localhost/liquidsoap/getnexttrack/"
+            'telnet' => [
+                'port' => 4212,
+                'password' => 'replaceme'
             ]
         ]
 

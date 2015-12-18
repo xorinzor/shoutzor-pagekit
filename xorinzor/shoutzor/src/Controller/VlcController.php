@@ -7,14 +7,14 @@ use Pagekit\Application as App;
 /**
  * @Access(admin=true)
  */
-class LiquidsoapController
+class VlcController
 {
     public function indexAction()
     {
         return [
             '$view' => [
-                'title' => __('LiquidSoap Settings'),
-                'name'  => 'shoutzor:views/admin/liquidsoap.php'
+                'title' => __('VLC Settings'),
+                'name'  => 'shoutzor:views/admin/vlc.php'
             ],
             '$data' => [
                 'config' => App::module('shoutzor')->config()

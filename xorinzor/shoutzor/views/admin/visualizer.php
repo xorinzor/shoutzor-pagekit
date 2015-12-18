@@ -12,6 +12,12 @@
     </div>
 
     <div class="uk-form-row">
+        <div class="uk-alert uk-alert-danger">
+            <p><strong>Important!</strong> This feature has not been implemented yet</p>
+        </div>
+    </div>
+
+    <div class="uk-form-row">
         <div class="uk-alert uk-alert-warning">
             <p><strong>Important!</strong> Applying changes will cause a brief disruption in the video stream from the visualizer</p>
         </div>

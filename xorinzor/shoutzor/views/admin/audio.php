@@ -8,6 +8,20 @@
     </div>
 
     <div class="uk-form-row">
+        <label class="uk-form-label">{{ 'Play Music' | trans }}</label>
+        <div class="uk-form-controls">
+            <button type="button" class="uk-button uk-button-primary" v-on="click: play">{{ 'Play Music' | trans }}</button>
+        </div>
+    </div>
+
+    <div class="uk-form-row">
+        <label class="uk-form-label">{{ 'Pause Music' | trans }}</label>
+        <div class="uk-form-controls">
+            <button type="button" class="uk-button uk-button-primary" v-on="click: pause">{{ 'Pause Music' | trans }}</button>
+        </div>
+    </div>
+
+    <div class="uk-form-row">
         <label class="uk-form-label">{{ 'Switch to the next track' | trans }}</label>
         <div class="uk-form-controls">
             <button type="button" class="uk-button uk-button-primary" v-on="click: nexttrack">{{ 'Next track' | trans }}</button>

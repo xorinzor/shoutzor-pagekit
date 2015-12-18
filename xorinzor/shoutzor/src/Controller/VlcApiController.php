@@ -11,7 +11,7 @@ use \Exception;
 /**
  * @Route("vlc", name="vlc")
  */
-class MusicApiController
+class VlcApiController
 {
     private $telnet;
 
