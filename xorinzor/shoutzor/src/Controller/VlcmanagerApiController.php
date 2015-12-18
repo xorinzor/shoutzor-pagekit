@@ -9,9 +9,9 @@ use Xorinzor\Shoutzor\Model\Telnet;
 use \Exception;
 
 /**
- * @Route("vlc", name="vlc")
+ * @Route("vlcmanager", name="vlcmanager")
  */
-class VlcApiController
+class VlcmanagerApiController
 {
     private $telnet;
 
@@ -88,6 +88,8 @@ class VlcApiController
      */
     protected function ensureLocalhost()
     {
+        return true;
+        
         $whitelist = array(
             '127.0.0.1',
             '::1'

@@ -162,7 +162,7 @@ return [
             'name' => '@shoutzor/api',
             'controller' => [
                 'Xorinzor\\Shoutzor\\Controller\\MusicApiController',
-                'Xorinzor\\Shoutzor\\Controller\\VlcApiController'
+                'Xorinzor\\Shoutzor\\Controller\\VlcmanagerApiController'
             ]
         ]
 
