@@ -6,7 +6,7 @@
     <?php endif; ?>
 
     <figcaption class="uk-overlay-panel">
-        <h3><?= $item->title ?></h3>
+        <h3><a href="#" data-music="<?= $item->id; ?>"><?= $item->title ?></a></h3>
         <?php if($item->artist): ?>
             <p><?= $item->artist->name ?></p>
         <?php endif; ?>

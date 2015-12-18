@@ -20,11 +20,12 @@ output_password="hackme"
 output_mount="shoutzor.ogg"
 
 vlc "$placeholder" \
+--input-slave="$placeholder" \
 --ttl 12 \
 --one-instance \
 --intf telnet \
---telnet-port $telnetport \
---telnet-password $telnetpassword \
+--telnet-port=$telnetport \
+--telnet-password=$telnetpassword \
 --loop \
 --quiet \
 --sout-theora-quality=$videoquality \

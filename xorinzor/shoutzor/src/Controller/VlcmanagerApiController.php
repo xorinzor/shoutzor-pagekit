@@ -39,6 +39,10 @@ class VlcmanagerApiController
     public function addrequestAction($music = 0)
     {
         try {
+            if(!$music) {
+                throw new Exception(__("Invalid request ID"));
+            }
+
             $this->ensureLocalhost();
 
             $music = Music::find($music);
@@ -53,7 +57,7 @@ class VlcmanagerApiController
             }
 
             $this->connectToTelnet();
-            $output = $this->telnet->exec(Vlc::CONTROL_ENQUEUE . " $filepath");
+            $output = $this->telnet->exec(Vlc::getCommandText(Vlc::CONTROL_ENQUEUE) . " $filepath");
 
             return array('result' => true, 'output' => $output);
 
@@ -134,8 +138,8 @@ class VlcmanagerApiController
         --ttl 12 \\
         --one-instance \\
         --intf telnet \\
-        --telnet-port \$telnetport \\
-        --telnet-password \$telnetpassword \\
+        --telnet-port=\$telnetport \\
+        --telnet-password=\$telnetpassword \\
         --loop \\
         --quiet \\
         --sout-theora-quality=\$videoquality \\
@@ -173,8 +177,8 @@ EOT;
      * Connect to the VLC Telnet interface
      */
     protected function connectToTelnet() {
-        $this->telnet = new Telnet('localhost', '4212', 5, '$');
-        $this->telnet->connect();
+        $this->telnet = new Telnet('localhost', '4212', 5);
+
         if($this->telnet->login('password') != Telnet::TELNET_OK) {
             throw new \Exception("Could not authenticate to the VLC telnet interface");
         }

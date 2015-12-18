@@ -17,7 +17,9 @@ use \Exception;
  * Matthias Blaser <mb@adfinis.ch>
  *
  * Extended by Christian Hammers <chammers@netcologne.de>
- * Modified by Frederik Sauer <fsa@dwarf.dk>
+ * Modified by Frederik Sauer <fsa@dwarf.dk> and Jorin Vermeulen <me@jorinvermeulen.com>
+ *
+ * Modified specifically to work with the VLC telnet! Should not be used for other connections
  *
  */
 class Telnet {
@@ -53,11 +55,11 @@ class Telnet {
      * @param float $streamTimeout Stream timeout in decimal seconds
      * @return void
      */
-    public function __construct($host = '127.0.0.1', $port = '23', $timeout = 10, $prompt = '$', $stream_timeout = 1) {
+    public function __construct($host = '127.0.0.1', $port = '23', $timeout = 10, $stream_timeout = 1) {
         $this->host = $host;
         $this->port = $port;
         $this->timeout = $timeout;
-        $this->setPrompt($prompt);
+        $this->setPrompt();
         $this->setStreamTimeout($stream_timeout);
         // set some telnet special characters
         $this->NULL = chr(0);
@@ -162,7 +164,7 @@ class Telnet {
      * @param string $str String to respond to
      * @return boolean
      */
-    public function setPrompt($str = '$') {
+    public function setPrompt($str = '>') {
         return $this->setRegexPrompt(preg_quote($str, '/'));
     }
 
