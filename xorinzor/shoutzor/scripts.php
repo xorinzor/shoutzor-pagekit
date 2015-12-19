@@ -30,11 +30,25 @@ return [
                 $table->addColumn('status', 'boolean', ['length' => 1, 'default' => '0']);
                 $table->addColumn('created', 'datetime');
                 $table->addColumn('amount_requested', 'integer', ['unsigned' => true, 'length' => 10]);
+                $table->addColumn('crc', 'text', ['length' => 1000, 'default' => '']);
                 $table->setPrimaryKey(['id']);
                 $table->addIndex(array('artist_id'), 'artist_index');
                 $table->addIndex(array('uploader_id'), 'uploader_index');
                 $table->addIndex(array('status'), 'status_index');
                 $table->addIndex(array('created'), 'created_index');
+            });
+        }
+
+        if ($util->tableExists('@shoutzor_requestlist') === false) {
+            $util->createTable('@shoutzor_requestlist', function ($table) {
+                $table->addColumn('id', 'integer', ['unsigned' => true, 'length' => 10, 'autoincrement' => true]);
+                $table->addColumn('music_id', 'integer', ['unsigned' => true, 'length' => 10]);
+                $table->addColumn('requester_id', 'integer', ['unsigned' => true, 'length' => 10]);
+                $table->addColumn('requesttime', 'datetime');
+                $table->setPrimaryKey(['id']);
+                $table->addIndex(array('music_id'), 'artist_index');
+                $table->addIndex(array('requester_id'), 'uploader_index');
+                $table->addIndex(array('requesttime'), 'requesttime_index');
             });
         }
     },

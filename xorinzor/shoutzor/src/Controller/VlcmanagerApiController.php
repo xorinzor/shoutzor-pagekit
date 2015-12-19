@@ -6,7 +6,9 @@ use Pagekit\Application as App;
 use Xorinzor\Shoutzor\Model\Music;
 use Xorinzor\Shoutzor\Model\Vlc;
 use Xorinzor\Shoutzor\Model\Telnet;
+use Xorinzor\Shoutzor\Model\Request;
 use \Exception;
+use Symfony\Component\Process\Process;
 
 /**
  * @Route("vlcmanager", name="vlcmanager")
@@ -33,6 +35,24 @@ class VlcmanagerApiController
     }
 
     /**
+     * @Route("/start", methods="GET")
+     */
+    public function startAction() {
+        if($this->isRunning()) {
+            return array('result' => false);
+        }
+
+        $this->buildVlcConfig();
+
+        $path = $this->getPath(App::module('shoutzor')->config('root_path')) . 'assets/scripts/';
+
+        $process = new Process($path.'vlc.sh > /dev/null 2>&1 &');
+        $process->run();
+
+        return array('result' => true);
+    }
+
+    /**
      * @Route("/addrequest", methods="POST")
      * @Request({"music": "int"})
      */
@@ -43,26 +63,57 @@ class VlcmanagerApiController
                 throw new Exception(__("Invalid request ID"));
             }
 
-            $this->ensureLocalhost();
+            //Make sure file uploads are enabled
+            if(!App::user()->hasAccess("shoutzor: add requests")) {
+                throw new Exception(__('You have no permission to request'));
+            }
 
+            //Make sure file uploads are enabled
+            if(App::module('shoutzor')->config('shoutzor.request') == 0) {
+                throw new Exception(__('File requests have been disabled'));
+            }
+
+            //Check if the requested Music ID exists
             $music = Music::find($music);
             if($music == null || !$music) {
                 throw new Exception(__('Music with this ID does not exist'));
             }
 
-            $filepath = $music->filename;
+            //Make sure the file is readable
+            $root_path = $this->getPath(App::path().'/'.App::module('system/finder')->config('storage'));
+            $filepath = $root_path . $music->filename;
 
             if (!is_readable($filepath)) {
                 throw new Exception(__('Cannot read music file '.$filepath.', Permission denied.'));
             }
 
-            $this->connectToTelnet();
-            $output = $this->telnet->exec(Vlc::getCommandText(Vlc::CONTROL_ENQUEUE) . " $filepath");
+            $isRequestable = (Request::where(['music_id = :id AND requesttime < NOW() - INTERVAL 30 MINUTE'], ['id' => $music->id])->count() > 0) ? false : true;
+            if(!$isRequestable) {
+                throw new Exception(__('This song has been requested too recently'));
+            }
 
-            return array('result' => true, 'output' => $output);
+            //Add request to the playlist
+            $this->connectToTelnet();
+
+            //Add the request to the playlist
+            try {
+                $this->telnet->exec(Vlc::getCommandText(Vlc::CONTROL_ENQUEUE) . " $filepath");
+            } catch(Exception $e) {
+                //It works, just ignore it.
+            }
+
+            //Save request in the database
+            $request = Request::create();
+            $request->save(array(
+                'music_id' => $music->id,
+                'requester_id' => App::user()->id,
+                'requesttime' => (new \DateTime())->format('Y-m-d H:i:s')
+            ));
+
+            return array('result' => true);
 
         } catch(Exception $e) {
-            App::abort(400, $e->getMessage());
+            return array('result' => false, 'message' => $e->getMessage());
         }
     }
 
@@ -104,6 +155,15 @@ class VlcmanagerApiController
         }
     }
 
+    protected function isRunning() {
+        try {
+            $this->connectToTelnet();
+            return true;
+        } catch(Exception $e) {
+            return false;
+        }
+    }
+
     /**
      * Rebuilds the VLC script with the config parameters as provided in the admin panel
      */
@@ -112,52 +172,53 @@ class VlcmanagerApiController
             $config = App::module('shoutzor')->config['vlc'];
 
             $settings = array(
-                'placeholder' => $config['stream']['video']['placeholder'],
-                'logo' => $config['stream']['video']['logo']['path'],
-                'logo_transparency' => $config['stream']['video']['logo']['transparency'],
-                'logo_x_pos' => $config['stream']['video']['logo']['x'],
-                'logo_y_pos' => $config['stream']['video']['logo']['y'],
-                'telnetport' => $config['telnet']['port'],
-                'telnetpassword' => $config['telnet']['password'],
-                'threads' => $config['transcoding']['threads'],
-                'vcodec' => $config['transcoding']['vcodec'],
-                'acodec' => $config['transcoding']['acodec'],
-                'videoquality' => $config['transcoding']['videoquality'],
-                'audioquality' => $config['transcoding']['audioquality'],
-                'bitrate' => $config['transcoding']['bitrate'],
-                'width' => $config['video']['width'],
-                'height' => $config['video']['height'],
-                'output_destination' => $config['output']['host'],
-                'output_port' => $config['output']['port'],
-                'output_mount' => $config['output']['mount'],
-                'output_password' => $config['output']['password']
+                'placeholder' =>            '"'.$config['stream']['video']['placeholder'].'"',
+                'logo' =>                   '"'.$config['stream']['video']['logo']['path'].'"',
+                'logo_transparency' =>      $config['stream']['video']['logo']['transparency'],
+                'logo_x_pos' =>             $config['stream']['video']['logo']['x'],
+                'logo_y_pos' =>             $config['stream']['video']['logo']['y'],
+                'telnetport' =>             $config['telnet']['port'],
+                'telnetpassword' =>         '"'.$config['telnet']['password'].'"',
+                'threads' =>                $config['transcoding']['threads'],
+                'vcodec' =>                 $config['transcoding']['vcodec'],
+                'acodec' =>                 $config['transcoding']['acodec'],
+                'videoquality' =>           $config['transcoding']['videoquality'],
+                'audioquality' =>           $config['transcoding']['audioquality'],
+                'bitrate' =>                $config['transcoding']['bitrate'],
+                'width' =>                  $config['video']['width'],
+                'height' =>                 $config['video']['height'],
+                'output_destination' =>     $config['output']['host'],
+                'output_port' =>            $config['output']['port'],
+                'output_mount' =>           '"'.$config['output']['mount'].'"',
+                'output_password' =>        '"'.$config['output']['password'].'"'
             );
 
             $command_template = <<<EOT
-        vlc "\$placeholder" \\
-        --ttl 12 \\
-        --one-instance \\
-        --intf telnet \\
-        --telnet-port=\$telnetport \\
-        --telnet-password=\$telnetpassword \\
-        --loop \\
-        --quiet \\
-        --sout-theora-quality=\$videoquality \\
-        --sout-vorbis-quality=\$audioquality \\
-        --sout "#transcode{sfilter=logo{file='\$logo',x=\$logo_x_pos,y=\$logo_y_pos,transparency=\$logo_transparency},deinterlace,hq,threads=\$threads,vcodec=\$vcodec,acodec=\$acodec,ab=\$bitrate,channels=2,width=\$width,height=\$height}:std{access=shout,mux=ogg,dst=source:\$output_password@\$output_destination:\$output_port/\$output_mount}" --sout-keep
+vlc "\$placeholder" \\
+--input-slave="\$placeholder" \\
+--ttl 12 \\
+--one-instance \\
+--intf telnet \\
+--telnet-port=\$telnetport \\
+--telnet-password=\$telnetpassword \\
+--loop \\
+--quiet \\
+--sout-theora-quality=\$videoquality \\
+--sout-vorbis-quality=\$audioquality \\
+--sout "#transcode{sfilter=logo{file='\$logo',x=\$logo_x_pos,y=\$logo_y_pos,transparency=\$logo_transparency},deinterlace,hq,threads=\$threads,vcodec=\$vcodec,acodec=\$acodec,ab=\$bitrate,channels=2,width=\$width,height=\$height}:std{access=shout,mux=ogg,dst=source:\$output_password@\$output_destination:\$output_port/\$output_mount}" --sout-keep
 EOT;
 
             $script = '';
 
             //Add the configuration options
             foreach($settings as $setting=>$value) {
-                $script .= $setting . '=' . $value . PHP_EOl;
+                $script .= $setting . '=' . $value . "\n";
             }
 
             //Add the template for the command to the script
             $script .= $command_template;
 
-            $path = $this->getPath(App::module('shoutzor')->config('root_path')) . 'scripts/vlc.sh';
+            $path = $this->getPath(App::module('shoutzor')->config('root_path')) . 'assets/scripts/vlc.sh';
 
             if (!is_writable($path)) {
                 throw new Exception(__('Cannot edit VLC.sh file at ' . $path . ', Permission denied.'));
@@ -177,23 +238,27 @@ EOT;
      * Connect to the VLC Telnet interface
      */
     protected function connectToTelnet() {
-        $this->telnet = new Telnet('localhost', '4212', 5);
+        $config = App::module('shoutzor')->config['vlc'];
 
-        if($this->telnet->login('password') != Telnet::TELNET_OK) {
+        $this->telnet = new Telnet('localhost', $config['telnet']['port'], 5);
+
+        $login = $this->telnet->login('replaceme');
+
+        if($login != Telnet::TELNET_OK) {
             throw new \Exception("Could not authenticate to the VLC telnet interface");
         }
+
     }
 
     protected function getPath($path = '')
     {
-        $root = strtr(App::path(), '\\', '/');
-        $path = $this->normalizePath($root.'/'.App::request()->get('root').'/'.App::request()->get('path').'/'.$path);
+        $path = $this->normalizePath($path);
 
         if(substr($path, -1) !== '/') {
             $path .= '/';
         }
 
-        return 0 === strpos($path, $root) ? $path : false;
+        return $path;
     }
 
     /**

@@ -31,10 +31,13 @@ class MusicApiController
                 throw new Exception(__('File uploads have been disabled'));
             }
 
-            //Todo check if user has permission to upload a file
+            //Make sure file uploads are enabled
+            if(!App::user()->hasAccess("shoutzor: upload files")) {
+                throw new Exception(__('You have no permission to upload files'));
+            }
 
-            $root_path = $this->getPath(App::module('system/finder')->config('storage'));
-            $path = $root_path;
+            $root_path = $this->getPath(App::path() . '/' . App::module('system/finder')->config('storage'));
+            $path = $root_path  . 'temp/';
 
             if (!is_dir($path) || !is_writable($path)) {
                 throw new Exception(__('Cannot move file to '.$path.', Permission denied.'));
@@ -55,10 +58,11 @@ class MusicApiController
                     'artist_id' => 0,
                     'filename' => $file->getClientOriginalName(),
                     'uploader_id' => App::user()->id,
-                    'is_video' => false,
+                    'is_video' => $this->isVideo($path . $file->getClientOriginalName()),
                     'created' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'status' => 0,
-                    'amount_requested' => 0
+                    'amount_requested' => 0,
+                    'crc' => ''
                 ));
 
                 $fileId = $music->id;
@@ -83,21 +87,26 @@ class MusicApiController
         }
     }
 
-    /**
-     * @Route("/request", methods="POST", requirements={"id"="\d+"})
-     * @Request({"id": "int"})
-     */
-    public function requestAction($id = 0)
+    protected function isVideo($filename)
     {
-        //Check if the ID is invalid or the music item is not found
-        if (!$id || !$music = Music::find($id)) {
-            App::abort(404, __('Music not found.'));
+        $proc = new Process('ffprobe -v quiet -print_format json -show_streams '.$filename);
+        $proc->run();
+
+        // executes after the command finishes
+        if (!$proc->isSuccessful()) {
+            throw new Exception(__('Failed to run the ffprobe command'));
         }
 
-        //Music item is found, continue ($music now contains the item).
+        $data = json_decode($proc->getOutput());
 
+        //Check if the file contains a video stream
+        foreach($data['streams'] as $stream) {
+            if($stream['codec_type'] == 'video') {
+                return true;
+            }
+        }
 
-        return array();
+        return false;
     }
 
     protected function getPath($path = '')

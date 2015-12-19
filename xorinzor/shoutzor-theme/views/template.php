@@ -81,5 +81,37 @@
 
         <!-- Insert code before the closing body tag  -->
         <?= $view->render('footer') ?>
+
+        <script type="text/javascript">
+            $("a[data-music]").click(function() {
+                var clickedItem = $(this);
+
+                clickedItem.attr('class', 'uk-button');
+                clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-spinner uk-icon-spin');
+
+                if(clickedItem.prev(".uk-alert")) {
+                    clickedItem.prev(".uk-alert").remove();
+                }
+
+                $.post("<?= $view->url('@shoutzor/api/vlcmanager/addrequest'); ?>", {
+                    music: $(this).data("music")
+                }).always(function (data, type) {
+                    if (type == "success") {
+                        if(data.result == true) {
+                            clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-check');
+                            clickedItem.attr('class', 'uk-button uk-button-success');
+                        } else {
+                            $('<div class="uk-alert uk-alert-danger">'+data.message+'</div>').insertBefore(clickedItem);
+                            clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-plus');
+                            clickedItem.attr('class', 'uk-button uk-button-primary');
+                        }
+                    } else {
+                        $('<div class="uk-alert uk-alert-danger">Oops! Something went wrong!</div>').insertBefore(clickedItem);
+                        clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-plus');
+                        clickedItem.attr('class', 'uk-button uk-button-primary');
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

@@ -54,6 +54,9 @@ class Music implements \JsonSerializable{
     /** @Column(type="integer") */
     public $amount_requested;
 
+    /** @Column(type="string") */
+    public $crc;
+
     /**
      * @BelongsTo(targetEntity="Xorinzor\Shoutzor\Model\Artist", keyFrom="artist_id")
      */

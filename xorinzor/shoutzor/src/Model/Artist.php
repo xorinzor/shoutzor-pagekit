@@ -3,7 +3,6 @@
 namespace Xorinzor\Shoutzor\Model;
 
 use Pagekit\Application as App;
-use Pagekit\System\Model\DataModelTrait;
 use Pagekit\Database\ORM\ModelTrait;
 
 /**
@@ -11,7 +10,7 @@ use Pagekit\Database\ORM\ModelTrait;
  */
 class Artist implements \JsonSerializable{
 
-    use ModelTrait, DataModelTrait;
+    use ModelTrait;
 
     /** @Column(type="integer") @Id */
     public $id;

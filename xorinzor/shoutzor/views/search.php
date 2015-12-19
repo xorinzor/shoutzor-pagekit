@@ -1,6 +1,3 @@
-<?php $view->style('shoutzor-style-main', 'shoutzor:assets/css/style.css') ?>
-
-
 <div class="uk-panel uk-panel-box">
     <div class="uk-panel-title">
         <p>Search Results for '<?= $searchterm; ?>' - Found <?= $total; ?> Result(s)</p>
@@ -17,7 +14,7 @@
                             <img src="<?= $view->url()->getStatic('shoutzor:assets/images/music-placeholder.png'); ?>">
                         <?php endif; ?>
                     </figure>
-                    <p><a href="#" data-music="<?= $item->id; ?>"><strong><?= $item->title; ?></strong> - <?php if($item->artist) { echo $item->artist->name; } ?></a></p>
+                    <p><strong><?= $item->title; ?></strong> - <?php if($item->artist) { echo $item->artist->name; } ?></p>
                     <a data-music="<?= $item->id; ?>" class="uk-button uk-button-primary"><i class="uk-icon uk-icon-plus"></i> Request</a>
                 </div>
             </li>

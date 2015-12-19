@@ -59,7 +59,7 @@ class Telnet {
         $this->host = $host;
         $this->port = $port;
         $this->timeout = $timeout;
-        $this->setPrompt();
+        //$this->setPrompt();
         $this->setStreamTimeout($stream_timeout);
         // set some telnet special characters
         $this->NULL = chr(0);
@@ -108,6 +108,7 @@ class Telnet {
         }
         return self::TELNET_OK;
     }
+
     /**
      * Closes IP socket
      *

@@ -162,7 +162,8 @@ return [
             'name' => '@shoutzor/api',
             'controller' => [
                 'Xorinzor\\Shoutzor\\Controller\\MusicApiController',
-                'Xorinzor\\Shoutzor\\Controller\\VlcmanagerApiController'
+                'Xorinzor\\Shoutzor\\Controller\\VlcmanagerApiController',
+                'Xorinzor\\Shoutzor\\Controller\\MusicconverterApiController'
             ]
         ]
 
@@ -272,7 +273,7 @@ return [
      */
     'config' => [
 
-        'root_path' => dirname(__FILE__),
+        'root_path' => __DIR__,
 
         'search' => [
             'results_per_page' => 10,
@@ -307,7 +308,7 @@ return [
                 ],
 
                 'video' => [
-                    'placeholder' => 'placeholder.ogg',
+                    'placeholder' => '../images/placeholder.ogg',
                     'width' => 1920,
                     'height' => 1080,
                     'fps' => 60,
