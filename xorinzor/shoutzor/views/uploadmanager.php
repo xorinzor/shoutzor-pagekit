@@ -27,10 +27,11 @@
                 param: 'musicfile',
                 params: {},
                 type: 'json',
-                allow : '*.(mp3|mkv|avi|flv)', // allow only audio and video files
+                allow : '*.(wav|mp3|mkv|avi|flv|ogg|ogv|mp4)', // allow only audio and video files
 
                 notallowed: function(file, settings) {
                     //When an non-allowed file is beeing uploaded
+                    $("#not-allowed").removeClass('uk-hidden');
                 },
 
                 loadstart: function() {
@@ -81,6 +82,7 @@
     });
 </script>
 
+<div id="not-allowed" class="uk-alert uk-alert-danger uk-hidden"><strong>Not allowed!</strong> Allowed filetypes are: wav, mp3, mkv, avi, flv, ogg, ogv, mp4</div>
 <div id="upload-error" class="uk-alert uk-alert-danger uk-hidden"><strong>Error!</strong> One or more files failed to upload, please try again.</div>
 
 <div class="uk-panel uk-panel-box">
@@ -90,7 +92,7 @@
 
     <ul id="uploadList" class="uk-list uk-list-line">
         <?php if(count($uploads) == 0): ?>
-            <li id="uploadListEmpty"><p>You have no remaining uploads</p></li>
+            <li id="uploadListEmpty"><p>You have no remaining uploads (finished uploads will not show here)</p></li>
         <?php endif; ?>
 
         <?php foreach($uploads as $upload): ?>

@@ -45,7 +45,7 @@ $uploadStatus = $status[$upload->status];
 ?>
 <li data-uploadid="<?= $upload->id; ?>">
     <div class="uploaded-item">
-        <p><div class="uk-badge <?= $uploadStatus['labelclass']; ?>"><?= $uploadStatus['label']; ?></div> <strong><?= $upload->filename; ?></strong></p>
+        <p><div class="uk-badge <?= $uploadStatus['labelclass']; ?>"><?= $uploadStatus['label']; ?></div> <strong><?= $upload->title; ?></strong></p>
 
         <div class="uk-progress <?= $uploadStatus['progressbarclass']; ?>">
             <div class="uk-progress-bar" style="width: 100%;"><?= $uploadStatus['progressbar']; ?></div>

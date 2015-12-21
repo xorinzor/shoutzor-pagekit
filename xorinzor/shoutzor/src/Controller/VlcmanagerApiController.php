@@ -56,7 +56,7 @@ class VlcmanagerApiController
      * @Route("/addrequest", methods="POST")
      * @Request({"music": "int"})
      */
-    public function addrequestAction($music = 0)
+    public function addrequestAction($music = 0, $force = false)
     {
         try {
             if(!$music) {
@@ -87,9 +87,16 @@ class VlcmanagerApiController
                 throw new Exception(__('Cannot read music file '.$filepath.', Permission denied.'));
             }
 
-            $isRequestable = (Request::where(['music_id = :id AND requesttime < NOW() - INTERVAL 30 MINUTE'], ['id' => $music->id])->count() > 0) ? false : true;
-            if(!$isRequestable) {
-                throw new Exception(__('This song has been requested too recently'));
+            if($force === false) {
+                $isRequestable = (Request::where(['music_id = :id AND requesttime < NOW() - INTERVAL 30 MINUTE'], ['id' => $music->id])->count() > 0) ? false : true;
+                if (!$isRequestable) {
+                    throw new Exception(__('This song has been requested too recently'));
+                }
+
+                $canRequest = (Request::where(['requester_id = :id AND requesttime < NOW() - INTERVAL 10 MINUTE'], ['id' => App::user()->id])->count() > 0) ? false : true;
+                if (!$canRequest) {
+                    throw new Exception(__('You already recently requested a song, try again in 10 minutes'));
+                }
             }
 
             //Add request to the playlist
@@ -135,6 +142,36 @@ class VlcmanagerApiController
             App::abort(400, $e->getMessage());
         }
     }
+
+    /**
+     * @Route("/autorequester", methods="GET")
+     */
+    public function autorequesterAction() {
+        $last_request = Request::where('1=1')->orderBy('requesttime', 'DESC')->related(['user', 'music'])->limit(1)->get();
+
+        $last_request_time = strtotime($last_request[0]->requesttime->date);
+        $request_end_time = $last_request_time + strtotime($last_request[0]->music->duration);
+
+        $recent = Request::where('requesttime < NOW() - INTERVAL 10 MINUTE')->get();
+        $builder = '';
+        foreach($recent as $item) {
+            $builder .= $item->id.',';
+        }
+
+        $builder = rtrim($builder, ",");
+
+
+        $random = Music::where('id NOT IN('.$builder.')')->orderBy('RAND()')->limit(1);
+        if($random->count() == 0) {
+            $random = Music::where('1=1')->orderBy('RAND()')->limit(1);
+        }
+
+        $song = $random->get();
+        $this->addrequestAction($song->id, true);
+
+        return array('result' => true);
+    }
+
 
     /**
      * Make sure the API commands are run by the server only
@@ -185,30 +222,17 @@ class VlcmanagerApiController
                 'videoquality' =>           $config['transcoding']['videoquality'],
                 'audioquality' =>           $config['transcoding']['audioquality'],
                 'bitrate' =>                $config['transcoding']['bitrate'],
-                'width' =>                  $config['video']['width'],
-                'height' =>                 $config['video']['height'],
-                'output_destination' =>     $config['output']['host'],
-                'output_port' =>            $config['output']['port'],
-                'output_mount' =>           '"'.$config['output']['mount'].'"',
-                'output_password' =>        '"'.$config['output']['password'].'"'
+                'width' =>                  $config['stream']['video']['width'],
+                'height' =>                 $config['stream']['video']['height'],
+                'output_destination' =>     '"'.$config['stream']['output']['host'].'"',
+                'output_port' =>            $config['stream']['output']['port'],
+                'output_mount' =>           '"'.$config['stream']['output']['mount'].'"',
+                'output_password' =>        '"'.$config['stream']['output']['password'].'"'
             );
 
-            $command_template = <<<EOT
-vlc "\$placeholder" \\
---input-slave="\$placeholder" \\
---ttl 12 \\
---one-instance \\
---intf telnet \\
---telnet-port=\$telnetport \\
---telnet-password=\$telnetpassword \\
---loop \\
---quiet \\
---sout-theora-quality=\$videoquality \\
---sout-vorbis-quality=\$audioquality \\
---sout "#transcode{sfilter=logo{file='\$logo',x=\$logo_x_pos,y=\$logo_y_pos,transparency=\$logo_transparency},deinterlace,hq,threads=\$threads,vcodec=\$vcodec,acodec=\$acodec,ab=\$bitrate,channels=2,width=\$width,height=\$height}:std{access=shout,mux=ogg,dst=source:\$output_password@\$output_destination:\$output_port/\$output_mount}" --sout-keep
-EOT;
+            $command_template = "\n\n" . 'vlc "$placeholder" --ttl=12 --one-instance --intf=telnet --telnet-port=$telnetport --telnet-password=$telnetpassword --loop --quiet --sout-theora-quality=$videoquality --sout-vorbis-quality=$audioquality --sout "#transcode{sfilter=logo{file=\'$logo\',x=$logo_x_pos,y=$logo_y_pos,transparency=$logo_transparency},deinterlace,hq,threads=$threads,vcodec=$vcodec,acodec=$acodec,ab=$bitrate,channels=2,width=$width,height=$height}:std{access=shout,mux=ogg,dst=source:$output_password@$output_destination:$output_port/$output_mount}" --sout-keep';
 
-            $script = '';
+            $script = '#!/bin/bash'."\n\n";
 
             //Add the configuration options
             foreach($settings as $setting=>$value) {
@@ -242,7 +266,7 @@ EOT;
 
         $this->telnet = new Telnet('localhost', $config['telnet']['port'], 5);
 
-        $login = $this->telnet->login('replaceme');
+        $login = $this->telnet->login($config['telnet']['password']);
 
         if($login != Telnet::TELNET_OK) {
             throw new \Exception("Could not authenticate to the VLC telnet interface");

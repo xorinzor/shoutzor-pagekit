@@ -7,6 +7,7 @@ use Xorinzor\Shoutzor\Model\Music;
 
 class SiteController
 {
+
     /**
      * @Route("/")
      */

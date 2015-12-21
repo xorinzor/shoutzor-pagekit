@@ -31,6 +31,7 @@ return [
                 $table->addColumn('created', 'datetime');
                 $table->addColumn('amount_requested', 'integer', ['unsigned' => true, 'length' => 10]);
                 $table->addColumn('crc', 'text', ['length' => 1000, 'default' => '']);
+                $table->addColumn('duration', 'integer', ['unsigned' => true, 'length' => 10]);
                 $table->setPrimaryKey(['id']);
                 $table->addIndex(array('artist_id'), 'artist_index');
                 $table->addIndex(array('uploader_id'), 'uploader_index');

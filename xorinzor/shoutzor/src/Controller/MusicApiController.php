@@ -5,6 +5,9 @@ namespace Xorinzor\Shoutzor\Controller;
 use Pagekit\Application as App;
 use Xorinzor\Shoutzor\Model\Music;
 use \Exception;
+use Symfony\Component\Process\Process;
+
+require_once(__DIR__ . '/../Vendor/getid3/getid3.php');
 
 /**
  * @Route("music", name="music")
@@ -50,19 +53,54 @@ class MusicApiController
             }
 
             if($file->isValid()) {
-                $file->move($path, $file->getClientOriginalName());
+                $filename = md5(uniqid()).'.'.$file->getClientOriginalName();
+                $file->move($path, $filename);
+
+                $is_video = $this->isVideo($path . $filename);
+
+                $exists = false;
+                $crc = hash_file('crc32', $path . $filename);
+                if(Music::where(['crc = :hash'], ['hash' => $crc])->count() > 0) {
+                    $exists = true;
+                }
+
+                if($exists == false) {
+                    if($is_video) {
+                        $time = exec("ffmpeg -i " . $path . $filename . " 2>&1 | grep 'Duration' | cut -d ' ' -f 4 | sed s/,//");
+                        $duration = explode(":", $time);
+                        if(isset($duration[2])) {
+                            $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60 + round($duration[2]);
+                        } else {
+                            $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60;
+                        }
+                    } else {
+                        //If it's a audio file, move it from the temp directory to the main storage directory
+                        rename($path.$filename, $root_path.$filename);
+
+                        $id3 = new \getID3();
+                        $info = $id3->analyze($root_path.$filename);
+                        $time = $info['playtime_string'];
+                        $duration = explode(":", $time);
+                        if(isset($duration[2])) {
+                            $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60 + round($duration[2]);
+                        } else {
+                            $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60;
+                        }
+                    }
+                }
 
                 $music = Music::create();
                 $music->save(array(
-                    'title' => '',
+                    'title' => $file->getClientOriginalName(),
                     'artist_id' => 0,
-                    'filename' => $file->getClientOriginalName(),
+                    'filename' => $filename,
                     'uploader_id' => App::user()->id,
-                    'is_video' => $this->isVideo($path . $file->getClientOriginalName()),
+                    'is_video' => $is_video,
                     'created' => (new \DateTime())->format('Y-m-d H:i:s'),
-                    'status' => 0,
+                    'status' => ($exists) ? Music::STATUS_DUPLICATE : (($is_video) ? Music::STATUS_UPLOADED : Music::STATUS_FINISHED),
                     'amount_requested' => 0,
-                    'crc' => ''
+                    'crc' => $crc,
+                    'duration' => $duration_in_seconds
                 ));
 
                 $fileId = $music->id;
@@ -74,7 +112,7 @@ class MusicApiController
             $filesize = ($file->getClientSize() == 0) ? 1 : $file->getClientSize();
 
             $result = array(
-                'id' => $fileId, //todo replace with Mysql insert ID
+                'id' => $fileId,
                 'filename' => $file->getClientOriginalName(),
                 'size' => $filesize / (1024 * 1024), //Filesize in MB
                 'isValid' => (($fileId == 0) ? false : true)
@@ -89,32 +127,39 @@ class MusicApiController
 
     protected function isVideo($filename)
     {
-        $proc = new Process('ffprobe -v quiet -print_format json -show_streams '.$filename);
-        $proc->run();
+        try {
+            $proc = new Process('ffprobe -v quiet -print_format json -show_streams '.$filename);
+            $proc->run();
 
-        // executes after the command finishes
-        if (!$proc->isSuccessful()) {
-            throw new Exception(__('Failed to run the ffprobe command'));
-        }
-
-        $data = json_decode($proc->getOutput());
-
-        //Check if the file contains a video stream
-        foreach($data['streams'] as $stream) {
-            if($stream['codec_type'] == 'video') {
-                return true;
+            // executes after the command finishes
+            if (!$proc->isSuccessful()) {
+                throw new Exception(__('Failed to run the ffprobe command'));
             }
-        }
 
-        return false;
+            $data = json_decode($proc->getOutput());
+
+            //Check if the file contains a video stream
+            foreach($data->streams as $stream) {
+                if($stream->codec_type == 'video') {
+                    return true;
+                }
+            }
+
+            return false;
+        } catch(Exception $e) {
+            return false;
+        }
     }
 
     protected function getPath($path = '')
     {
-        $root = strtr(App::path(), '\\', '/');
-        $path = $this->normalizePath($root.'/'.App::request()->get('root').'/'.App::request()->get('path').'/'.$path);
+        $path = $this->normalizePath($path);
 
-        return 0 === strpos($path, $root) ? $path : false;
+        if(substr($path, -1) !== '/') {
+            $path .= '/';
+        }
+
+        return $path;
     }
 
     /**

@@ -8,7 +8,7 @@ use Symfony\Component\Process\Process;
 use Xorinzor\Shoutzor\Model\Music;
 
 /**
- * @Route("vlcmanager", name="vlcmanager")
+ * @Route("musicconverter", name="musicconverter")
  */
 class MusicconverterApiController
 {
@@ -39,7 +39,11 @@ class MusicconverterApiController
             $root_path = $this->getPath(App::path() . '/' . App::module('system/finder')->config('storage'));
             $path = $root_path . 'last_run.txt';
 
-            if(strtotime(file_get_contents($path)) < strtotime("-1 minute")) {
+            if(!file_exists($path)) {
+                file_put_contents($path, '0');
+            }
+
+            if(file_get_contents($path) > strtotime("-1 minute")) {
                 throw new Exception(__('A parser is already running or has been running too recently'));
             }
 
@@ -49,6 +53,8 @@ class MusicconverterApiController
                 file_put_contents($path, time());
                 $this->parseAction($item->id);
             }
+
+            return array('result' => true);
 
         } catch(Exception $e) {
             App::abort(400, $e->getMessage());
@@ -94,9 +100,9 @@ class MusicconverterApiController
             }
 
             //Start conversion
-            $outputPath = $root_path . $music->filename;
+            $outputPath = $root_path . $music->filename.'.ogg';
 
-            $process = new Process('ffmpeg -i ' . $filepath . ' -acodec libvorbis -vcodec libtheora '. $outputPath);
+            $process = new Process('avconv -i ' . $filepath . ' -acodec libvorbis -vcodec libtheora '. $outputPath);
             $process->start();
 
             $lastrun_path = $root_path . 'last_run.txt';
@@ -105,6 +111,9 @@ class MusicconverterApiController
                 file_put_contents($lastrun_path, time());
                 sleep(1);
             }
+
+            var_dump($outputPath);
+            var_dump(file_exists($outputPath));
 
             //If the new file has been generated, delete the old one
             if(file_exists($outputPath)) {
@@ -148,14 +157,13 @@ class MusicconverterApiController
 
     protected function getPath($path = '')
     {
-        $root = strtr(App::path(), '\\', '/');
-        $path = $this->normalizePath($root.'/'.App::request()->get('root').'/'.App::request()->get('path').'/'.$path);
+        $path = $this->normalizePath($path);
 
         if(substr($path, -1) !== '/') {
             $path .= '/';
         }
 
-        return 0 === strpos($path, $root) ? $path : false;
+        return $path;
     }
 
     /**
