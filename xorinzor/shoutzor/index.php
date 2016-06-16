@@ -2,160 +2,92 @@
 
 use Pagekit\Application;
 
-/*
- * This array is the module definition.
- * It's used by Pagekit to load your extension and register all things
- * that your extension provides (routes, menu items, php classes etc)
- */
 return [
-
-    /*
-     * Define a unique name.
-     */
     'name' => 'shoutzor',
-
-    /*
-     * Define the type of this module.
-     * Has to be 'extension' here. Can be 'theme' for a theme.
-     */
     'type' => 'extension',
-
-    /*
-     * Main entry point. Called when your extension is both installed and activated.
-     * Either assign an closure or a string that points to a PHP class.
-     * Example: 'main' => 'Pagekit\\Hello\\HelloExtension'
-     */
     'main' => function (Application $app) {
-
         // bootstrap code
-
     },
 
-    /*
-     * Register all namespaces to be loaded.
-     * Map from namespace to folder where the classes are located.
-     * Remember to escape backslashes with a second backslash.
-     */
     'autoload' => [
-
         'Xorinzor\\Shoutzor\\' => 'src'
-
     ],
 
-    /*
-     * Define nodes. A node is similar to a route with the difference
-     * that it can be placed anywhere in the menu structure. The
-     * resulting route is therefore determined on runtime.
-     */
+/*
     'nodes' => [
 
         'shoutzor/home' => [
-
-            // The name of the node route
             'name' => '@shoutzor/home',
-
-            // Label to display in the backend
             'label' => 'Dashboard',
-
-            // The controller for this node. Each controller action will be mounted
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::indexAction',
-
-            // A unique node that cannot be deleted, resides in "Not Linked" by default
             'protected' => true,
-
             'frontpage' => true,
-
             'active' => '@shoutzor/home'
-
         ],
 
         'shoutzor/visualizer' => [
-
-            // The name of the node route
             'name' => '@shoutzor/visualizer',
-
-            // Label to display in the backend
             'label' => 'Shoutzor Visualizer',
-
-            // The controller for this node. Each controller action will be mounted
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::visualizerAction',
-
-            // A unique node that cannot be deleted, resides in "Not Linked" by default
             'protected' => true,
-
             'active' => '@shoutzor/visualizer'
-
         ],
 
         'shoutzor/uploadmanager' => [
-
-            // The name of the node route
             'name' => '@shoutzor/uploadmanager',
-
-            // Label to display in the backend
             'label' => 'Upload manager',
-
-            // The controller for this node. Each controller action will be mounted
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::uploadManagerAction',
-
-            // A unique node that cannot be deleted, resides in "Not Linked" by default
             'protected' => true,
-
             'active' => '@shoutzor/uploadmanager'
-
         ],
 
         'shoutzor/search' => [
-
-            // The name of the node route
             'name' => '@shoutzor/search',
-
-            // Label to display in the backend
             'label' => 'Search',
-
-            // The controller for this node. Each controller action will be mounted
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::searchAction',
-
-            // A unique node that cannot be deleted, resides in "Not Linked" by default
             'protected' => true,
-
             'active' => '@shoutzor/search'
-
         ]
-
-    ],
+*/
 
 
     /*
      * Define routes.
      */
     'routes' => [
+        '/'     => [
+            'name' => '@shoutzor/home',
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::indexAction'
+        ],
+
+        '/upload-manager' => [
+            'name' => '@shoutzor/uploadmanager',
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::uploadManagerAction'
+        ],
+
+        '/search' => [
+            'name' => '@shoutzor/search',
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::searchAction'
+        ],
+
         '/shoutzor' => [
             'name' => '@shoutzor/admin',
-            'controller' => [
-                'Xorinzor\\Shoutzor\\Controller\\ShoutzorController'
-            ]
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\ShoutzorController'
         ],
 
         '/shoutzor/visualizer' => [
             'name' => '@shoutzor/admin/visualizer',
-            'controller' => [
-                'Xorinzor\\Shoutzor\\Controller\\VisualizerController'
-            ]
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\VisualizerController'
         ],
 
         '/shoutzor/audio' => [
             'name' => '@shoutzor/admin/audio',
-            'controller' => [
-                'Xorinzor\\Shoutzor\\Controller\\AudioController'
-            ]
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\AudioController'
         ],
 
         '/shoutzor/vlc' => [
             'name' => '@shoutzor/admin/vlc',
-            'controller' => [
-                'Xorinzor\\Shoutzor\\Controller\\VlcController'
-            ]
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\VlcController'
         ],
 
         '/shoutzor/api' => [
