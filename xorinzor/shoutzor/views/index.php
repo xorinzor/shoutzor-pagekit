@@ -2,6 +2,14 @@
 
 <div class="uk-panel uk-panel-box">
     <div class="uk-panel-title">
+        <p>Now Playing</p>
+    </div>
+
+    <p>Rick Astley - Never gonna give you up</p>
+</div>
+
+<div class="uk-panel uk-panel-box">
+    <div class="uk-panel-title">
         <p>Recently added</p>
     </div>
 

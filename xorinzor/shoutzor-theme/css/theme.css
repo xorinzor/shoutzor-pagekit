@@ -102,3 +102,14 @@ body {
     height: 100px;
     max-height: 100px;
 }
+
+.uk-panel-box {
+    border-radius: 0;
+}
+
+.uk-panel-box .uk-panel-title p {
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+    font-size: 20px;
+    padding-bottom: 2px;
+}

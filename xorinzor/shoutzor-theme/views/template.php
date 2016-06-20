@@ -39,7 +39,7 @@
 
             <nav class="uk-navbar uk-margin-large-bottom">
                 <a class="uk-navbar-brand uk-width-medium-1-5 uk-hidden-small" href="<?= $view->url()->get() ?>">
-                    <img src="<?= $view->url()->getStatic('theme:images/shoutzor-christmas-logo-small.png'); ?>" alt="shoutz0r logo" />
+                    <img src="<?= $view->url()->getStatic('theme:images/shoutzor-logo-small.png'); ?>" alt="shoutz0r logo" />
                 </a>
 
                 <div class="uk-navbar-content" id="main-navbar-content">
