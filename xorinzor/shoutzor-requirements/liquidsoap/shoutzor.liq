@@ -135,7 +135,7 @@ input = on_blank(max_blank=10., blank_handler, input)
 
 #stream output
 output.icecast(
-  %mp3(bitrate=streamBitrate),
+  encodingFormat,
   mount = wrapperInputListeningMount,
   id = "shoutzor",
   host = "localhost",

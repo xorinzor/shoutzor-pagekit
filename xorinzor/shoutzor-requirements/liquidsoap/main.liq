@@ -25,7 +25,7 @@ input = fallback(track_sensitive=false, [live, input])
 
 #stream output
 output.icecast(
-  %mp3(bitrate=streamBitrate),
+  encodingFormat,
   mount = wrapperOutputMount,
   id = "wrapper",
   host = wrapperOutputHost,

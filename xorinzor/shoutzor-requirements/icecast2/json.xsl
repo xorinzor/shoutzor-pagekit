@@ -1,6 +1,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
     <xsl:output method="text" encoding="UTF-8" media-type="application/json"/>
-    <xsl:template match="/icestats">{
+    <xsl:template match="/icestats">nowplaying({
       "contact":"<xsl:value-of select="admin"/>",
       "location":"<xsl:value-of select="location"/>",
       "total_listeners":"<xsl:value-of select="listeners"/>",
@@ -25,5 +25,5 @@
           "title": "<xsl:choose><xsl:when test="title"><xsl:value-of select="title" /></xsl:when><xsl:otherwise>Untitled</xsl:otherwise></xsl:choose>"
         }<xsl:if test="position() != last()">,</xsl:if></xsl:for-each>
       }
-    }</xsl:template>
+    })</xsl:template>
 </xsl:stylesheet>

@@ -18,11 +18,13 @@ shoutzorServerSocketPermissions = 511
 wrapperInputListeningMount = "/streaminput"
 wrapperInputListeningPort = 1337
 wrapperInputListeningPassword = "hackme"
-streamBitrate = 192
 wrapperOutputHost = "localhost"
 wrapperOutputMount = "/shoutzor"
 wrapperOutputPort = 8000
 wrapperOutputPassword = "hackme"
+
+#encoding format
+encodingFormat = %mp3(bitrate=192)
 
 #use ignore because of warnings
 ignore(wrapperLogFilePath)
@@ -40,8 +42,8 @@ ignore(shoutzorServerSocketPermissions)
 ignore(wrapperInputListeningMount)
 ignore(wrapperInputListeningPort)
 ignore(wrapperInputListeningPassword)
-ignore(streamBitrate)
 ignore(wrapperOutputHost)
 ignore(wrapperOutputMount)
 ignore(wrapperOutputPort)
 ignore(wrapperOutputPassword)
+ignore(encodingFormat)

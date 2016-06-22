@@ -1,12 +1,11 @@
-<?php $view->style('shoutzor-style-main', 'shoutzor:assets/css/style.css') ?>
+<?php $view->script('jquery', 'shoutzor:assets/js/jquery-1.9.1.min.js') ?>
+<?php $view->script('nowplaying', 'shoutzor:assets/js/nowplaying.js', 'jquery') ?>
 
 <div class="uk-panel uk-panel-box music-box">
     <div class="uk-panel-title">
-        <p>Now Playing <a href="http://<?= $_SERVER['SERVER_NAME']; ?>:8000/shoutzor.mp3.m3u" class="tuneIn uk-button-small uk-button-primary"><i class="uk-icon-play"></i> Tune In</a></p>
+        <p>Now Playing <a href="http://<?= $_SERVER['SERVER_NAME']; ?>:8000/shoutzor.m3u" class="tuneIn uk-button-small uk-button-primary"><i class="uk-icon-play"></i> Tune In</a></p>
     </div>
-    <p>
-        Rick Astley - Never gonna give you up
-    </p>
+    <p id="nowplaying">Loading "now playing" information..</p>
 </div>
 
 <div class="uk-panel uk-panel-box">
