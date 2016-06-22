@@ -25,8 +25,10 @@ input = fallback(track_sensitive=false, [live, input])
 
 #stream output
 output.icecast(
-  %mp3(bitrate=192),
-  mount="/",
-  id="wrapper",
-  host="localhost", port=8000, password="vledder",
+  %mp3(bitrate=streamBitrate),
+  mount = wrapperOutputMount,
+  id = "wrapper",
+  host = wrapperOutputHost,
+  port = wrapperOutputPort,
+  password = wrapperOutputPassword,
   input)
