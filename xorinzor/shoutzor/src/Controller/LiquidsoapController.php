@@ -7,14 +7,14 @@ use Pagekit\Application as App;
 /**
  * @Access(admin=true)
  */
-class ShoutzorController
+class LiquidsoapController
 {
     public function indexAction()
     {
         return [
             '$view' => [
-                'title' => __('Shoutzor Settings'),
-                'name'  => 'shoutzor:views/admin/shoutzor.php'
+                'title' => __('Liquidsoap Settings'),
+                'name'  => 'shoutzor:views/admin/liquidsoap.php'
             ],
             '$data' => [
                 'config' => App::module('shoutzor')->config()

@@ -42,6 +42,13 @@ return [
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\AudioController'
         ],
 
+        '/shoutzor/liquidsoap' => [
+            'name' => '@shoutzor/admin/liquidsoap',
+            'controller' => [
+                'Xorinzor\\Shoutzor\\Controller\\LiquidsoapController'
+            ]
+        ],
+
         '/shoutzor/api' => [
             'name' => '@shoutzor/api',
             'controller' => [
@@ -49,7 +56,6 @@ return [
                 'Xorinzor\\Shoutzor\\Controller\\MusicconverterApiController'
             ]
         ]
-
     ],
 
     /*
@@ -78,6 +84,13 @@ return [
             'label' => 'Audio',
             'url' => '@shoutzor/admin/audio',
             'access' => 'shoutzor: manage audio settings'
+        ],
+
+        'shoutzor: liquidsoap' => [
+            'parent' => 'shoutzor',
+            'label' => 'Liquidsoap',
+            'url' => '@shoutzor/admin/liquidsoap',
+            'access' => 'shoutzor: manage liquidsoap settings'
         ]
     ],
 
@@ -95,6 +108,10 @@ return [
 
         'shoutzor: manage audio settings' => [
             'title' => 'Manage Shoutzor Audio Settings'
+        ],
+
+        'shoutzor: manage liquidsoap settings' => [
+            'title' => 'Manage Shoutzor liquidsoap Settings'
         ],
 
         'shoutzor: upload files' => [
