@@ -13,44 +13,6 @@ return [
         'Xorinzor\\Shoutzor\\' => 'src'
     ],
 
-/*
-    'nodes' => [
-
-        'shoutzor/home' => [
-            'name' => '@shoutzor/home',
-            'label' => 'Dashboard',
-            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::indexAction',
-            'protected' => true,
-            'frontpage' => true,
-            'active' => '@shoutzor/home'
-        ],
-
-        'shoutzor/visualizer' => [
-            'name' => '@shoutzor/visualizer',
-            'label' => 'Shoutzor Visualizer',
-            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::visualizerAction',
-            'protected' => true,
-            'active' => '@shoutzor/visualizer'
-        ],
-
-        'shoutzor/uploadmanager' => [
-            'name' => '@shoutzor/uploadmanager',
-            'label' => 'Upload manager',
-            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::uploadManagerAction',
-            'protected' => true,
-            'active' => '@shoutzor/uploadmanager'
-        ],
-
-        'shoutzor/search' => [
-            'name' => '@shoutzor/search',
-            'label' => 'Search',
-            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::searchAction',
-            'protected' => true,
-            'active' => '@shoutzor/search'
-        ]
-*/
-
-
     /*
      * Define routes.
      */
@@ -75,26 +37,15 @@ return [
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\ShoutzorController'
         ],
 
-        '/shoutzor/visualizer' => [
-            'name' => '@shoutzor/admin/visualizer',
-            'controller' => 'Xorinzor\\Shoutzor\\Controller\\VisualizerController'
-        ],
-
         '/shoutzor/audio' => [
             'name' => '@shoutzor/admin/audio',
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\AudioController'
-        ],
-
-        '/shoutzor/vlc' => [
-            'name' => '@shoutzor/admin/vlc',
-            'controller' => 'Xorinzor\\Shoutzor\\Controller\\VlcController'
         ],
 
         '/shoutzor/api' => [
             'name' => '@shoutzor/api',
             'controller' => [
                 'Xorinzor\\Shoutzor\\Controller\\MusicApiController',
-                'Xorinzor\\Shoutzor\\Controller\\VlcmanagerApiController',
                 'Xorinzor\\Shoutzor\\Controller\\MusicconverterApiController'
             ]
         ]
@@ -108,40 +59,18 @@ return [
 
         // name, can be used for menu hierarchy
         'shoutzor' => [
-
-            // Label to display
             'label' => 'Shoutzor',
-
-            // Icon to display
             'icon' => 'shoutzor:icon.png',
-
-            // URL this menu item links to
             'url' => '@shoutzor/admin',
-
-            // Optional: Expression to check if menu item is active on current url
-            // 'active' => '@hello*'
-
-            // Optional: Limit access to roles which have specific permission assigned
             'access' => 'shoutzor: manage shoutzor'
         ],
 
         'shoutzor: settings' => [
-
-            // Parent menu item, makes this appear on 2nd level
             'parent' => 'shoutzor',
-
-            // See above
             'label' => 'Shoutzor',
             'icon' => 'shoutzor:icon.png',
             'url' => '@shoutzor/admin',
             'access' => 'shoutzor: manage shoutzor'
-        ],
-
-        'shoutzor: visualizer' => [
-            'parent' => 'shoutzor',
-            'label' => 'Visualizer',
-            'url' => '@shoutzor/admin/visualizer',
-            'access' => 'shoutzor: manage visualizer settings'
         ],
 
         'shoutzor: audio' => [
@@ -149,15 +78,7 @@ return [
             'label' => 'Audio',
             'url' => '@shoutzor/admin/audio',
             'access' => 'shoutzor: manage audio settings'
-        ],
-
-        'shoutzor: vlc' => [
-            'parent' => 'shoutzor',
-            'label' => 'VLC',
-            'url' => '@shoutzor/admin/vlc',
-            'access' => 'shoutzor: manage vlc settings'
         ]
-
     ],
 
     /*
@@ -172,16 +93,8 @@ return [
             'title' => 'Manage Shoutzor Settings'
         ],
 
-        'shoutzor: manage visualizer settings' => [
-            'title' => 'Manage Shoutzor Visualizer Settings'
-        ],
-
         'shoutzor: manage audio settings' => [
             'title' => 'Manage Shoutzor Audio Settings'
-        ],
-
-        'shoutzor: manage vlc settings' => [
-            'title' => 'Manage Shoutzor VLC Service Settings'
         ],
 
         'shoutzor: upload files' => [
@@ -217,45 +130,20 @@ return [
             'request' => 2
         ],
 
-        'visualizer' => [
-            'enabled' => 0,
-        ],
-
-        'vlc' => [
-            'transcoding' => [
-                'bitrate' => 192,
-                'threads' => 4,
-                'acodec' => 'vorbisenc',
-                'vcodec' => 'theoraenc',
-                'videoquality' => 10,
-                'audioquality' => 10
-            ],
-
+        'liquidsoap' => [
             'stream' => [
                 'output' => [
                     'host'      => 'localhost',
-                    'mount'     => 'shoutzor.ogg',
+                    'mount'     => '/shoutzor.mp3',
                     'port'      => 8000,
-                    'password'  => 'replaceme'
+                    'password'  => 'hackme'
                 ],
-
-                'video' => [
-                    'placeholder' => '../images/placeholder.ogg',
-                    'width' => 1920,
-                    'height' => 1080,
-                    'fps' => 60,
-                    'logo' => [
-                        'x' => 5,
-                        'y' => 5,
-                        'transparency' => 255,
-                        'path' => "../images/shoutzor-christmas-logo-small.png"
-                    ]
+                'wrapperinput' => [
+                    'host' => 'localhost',
+                    'mount' => '/input',
+                    'port' => 1337,
+                    'password' => 'hackme'
                 ]
-            ],
-
-            'telnet' => [
-                'port' => 4212,
-                'password' => 'replaceme'
             ]
         ]
 

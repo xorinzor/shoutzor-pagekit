@@ -1,11 +1,12 @@
 <?php $view->style('shoutzor-style-main', 'shoutzor:assets/css/style.css') ?>
 
-<div class="uk-panel uk-panel-box">
+<div class="uk-panel uk-panel-box music-box">
     <div class="uk-panel-title">
-        <p>Now Playing</p>
+        <p>Now Playing <a href="http://<?= $_SERVER['SERVER_NAME']; ?>:8000/shoutzor.mp3.m3u" class="tuneIn uk-button-small uk-button-primary"><i class="uk-icon-play"></i> Tune In</a></p>
     </div>
-
-    <p>Rick Astley - Never gonna give you up</p>
+    <p>
+        Rick Astley - Never gonna give you up
+    </p>
 </div>
 
 <div class="uk-panel uk-panel-box">

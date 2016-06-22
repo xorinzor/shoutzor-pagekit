@@ -9,7 +9,7 @@ class SiteController
 {
 
     /**
-     * @Route("/")
+     * @Route("/", name="index")
      */
     public function indexAction()
     {
@@ -27,21 +27,7 @@ class SiteController
     }
 
     /**
-     * @Route("/visualizer")
-     */
-    public function visualizerAction()
-    {
-        return [
-            '$view' => [
-                'title' => __('Visualizer'),
-                'name' => 'shoutzor:views/visualizer.php',
-                'layout' => false
-            ]
-        ];
-    }
-
-    /**
-     * @Route("/uploadmanager", methods="GET")
+     * @Route("/uploadmanager", name="uploadmanager", methods="GET")
      */
     public function uploadManagerAction()
     {
@@ -59,7 +45,7 @@ class SiteController
     }
 
     /**
-     * @Route("/search", methods="GET")
+     * @Route("/search", name="search", methods="GET")
      * @Request({"q":"string"})
      */
     public function searchAction($q = "")

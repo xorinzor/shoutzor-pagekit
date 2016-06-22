@@ -21,10 +21,9 @@
           "genre": "<xsl:choose><xsl:when test="genre"><xsl:value-of select="genre" /></xsl:when><xsl:otherwise>Undefined</xsl:otherwise></xsl:choose>",
           "mount": "<xsl:choose><xsl:when test="@mount"><xsl:value-of select="@mount" /></xsl:when><xsl:otherwise>Undefined</xsl:otherwise></xsl:choose>",
           "server_url": "<xsl:choose><xsl:when test="server_url"><xsl:value-of select="server_url" /></xsl:when><xsl:otherwise>Undefined</xsl:otherwise></xsl:choose>",
-          "artist": "<xsl:choose><xsl:when test="artist"><xsl:value-of select="artist" /></xsl:when><xsl:otherwise>Undefined</xsl:otherwise></xsl:choose>",
-          "title": "<xsl:choose><xsl:when test="title"><xsl:value-of select="title" /></xsl:when><xsl:otherwise>Undefined</xsl:otherwise></xsl:choose>"
+          "artist": "<xsl:choose><xsl:when test="artist"><xsl:value-of select="artist" /></xsl:when><xsl:otherwise>Unknown</xsl:otherwise></xsl:choose>",
+          "title": "<xsl:choose><xsl:when test="title"><xsl:value-of select="title" /></xsl:when><xsl:otherwise>Untitled</xsl:otherwise></xsl:choose>"
         }<xsl:if test="position() != last()">,</xsl:if></xsl:for-each>
       }
     }</xsl:template>
 </xsl:stylesheet>
-
