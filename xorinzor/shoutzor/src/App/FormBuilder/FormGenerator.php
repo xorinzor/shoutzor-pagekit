@@ -2,8 +2,8 @@
 
 namespace Xorinzor\Shoutzor\App\FormBuilder;
 
-use Pagekit\Application as App;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\FormField;
+use Xorinzor\Shoutzor\App\FormBuilder\FormValidation;
 
 class FormGenerator {
 
@@ -15,7 +15,10 @@ class FormGenerator {
     private $classes;
     private $id;
 
+    private $validator;
+
     public function __construct($target, $method, $classes = '', $id = '') {
+        $this->validator = new FormValidation();
         $this->target = $target;
         $this->method = $method;
         $this->classes = $classes;
@@ -70,6 +73,14 @@ class FormGenerator {
      */
     public function setFieldDescription($description) {
         $this->fieldPointer->setDescription($description);
+    }
+
+    public function validate() {
+        $this->validator->validateFields($this->fields);
+    }
+
+    public function hasErrors() {
+        return $this->validator->hasErrors();
     }
 
     public function render() {

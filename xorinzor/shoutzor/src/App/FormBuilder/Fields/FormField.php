@@ -2,8 +2,6 @@
 
 namespace Xorinzor\Shoutzor\App\FormBuilder\Fields;
 
-use Pagekit\Application as App;
-
 abstract class FormField {
 
     protected $id;
@@ -14,9 +12,9 @@ abstract class FormField {
     protected $classes;
     protected $template;
 
-    protected $validation_type;
-    protected $validation_requirements;
-    protected $validation_error;
+    protected $validation_type = null;
+    protected $validation_requirements = array();
+    protected $validation_error = '';
 
     public function __construct($id, $name, $title, $value = '', $description = '', $classes = '', $template = 'template.php')
     {

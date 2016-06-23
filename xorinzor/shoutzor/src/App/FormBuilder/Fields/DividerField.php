@@ -3,7 +3,6 @@
 
 namespace Xorinzor\Shoutzor\App\FormBuilder\Fields;
 
-use Pagekit\Application as App;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\FormField;
 
 /**

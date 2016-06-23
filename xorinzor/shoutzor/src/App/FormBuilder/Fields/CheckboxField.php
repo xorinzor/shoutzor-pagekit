@@ -3,7 +3,6 @@
 
 namespace Xorinzor\Shoutzor\App\FormBuilder\Fields;
 
-use Pagekit\Application as App;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\FormField;
 
 /**
@@ -67,6 +66,10 @@ class CheckboxField extends FormField {
 
         if(!empty($this->getDescription())) {
             $content .= ' <p class="uk-form-help-block">'. $this->getDescription() .'</p>';
+        }
+
+        if(!empty($this->getValidationError())) {
+            $content .= ' <p class="uk-text-danger">'. $this->getValidationError() .'</p>';
         }
 
         $data = array(

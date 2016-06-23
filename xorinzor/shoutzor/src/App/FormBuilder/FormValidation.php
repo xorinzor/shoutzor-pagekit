@@ -2,10 +2,7 @@
 
 namespace Xorinzor\Shoutzor\App\FormBuilder;
 
-require_once(__DIR__ . '/../Vendor/html2text/Html2Text.php');
-
-use Pagekit\Application as App;
-use Html2Text\Html2Text as Html2Text;
+use Xorinzor\Shoutzor\App\FormBuilder\Fields\FormField;
 
 class FormValidation {
 
@@ -17,12 +14,10 @@ class FormValidation {
     const REQ_NOTEMPTY  = 'isNotEmpty';
     const REQ_BETWEEN   = 'isBetween';
 
-    private $app;
     private $hasErrors;
 
-    public function __construct(App $app)
+    public function __construct()
     {
-        $this->app = $app;
         $this->hasErrors = false;
     }
 
@@ -77,8 +72,7 @@ class FormValidation {
                 break;
 
             default:
-                $validated = false;
-                $message = 'has an invalid validation type provided';
+                $validated = true;
                 break;
         }
 
@@ -141,7 +135,7 @@ class FormValidation {
      * @param bool resetErrorFlag
      * @param false|array
      */
-    private function parseRequirement(FormField $field, $type, $params = array(), $resetErrorFlag = true)
+    private function parseRequirement(FormField $field, $type, $params = array())
     {
         switch($type)
         {
@@ -178,23 +172,6 @@ class FormValidation {
     public function hasErrors()
     {
         return $this->hasErrors;
-    }
-
-    /**
-     * Sanitizes the input string by removing all possible html
-     * @param string input
-     * @return string
-     */
-    public function sanitizeHTML($input)
-    {
-        if($this->isString($input) === true && $this->isNotEmpty($input) === true)
-        {
-            return Html2Text::convert($input);
-        }
-        else
-        {
-            return '';
-        }
     }
 
     /* type validation methods */
