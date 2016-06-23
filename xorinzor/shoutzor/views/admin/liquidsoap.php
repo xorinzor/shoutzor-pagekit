@@ -9,12 +9,6 @@
         </div>
     </div>
 
-    <div class="uk-form-row">
-        <label class="uk-form-label"><?= __('Log path'); ?></label>
-        <div class="uk-form-controls">
-            <input type="text" class="uk-form-width-large" />
-            <span class="uk-form-help-inline">The path for log files to be written to</span>
-        </div>
-    </div>
+    <?= $form; ?>
 
 </div>

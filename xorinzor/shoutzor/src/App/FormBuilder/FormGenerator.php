@@ -3,17 +3,15 @@
 namespace Xorinzor\Shoutzor\App\FormBuilder;
 
 use Pagekit\Application as App;
-use Xorinzor\Shoutzor\App\FormField;
+use Xorinzor\Shoutzor\App\FormBuilder\Fields\FormField;
 
 class FormGenerator {
 
-    private $app;
     private $fields = array();
     private $fieldPointer = null;
 
-    public function __construct(App $app)
+    public function __construct()
     {
-        $this->app = $app;
     }
 
     /**
@@ -26,9 +24,9 @@ class FormGenerator {
     /**
      * Creates a new field and sets the pointer to this field
      */
-    public function addField($id, $name, $type, $title, $value = '', $description = '') {
-        $this->fields[$id] = new FormField($id, $name, $type, $title, $value, $description);
-        $this->fieldPointer = $id;
+    public function addField(FormField $field) {
+        $this->fields[$field->getId()] = $field;
+        $this->fieldPointer = $field->getId();
     }
 
     /**
