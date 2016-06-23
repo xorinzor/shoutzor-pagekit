@@ -119,7 +119,7 @@ abstract class FormField {
      * Returns the output html
      */
     protected function parseTemplate($data) {
-        return str_replace(array_keys($data), array_values($data), file_get_contents($this->template));
+        return str_replace(array_keys($data), array_values($data), file_get_contents(__DIR__ . '/' . $this->template));
     }
 
     /**

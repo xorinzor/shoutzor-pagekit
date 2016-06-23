@@ -5,7 +5,7 @@
             <h2 class="uk-margin-remove"><?= __('Liquidsoap Settings'); ?></h2>
         </div>
         <div data-uk-margin>
-            <button class="uk-button uk-button-primary" v-on="click: save"><?= __('Save'); ?></button>
+            <button class="uk-button uk-button-primary"><?= __('Save'); ?></button>
         </div>
     </div>
 

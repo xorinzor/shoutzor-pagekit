@@ -60,26 +60,11 @@ class FormGenerator {
         $this->fieldPointer->setDescription($description);
     }
 
-    private function buildField(FormField $field) {
-        $result = '<div class="uk-form-row">';
-        $result .= '<label class="uk-form-label">' . $field->getTitle() . '</label>';
-        $result .= '<div class="uk-form-controls">';
-        $result .= '<input type="' . $field->getType() . '" class="uk-form-width-large" value="' . $field->getValue() . '">';
-
-        if(!empty($field->getDescription())) {
-            $result .= '<span class="uk-form-help-inline">' . $field->getDescription() . '</span>';
-        }
-
-        $result .= '</div></div>';
-
-        return $result;
-    }
-
     public function render() {
         $formContent = '';
 
         foreach($this->fields as $field) {
-            $formContent .= $this->buildField($field);
+            $formContent .= $field->render();
         }
 
         return $formContent;

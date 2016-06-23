@@ -148,6 +148,19 @@ return [
         ],
 
         'liquidsoap' => [
+            'options' => [
+                'logDirectoryPath' => '/tmp/shoutzor',
+                'wrapperLogStdout' => false,
+                'wrapperServerTelnet' => false,
+                'wrapperServerSocket' => true,
+                'wrapperServerSocketPath' => '/tmp/shoutzor',
+                'wrapperServerSocketPermissions' => 511,
+                'shoutzorLogStdout' => false,
+                'shoutzorServerTelnet' => false,
+                'shoutzorServerSocket' => true,
+                'shoutzorServerSocketPath' => '/tmp/shoutzor',
+                'shoutzorServerSocketPermissions' => 511
+            ],
             'stream' => [
                 'output' => [
                     'host'      => 'localhost',

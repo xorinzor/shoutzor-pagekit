@@ -53,12 +53,19 @@ class CheckboxField extends FormField {
     }
 
     public function render() {
-        $type = ($this->getMultiple === true) ? 'checkbox' : 'radio';
-        $name = $this->getName() . (($this->getMultiple === true) ? '[]]' : '');
+        $type = ($this->getMultiple() === true) ? 'checkbox' : 'radio';
+        $name = $this->getName() . (($this->getMultiple() === true) ? '[]]' : '');
 
+        $content = '';
+        $i = 0;
         foreach($this->getOptions() as $option) {
             $selected = (in_array($option['value'], $this->getValue())) ? 'checked' : '';
-            $content .= '<input type="'.$type.'" name="'. $name .'" value="'. $option['value'] .'" ' . $selected . '>' . $option['title'] . '</option>';
+            $content .= '<input id="'.$this->getName().'-'.$i.'" type="'.$type.'" name="'. $name .'" value="'. $option['value'] .'" ' . $selected . '><label for="'.$this->getName().'-'.$i.'"> ' . $option['title'] . "</label>\n";
+            $i++;
+        }
+
+        if(!empty($this->getDescription())) {
+            $content .= ' <p class="uk-form-help-block">'. $this->getDescription() .'</p>';
         }
 
         $data = array(

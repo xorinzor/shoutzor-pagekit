@@ -38,6 +38,10 @@ class InputField extends FormField {
 
         $content = '<input type="'. $this->getType() .'" value="'. $this->getValue() .'" name="'. $this->getName() .'" id="'. $this->getId() .'" />';
 
+        if(!empty($this->getDescription())) {
+            $content .= ' <p class="uk-form-help-block">'. $this->getDescription() .'</p>';
+        }
+
         $data = array(
             "%id%" => $this->getId(),
             "%title%" => $this->getTitle(),

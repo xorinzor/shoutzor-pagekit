@@ -54,6 +54,10 @@ class SelectField extends FormField {
 
         $content .= '</select>';
 
+        if(!empty($this->getDescription())) {
+            $content .= ' <p class="uk-form-help-block">'. $this->getDescription() .'</p>';
+        }
+
         $data = array(
             "%id%" => $this->getId(),
             "%title%" => $this->getTitle(),
