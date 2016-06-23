@@ -21,7 +21,7 @@ wrapperInputListeningPassword = "%wrapperInputListeningPassword%"
 wrapperOutputHost = "%wrapperOutputHost%"
 wrapperOutputMount = "%wrapperOutputMount%"
 wrapperOutputPort = %wrapperOutputPort%
-wrapperOutputPasswor = "%wrapperOutputPasswor%"
+wrapperOutputPassword = "%wrapperOutputPassword%"
 
 #encoding format
 #bitrate: encoded data fixed bitrate

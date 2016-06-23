@@ -148,33 +148,26 @@ return [
         ],
 
         'liquidsoap' => [
-            'options' => [
-                'logDirectoryPath' => '/tmp/shoutzor',
-                'wrapperLogStdout' => false,
-                'wrapperServerTelnet' => false,
-                'wrapperServerSocket' => true,
-                'wrapperServerSocketPath' => '/tmp/shoutzor',
-                'wrapperServerSocketPermissions' => 511,
-                'shoutzorLogStdout' => false,
-                'shoutzorServerTelnet' => false,
-                'shoutzorServerSocket' => true,
-                'shoutzorServerSocketPath' => '/tmp/shoutzor',
-                'shoutzorServerSocketPermissions' => 511
-            ],
-            'stream' => [
-                'output' => [
-                    'host'      => 'localhost',
-                    'mount'     => '/shoutzor.mp3',
-                    'port'      => 8000,
-                    'password'  => 'hackme'
-                ],
-                'wrapperinput' => [
-                    'host' => 'localhost',
-                    'mount' => '/input',
-                    'port' => 1337,
-                    'password' => 'hackme'
-                ]
-            ]
+            'logDirectoryPath' => '/tmp/shoutzor',
+            'wrapperLogStdout' => false,
+            'wrapperServerTelnet' => false,
+            'wrapperServerSocket' => true,
+            'wrapperServerSocketPath' => '/tmp/shoutzor',
+            'wrapperServerSocketPermissions' => 511,
+            'shoutzorLogStdout' => false,
+            'shoutzorServerTelnet' => false,
+            'shoutzorServerSocket' => true,
+            'shoutzorServerSocketPath' => '/tmp/shoutzor',
+            'shoutzorServerSocketPermissions' => 511,
+            'wrapperInputListeningMount' => '/shoutzor',
+            'wrapperInputListeningPort' => '1337',
+            'wrapperInputListeningPassword' => 'hackme',
+            'wrapperOutputHost' => 'localhost',
+            'wrapperOutputMount' => '/shoutzor',
+            'wrapperOutputPort' => '8000',
+            'wrapperOutputPassword' => 'hackme',
+            'encodingBitrate' => 192,
+            'encodingQuality' => 2
         ]
 
     ],
