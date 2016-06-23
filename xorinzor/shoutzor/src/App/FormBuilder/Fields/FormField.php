@@ -11,19 +11,21 @@ abstract class FormField {
     protected $title;
     protected $value;
     protected $description;
+    protected $classes;
     protected $template;
 
     protected $validation_type;
     protected $validation_requirements;
     protected $validation_error;
 
-    public function __construct($id, $name, $title, $value = '', $description = '', $template = 'template.php')
+    public function __construct($id, $name, $title, $value = '', $description = '', $classes = '', $template = 'template.php')
     {
         $this->id = $id;
         $this->setName($name);
         $this->setTitle($title);
         $this->setValue($value);
         $this->setDescription($description);
+        $this->setClasses($classes);
         $this->setTemplate($template);
     }
 
@@ -45,6 +47,10 @@ abstract class FormField {
 
     public function getDescription() {
         return $this->description;
+    }
+
+    public function getClasses() {
+        return $this->classes;
     }
 
     public function getTemplate() {
@@ -89,6 +95,13 @@ abstract class FormField {
      */
     public function setDescription($description) {
         $this->description = $description;
+    }
+
+    /**
+     * Sets the classes of the currently selected field
+     */
+    public function setClasses($classes) {
+        $this->classes = $classes;
     }
 
     /**

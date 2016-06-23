@@ -15,7 +15,7 @@ class SelectField extends FormField {
     private $options;
     private $multiple;
 
-    public function __construct($id, $name, $title, $type, $value = '', $options = array(), $multiple = false, $description = '', $template = 'template.php')
+    public function __construct($id, $name, $title, $type, $value = '', $options = array(), $multiple = false, $description = '', $classes = '', $template = 'template.php')
     {
         $this->id = $id;
         $this->setName($name);
@@ -24,6 +24,7 @@ class SelectField extends FormField {
         $this->setOptions($options);
         $this->setMultiple($multiple);
         $this->setDescription($description);
+        $this->setClasses($classes);
         $this->setTemplate($template);
     }
 
@@ -45,7 +46,7 @@ class SelectField extends FormField {
 
     public function render() {
         $multiple = ($this->getMultiple === true) ? 'multiple' : '';
-        $content = '<select name="'. $this->getName() .'" id="'. $this->getId() .'" '. $multiple .' />';
+        $content = '<select class="'. $this->getClasses() .'" name="'. $this->getName() .'" id="'. $this->getId() .'" '. $multiple .' />';
 
         foreach($this->getOptions() as $option) {
             $selected = ($this->getValue() == $option['value']) ? 'selected' : '';

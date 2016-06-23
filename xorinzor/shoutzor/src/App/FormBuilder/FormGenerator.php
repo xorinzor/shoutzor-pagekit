@@ -10,6 +10,18 @@ class FormGenerator {
     private $fields = array();
     private $fieldPointer = null;
 
+    private $target;
+    private $method;
+    private $classes;
+    private $id;
+
+    public function __construct($target, $method, $classes = '', $id = '') {
+        $this->target = $target;
+        $this->method = $method;
+        $this->classes = $classes;
+        $this->id = $id;
+    }
+
     /**
      * Sets the pointer to the desired field
      */
@@ -61,11 +73,13 @@ class FormGenerator {
     }
 
     public function render() {
-        $formContent = '';
+        $formContent = '<form id="'. $this->id .'" class="'. $this->classes .'" action="'. $this->target .'" method="' . $this->method . '">';
 
         foreach($this->fields as $field) {
             $formContent .= $field->render();
         }
+
+        $formContent .= '</form>';
 
         return $formContent;
     }

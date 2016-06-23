@@ -16,7 +16,7 @@ class CheckboxField extends FormField {
     private $options;
     private $multiple;
 
-    public function __construct($id, $name, $title, $value = array(), $options = array(), $multiple = false, $description = '', $template = 'template.php')
+    public function __construct($id, $name, $title, $value = array(), $options = array(), $multiple = false, $description = '', $classes = '', $template = 'template.php')
     {
         $this->id = $id;
         $this->setName($name);
@@ -25,6 +25,7 @@ class CheckboxField extends FormField {
         $this->setOptions($options);
         $this->setMultiple($multiple);
         $this->setDescription($description);
+        $this->setClasses($classes);
         $this->setTemplate($template);
     }
 
@@ -60,7 +61,7 @@ class CheckboxField extends FormField {
         $i = 0;
         foreach($this->getOptions() as $option) {
             $selected = (in_array($option['value'], $this->getValue())) ? 'checked' : '';
-            $content .= '<input id="'.$this->getName().'-'.$i.'" type="'.$type.'" name="'. $name .'" value="'. $option['value'] .'" ' . $selected . '><label for="'.$this->getName().'-'.$i.'"> ' . $option['title'] . "</label>\n";
+            $content .= '<input  class="'. $this->getClasses() .'" id="'.$this->getName().'-'.$i.'" type="'.$type.'" name="'. $name .'" value="'. $option['value'] .'" ' . $selected . '><label for="'.$this->getName().'-'.$i.'"> ' . $option['title'] . "</label>\n";
             $i++;
         }
 

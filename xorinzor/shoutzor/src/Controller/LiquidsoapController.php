@@ -17,7 +17,8 @@ class LiquidsoapController
     {
         $config = App::module('shoutzor')->config()['liquidsoap'];
 
-        $form = new FormGenerator();
+        $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
+
         $form->addField(new InputField(
             "logDirectoryPath",
             "logDirectoryPath",
@@ -209,6 +210,18 @@ class LiquidsoapController
             "text",
             $config['encodingQuality'],
             "The quality to be used by the LAME encoder, 0 - 9 where 0 is the highest quality")
+        );
+
+        $form->addField(new DividerField());
+
+        $form->addField(new InputField(
+            "submit",
+            "submit",
+            "Save Changes",
+            "submit",
+            "Save Changes",
+            "",
+            "uk-button uk-button-primary")
         );
 
         $content = $form->render();

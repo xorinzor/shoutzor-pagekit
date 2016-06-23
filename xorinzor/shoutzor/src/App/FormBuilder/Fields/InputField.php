@@ -15,7 +15,7 @@ class InputField extends FormField {
 
     private $type;
 
-    public function __construct($id, $name, $title, $type, $value = '', $description = '', $template = 'template.php')
+    public function __construct($id, $name, $title, $type, $value = '', $description = '', $classes = '', $template = 'template.php')
     {
         $this->id = $id;
         $this->setName($name);
@@ -23,6 +23,7 @@ class InputField extends FormField {
         $this->setType($type);
         $this->setValue($value);
         $this->setDescription($description);
+        $this->setClasses($classes);
         $this->setTemplate($template);
     }
 
@@ -36,7 +37,7 @@ class InputField extends FormField {
 
     public function render() {
 
-        $content = '<input type="'. $this->getType() .'" value="'. $this->getValue() .'" name="'. $this->getName() .'" id="'. $this->getId() .'" />';
+        $content = '<input class="'. $this->getClasses() .'" type="'. $this->getType() .'" value="'. $this->getValue() .'" name="'. $this->getName() .'" id="'. $this->getId() .'" />';
 
         if(!empty($this->getDescription())) {
             $content .= ' <p class="uk-form-help-block">'. $this->getDescription() .'</p>';
