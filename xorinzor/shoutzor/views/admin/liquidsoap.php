@@ -7,14 +7,16 @@
     </div>
 
     <?php
-        if($alert['type'] == 'error') {
-            echo '<div class="uk-alert uk-alert-danger">' . $alert['msg'] . '</div>';
-        }
+        if(isset($alert['type'])) {
+            if($alert['type'] == 'error') {
+                echo '<div class="uk-alert uk-alert-danger">' . $alert['msg'] . '</div>';
+            }
 
-        if($alert['type'] == 'success') {
-            echo '<div class="uk-alert uk-alert-success">' . $alert['msg'] . '</div>';
+            if($alert['type'] == 'success') {
+                echo '<div class="uk-alert uk-alert-success">' . $alert['msg'] . '</div>';
+            }
         }
-
+        
         echo $form;
     ?>
 

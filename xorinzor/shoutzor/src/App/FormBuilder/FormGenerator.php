@@ -25,6 +25,10 @@ class FormGenerator {
         $this->id = $id;
     }
 
+    public function getFields() {
+        return $this->fields;
+    }
+
     /**
      * Sets the pointer to the desired field
      */

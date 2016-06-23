@@ -36,6 +36,14 @@ class CheckboxField extends FormField {
         return $this->multiple;
     }
 
+    public function getValue() {
+        if($this->getMultiple() === false) {
+            return $this->value[0];
+        }
+
+        return $this->value;
+    }
+
     public function setValue($value) {
         if(!is_array($value)) {
             $value = array($value);
@@ -52,6 +60,14 @@ class CheckboxField extends FormField {
         $this->multiple = $multiple;
     }
 
+    private function isSelected($value) {
+        if($this->getMultiple()) {
+            return in_array($value, $this->getValue());
+        } else {
+            return $value == $this->getValue();
+        }
+    }
+
     public function render() {
         $type = ($this->getMultiple() === true) ? 'checkbox' : 'radio';
         $name = $this->getName() . (($this->getMultiple() === true) ? '[]]' : '');
@@ -59,7 +75,7 @@ class CheckboxField extends FormField {
         $content = '';
         $i = 0;
         foreach($this->getOptions() as $option) {
-            $selected = (in_array($option['value'], $this->getValue())) ? 'checked' : '';
+            $selected = ($this->isSelected($option['value'])) ? 'checked' : '';
             $content .= '<input  class="'. $this->getClasses() .'" id="'.$this->getName().'-'.$i.'" type="'.$type.'" name="'. $name .'" value="'. $option['value'] .'" ' . $selected . '><label for="'.$this->getName().'-'.$i.'"> ' . $option['title'] . "</label>\n";
             $i++;
         }
