@@ -1,18 +1,16 @@
-<?php $view->script('settings', 'shoutzor:app/bundle/settings.js', ['vue', 'jquery']) ?>
-
 <div id="settings" class="uk-form uk-form-horizontal">
 
     <div class="uk-margin uk-flex uk-flex-space-between uk-flex-wrap" data-uk-margin>
         <div data-uk-margin>
-            <h2 class="uk-margin-remove">{{ 'Shoutzor Settings' | trans }}</h2>
+            <h2 class="uk-margin-remove"><?= __('Shoutzor Settings'); ?></h2>
         </div>
         <div data-uk-margin>
-            <button class="uk-button uk-button-primary" v-on="click: save">{{ 'Save' | trans }}</button>
+            <button class="uk-button uk-button-primary" v-on="click: save"><?= __('Save'); ?></button>
         </div>
     </div>
 
     <div class="uk-form-row">
-        <label class="uk-form-label">{{ 'Shoutzor module root' | trans }}</label>
+        <label class="uk-form-label"><?= __('Shoutzor module root'); ?></label>
         <div class="uk-form-controls">
             <input type="text" class="uk-form-width-large" v-model="config.root_path" />
             <span class="uk-form-help-inline">The path to the shoutzor module root</span>
@@ -20,7 +18,7 @@
     </div>
 
     <div class="uk-form-row">
-        <label class="uk-form-label">{{ 'Allow uploads' | trans }}</label>
+        <label class="uk-form-label"><?= __('Allow uploads'); ?></label>
         <div class="uk-form-controls">
             <select name="allow_uploads" class="uk-form-select" v-model="config.shoutzor.upload">
                 <option value="0">None</option>
@@ -33,7 +31,7 @@
     </div>
 
     <div class="uk-form-row">
-        <label class="uk-form-label">{{ 'Allow requests' | trans }}</label>
+        <label class="uk-form-label"><?= __('Allow requests'); ?></label>
         <div class="uk-form-controls">
             <select name="allow_uploads" class="uk-form-select" v-model="config.shoutzor.request">
                 <option value="0">Music only</option>
