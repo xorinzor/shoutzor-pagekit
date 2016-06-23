@@ -4,7 +4,7 @@
 
 #wrapper.liq config system-variables
 wrapperLogFilePath = "/tmp/shoutzor/wrapper.log"
-wrapperLogStdout = false
+wrapperLogStdout = true
 wrapperServerTelnet = false
 wrapperServerSocket = true
 wrapperServerSocketPath = "/tmp/shoutzor/wrapper"
@@ -12,14 +12,14 @@ wrapperServerSocketPermissions = 511
 
 #shoutzor.liq config system-variables
 shoutzorLogFilePath = "/tmp/shoutzor/shoutzor.log"
-shoutzorLogStdout = false
+shoutzorLogStdout = true
 shoutzorServerTelnet = false
 shoutzorServerSocket = true
 shoutzorServerSocketPath = "/tmp/shoutzor/shoutzor"
 shoutzorServerSocketPermissions = 511
 
 #global configuration variables
-wrapperInputListeningMount = "/shoutzor"
+wrapperInputListeningMount = "/streaminput"
 wrapperInputListeningPort = 1337
 wrapperInputListeningPassword = "hackme"
 wrapperOutputHost = "localhost"
