@@ -1,4 +1,16 @@
+<?php $view->style('style', 'shoutzor:assets/css/admin.css', 'theme'); ?>
+
 <div id="settings" class="uk-form uk-form-horizontal">
+    <div class="uk-margin uk-flex uk-flex-space-between uk-flex-wrap" data-uk-margin>
+        <div data-uk-margin>
+            <h2 class="uk-margin-remove"><?= __('Shoutzor Status'); ?></h2>
+        </div>
+    </div>
+
+    <?= $form; ?>
+
+    <hr />
+
     <div class="uk-margin uk-flex uk-flex-space-between uk-flex-wrap" data-uk-margin>
         <div data-uk-margin>
             <h2 class="uk-margin-remove"><?= __('Shoutzor Controls'); ?></h2>
@@ -25,8 +37,4 @@
             <button type="button" class="uk-button uk-button-primary" v-on="click: nexttrack"><?= __('Next track'); ?></button>
         </div>
     </div>
-
-    <pre>
-        <?php print_r($config); ?>
-    </pre>
 </div>

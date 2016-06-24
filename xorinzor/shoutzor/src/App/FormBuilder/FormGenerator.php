@@ -79,6 +79,14 @@ class FormGenerator {
         $this->fieldPointer->setDescription($description);
     }
 
+    public function setError($error) {
+        $this->fieldPointer->setValidationError($error);
+    }
+
+    public function setSuccess($success) {
+        $this->fieldPointer->setValidationSuccess($success);
+    }
+
     public function validate() {
         $this->validator->validateFields($this->fields);
     }

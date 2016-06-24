@@ -3,3 +3,7 @@
     font-style: normal !important;
     font-size: 12px;
 }
+
+input.uk-button {
+    color: #FFF;
+}

@@ -10,13 +10,15 @@ abstract class FormField {
     protected $value;
     protected $description;
     protected $classes;
+    protected $attributes;
     protected $template;
 
     protected $validation_type = null;
     protected $validation_requirements = array();
     protected $validation_error = '';
+    protected $validation_success = '';
 
-    public function __construct($id, $name, $title, $value = '', $description = '', $classes = '', $template = 'template.php')
+    public function __construct($id, $name, $title, $value = '', $description = '', $classes = '', $attributes = '', $template = 'template.php')
     {
         $this->id = $id;
         $this->setName($name);
@@ -24,6 +26,7 @@ abstract class FormField {
         $this->setValue($value);
         $this->setDescription($description);
         $this->setClasses($classes);
+        $this->setAttributes($attributes);
         $this->setTemplate($template);
     }
 
@@ -51,6 +54,10 @@ abstract class FormField {
         return $this->classes;
     }
 
+    public function getAttributes() {
+        return $this->attributes;
+    }
+
     public function getTemplate() {
         return $this->template;
     }
@@ -65,6 +72,10 @@ abstract class FormField {
 
     public function getValidationError() {
         return $this->validation_error;
+    }
+
+    public function getValidationSuccess() {
+        return $this->validation_success;
     }
 
     /**
@@ -108,6 +119,14 @@ abstract class FormField {
     }
 
     /**
+    * Sets extra attributes of the currently selected field
+     */
+    public function setAttributes($attributes) {
+        $this->attributes = $attributes;
+        return $this;
+    }
+
+    /**
      * Sets the template to use for rendering this field
      */
     public function setTemplate($template) {
@@ -131,6 +150,11 @@ abstract class FormField {
 
     public function setValidationError($error) {
         $this->validation_error = $error;
+        return $this;
+    }
+
+    public function setValidationSuccess($success) {
+        $this->validation_success = $success;
         return $this;
     }
 
