@@ -2,11 +2,13 @@
 
 namespace Xorinzor\Shoutzor\App\Liquidsoap;
 
+use Pagekit\Application as App;
+use Exception;
+
 class LiquidsoapManager {
 
     //The directory where our liquidsoap files and scripts are located
     private $liquidsoapDirectory = __DIR__ . '/../../../../shoutzor-requirements/liquidsoap/';
-    private $app;
     private $wrapperConnection;
     private $shoutzorConnection;
     private $validTypes = array('wrapper', 'shoutzor');

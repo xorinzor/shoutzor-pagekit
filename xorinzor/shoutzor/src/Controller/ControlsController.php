@@ -3,7 +3,7 @@
 namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
-use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapCommunicator;
+use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 use Xorinzor\Shoutzor\App\FormBuilder\FormGenerator;
 use Xorinzor\Shoutzor\App\FormBuilder\FormValidation;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\InputField;
@@ -22,16 +22,10 @@ class ControlsController
     {
         $config = App::module('shoutzor')->config('liquidsoap');
 
-        try {
-            $wrapperLiquidsoap = new LiquidsoapCommunicator($config['socketPath'] . '/wrapper');
-            $shoutzorLiquidsoap = new LiquidsoapCommunicator($config['socketPath'] . '/shoutzor');
+        $liquidsoapManager = new LiquidsoapManager();
 
-            $wrapperActive = $wrapperLiquidsoap->isUp();
-            $shoutzorActive = $wrapperLiquidsoap->isUp();
-        } catch(Exception $e) {
-            $wrapperActive = false;
-            $shoutzorActive = false;
-        }
+        $wrapperActive = $liquidsoapManager->isUp('wrapper');
+        $shoutzorActive = $liquidsoapManager->isUp('shoutzor');
 
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
 

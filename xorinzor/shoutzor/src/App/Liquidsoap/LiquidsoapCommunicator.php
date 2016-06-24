@@ -2,6 +2,8 @@
 
 namespace Xorinzor\Shoutzor\App\Liquidsoap;
 
+use Exception;
+
 class LiquidsoapCommunicator {
 
 	private $socketLocation; //must have www-data:www-data permission
