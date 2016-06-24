@@ -143,8 +143,8 @@ return [
         ],
 
         'shoutzor' => [
-            'upload' => 3,
-            'request' => 2
+            'upload' => 1,
+            'request' => 1
         ],
 
         'liquidsoap' => [
@@ -170,17 +170,5 @@ return [
             'encodingQuality' => 2
         ]
 
-    ],
-
-    /*
-     * Listen to events.
-     */
-    'events' => [
-
-        'view.scripts' => function ($event, $scripts) {
-            $scripts->register('shoutzor-settings', 'shoutzor:app/bundle/settings.js', '~extensions');
-        }
-
     ]
-
 ];

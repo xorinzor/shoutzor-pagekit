@@ -56,8 +56,6 @@ class MusicApiController
                 $filename = md5(uniqid()).'.'.$file->getClientOriginalName();
                 $file->move($path, $filename);
 
-                $is_video = $this->isVideo($path . $filename);
-
                 $exists = false;
                 $crc = hash_file('crc32', $path . $filename);
                 if(Music::where(['crc = :hash'], ['hash' => $crc])->count() > 0) {
@@ -65,27 +63,17 @@ class MusicApiController
                 }
 
                 if($exists == false) {
-                    if($is_video) {
-                        $time = exec("ffmpeg -i " . $path . $filename . " 2>&1 | grep 'Duration' | cut -d ' ' -f 4 | sed s/,//");
-                        $duration = explode(":", $time);
-                        if(isset($duration[2])) {
-                            $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60 + round($duration[2]);
-                        } else {
-                            $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60;
-                        }
-                    } else {
-                        //If it's a audio file, move it from the temp directory to the main storage directory
-                        rename($path.$filename, $root_path.$filename);
+                    //move it from the temp directory to the main storage directory
+                    rename($path.$filename, $root_path.$filename);
 
-                        $id3 = new \getID3();
-                        $info = $id3->analyze($root_path.$filename);
-                        $time = $info['playtime_string'];
-                        $duration = explode(":", $time);
-                        if(isset($duration[2])) {
-                            $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60 + round($duration[2]);
-                        } else {
-                            $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60;
-                        }
+                    $id3 = new \getID3();
+                    $info = $id3->analyze($root_path.$filename);
+                    $time = $info['playtime_string'];
+                    $duration = explode(":", $time);
+                    if(isset($duration[2])) {
+                        $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60 + round($duration[2]);
+                    } else {
+                        $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60;
                     }
                 }
 
@@ -95,7 +83,6 @@ class MusicApiController
                     'artist_id' => 0,
                     'filename' => $filename,
                     'uploader_id' => App::user()->id,
-                    'is_video' => $is_video,
                     'created' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'status' => ($exists) ? Music::STATUS_DUPLICATE : (($is_video) ? Music::STATUS_UPLOADED : Music::STATUS_FINISHED),
                     'amount_requested' => 0,
@@ -122,32 +109,6 @@ class MusicApiController
 
         } catch(Exception $e) {
             App::abort(400, $e->getMessage());
-        }
-    }
-
-    protected function isVideo($filename)
-    {
-        try {
-            $proc = new Process('ffprobe -v quiet -print_format json -show_streams '.$filename);
-            $proc->run();
-
-            // executes after the command finishes
-            if (!$proc->isSuccessful()) {
-                throw new Exception(__('Failed to run the ffprobe command'));
-            }
-
-            $data = json_decode($proc->getOutput());
-
-            //Check if the file contains a video stream
-            foreach($data->streams as $stream) {
-                if($stream->codec_type == 'video') {
-                    return true;
-                }
-            }
-
-            return false;
-        } catch(Exception $e) {
-            return false;
         }
     }
 

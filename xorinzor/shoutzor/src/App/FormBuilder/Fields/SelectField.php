@@ -44,7 +44,7 @@ class SelectField extends FormField {
     }
 
     public function render() {
-        $multiple = ($this->getMultiple === true) ? 'multiple' : '';
+        $multiple = ($this->getMultiple() === true) ? 'multiple' : '';
         $content = '<select class="'. $this->getClasses() .'" name="'. $this->getName() .'" id="'. $this->getId() .'" '. $multiple .' />';
 
         foreach($this->getOptions() as $option) {

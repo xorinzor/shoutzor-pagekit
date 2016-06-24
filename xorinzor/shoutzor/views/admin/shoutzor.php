@@ -4,42 +4,7 @@
         <div data-uk-margin>
             <h2 class="uk-margin-remove"><?= __('Shoutzor Settings'); ?></h2>
         </div>
-        <div data-uk-margin>
-            <button class="uk-button uk-button-primary" v-on="click: save"><?= __('Save'); ?></button>
-        </div>
     </div>
 
-    <div class="uk-form-row">
-        <label class="uk-form-label"><?= __('Shoutzor module root'); ?></label>
-        <div class="uk-form-controls">
-            <input type="text" class="uk-form-width-large" v-model="config.root_path" />
-            <span class="uk-form-help-inline">The path to the shoutzor module root</span>
-        </div>
-    </div>
-
-    <div class="uk-form-row">
-        <label class="uk-form-label"><?= __('Allow uploads'); ?></label>
-        <div class="uk-form-controls">
-            <select name="allow_uploads" class="uk-form-select" v-model="config.shoutzor.upload">
-                <option value="0">None</option>
-                <option value="1">Music only</option>
-                <option value="2">Videos only</option>
-                <option value="3">Music &amp; Videos</option>
-            </select>
-        </div>
-        <p><small>Changing this setting will not delete uploaded content</small></p>
-    </div>
-
-    <div class="uk-form-row">
-        <label class="uk-form-label"><?= __('Allow requests'); ?></label>
-        <div class="uk-form-controls">
-            <select name="allow_uploads" class="uk-form-select" v-model="config.shoutzor.request">
-                <option value="0">Music only</option>
-                <option value="1">Videos only</option>
-                <option value="2">Music &amp; Videos</option>
-            </select>
-        </div>
-        <p><small>Changing this setting will only show uploads of the specified type(s)</small></p>
-    </div>
-
+    <?= $form; ?>
 </div>

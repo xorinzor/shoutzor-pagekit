@@ -18,7 +18,9 @@ class LiquidsoapController
     {
         $request = App::request();
 
-        $config = App::config()->get('liquidsoap')->toArray();
+        $baseConfig = App::module('shoutzor')->config('liquidsoap');
+        $config = App::config('liquidsoap')->toArray();
+        $config = array_merge($baseConfig, $config);
         $config = array_merge($config, $_POST); //Set the value to the new POST data
 
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');

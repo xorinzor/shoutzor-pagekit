@@ -5,7 +5,7 @@
 
 <?php $view->script('uikit-upload-script', 'theme:js/components/upload.min.js', ['jquery', 'uikit-script']) ?>
 
-<div id="upload-rules" class="uk-alert uk-alert-danger"><strong>Warning!</strong> Do NOT upload 18+ content or other harmful content, this will NOT be tolerated.<br />Doing so will get you removed from the LAN-Party instantly and without a warning.</div>
+<div id="upload-rules" class="uk-alert uk-alert-danger"><strong>Warning!</strong> Do NOT upload 18+ content or other harmful content, this will NOT be tolerated.</div>
 
 <div id="upload-drop" class="uk-placeholder uk-placeholder-large uk-text-center">
     <i class="uk-icon-cloud-upload uk-icon-medium uk-text-muted uk-margin-small-right"></i> Drop your file(s) here or <a class="uk-form-file">Select a file<input id="upload-select" type="file"></a>
@@ -27,7 +27,7 @@
                 param: 'musicfile',
                 params: {},
                 type: 'json',
-                allow : '*.(wav|mp3|mkv|avi|flv|ogg|ogv|mp4)', // allow only audio and video files
+                allow : '*.(wav|mp3|oga|flac|m4a|wma)', // allow only audio and video files
 
                 notallowed: function(file, settings) {
                     //When an non-allowed file is beeing uploaded
@@ -82,7 +82,7 @@
     });
 </script>
 
-<div id="not-allowed" class="uk-alert uk-alert-danger uk-hidden"><strong>Not allowed!</strong> Allowed filetypes are: wav, mp3, mkv, avi, flv, ogg, ogv, mp4</div>
+<div id="not-allowed" class="uk-alert uk-alert-danger uk-hidden"><strong>Not allowed!</strong> Allowed filetypes are: wav, mp3, oga, flac, m4a &amp; wma</div>
 <div id="upload-error" class="uk-alert uk-alert-danger uk-hidden"><strong>Error!</strong> One or more files failed to upload, please try again.</div>
 
 <div class="uk-panel uk-panel-box">

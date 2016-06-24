@@ -42,9 +42,6 @@ class Music implements \JsonSerializable{
     /** @Column(type="integer") */
     public $uploader_id;
 
-    /** @Column(type="boolean") */
-    public $is_video;
-
     /** @Column(type="integer") */
     public $status;
 
