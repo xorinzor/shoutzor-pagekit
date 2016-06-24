@@ -72,6 +72,7 @@ abstract class FormField {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -79,6 +80,7 @@ abstract class FormField {
      */
     public function setTitle($title) {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -86,6 +88,7 @@ abstract class FormField {
      */
     public function setValue($value) {
         $this->value = $value;
+        return $this;
     }
 
     /**
@@ -93,6 +96,7 @@ abstract class FormField {
      */
     public function setDescription($description) {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -100,6 +104,7 @@ abstract class FormField {
      */
     public function setClasses($classes) {
         $this->classes = $classes;
+        return $this;
     }
 
     /**
@@ -107,10 +112,12 @@ abstract class FormField {
      */
     public function setTemplate($template) {
         $this->template = $template;
+        return $this;
     }
 
     public function setValidationType($type) {
         $this->validation_type = $type;
+        return $this;
     }
 
     public function setValidationRequirements($requirements) {
@@ -119,10 +126,12 @@ abstract class FormField {
         }
 
         $this->validation_requirements = $requirements;
+        return $this;
     }
 
     public function setValidationError($error) {
         $this->validation_error = $error;
+        return $this;
     }
 
     /**

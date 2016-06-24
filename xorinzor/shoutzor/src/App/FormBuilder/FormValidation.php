@@ -13,6 +13,7 @@ class FormValidation {
 
     const REQ_NOTEMPTY  = 'isNotEmpty';
     const REQ_BETWEEN   = 'isBetween';
+    const REQ_VALUE     = 'hasValue';
 
     private $hasErrors;
 
@@ -52,22 +53,22 @@ class FormValidation {
         switch($field->getValidationType())
         {
             case self::TYPE_NUMERIC:
-                $validated = $this->isNumeric($value);
+                $validated = $this->isNumeric($field->getValue());
                 $message = 'is not a numerical value';
                 break;
 
             case self::TYPE_DIGIT:
-                $validated = $this->isDigit($value);
+                $validated = $this->isDigit($field->getValue());
                 $message = 'must consist of characters 0-9 only';
                 break;
 
             case self::TYPE_STRING:
-                $validated = $this->isString($value);
+                $validated = $this->isString($field->getValue());
                 $message = 'is not a string';
                 break;
 
             case self::TYPE_BOOLEAN:
-                $validated = $this->isBoolean($value);
+                $validated = $this->isBoolean($field->getValue());
                 $message = 'is not a boolean value (true or false)';
                 break;
 
@@ -149,6 +150,11 @@ class FormValidation {
                 $message = 'cannot be empty';
                 break;
 
+            case self::REQ_VALUE:
+                $validated = $this->hasValue($field->getValue(), $params);
+                $message = 'does not contain a valid value';
+                break;
+
             default:
                 $validated = false;
                 $message = 'has an invalid requirement method provided';
@@ -206,5 +212,9 @@ class FormValidation {
     private function isBetween($input, $min, $max)
     {
         return ($input >= $min && $input <= $max);
+    }
+
+    private function hasValue($input, $values) {
+        return in_array($input, $values);
     }
 }

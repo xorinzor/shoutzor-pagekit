@@ -4,6 +4,7 @@ namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
 use Xorinzor\Shoutzor\App\FormBuilder\FormGenerator;
+use Xorinzor\Shoutzor\App\FormBuilder\FormValidation;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\InputField;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\CheckboxField;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\DividerField;
@@ -29,7 +30,8 @@ class LiquidsoapController
             "text",
             $config['logDirectoryPath'],
             "The directory where to store the logs (without ending slash)")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new CheckboxField(
             "wrapperLogStdout",
@@ -39,7 +41,8 @@ class LiquidsoapController
             array(['value' => "true", 'title' => 'enable'],['value' => "false", 'title' => 'disable']),
             false,
             "Show stdout output in the logs")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('true','false')));
 
         $form->addField(new CheckboxField(
             "wrapperServerTelnet",
@@ -49,7 +52,8 @@ class LiquidsoapController
             array(['value' => "true", 'title' => 'enable'],['value' => "false", 'title' => 'disable']),
             false,
             "Enable telnet access to the wrapper")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('true','false')));
 
         $form->addField(new CheckboxField(
             "wrapperServerSocket",
@@ -59,7 +63,8 @@ class LiquidsoapController
             array(['value' => "true", 'title' => 'enable'],['value' => "false", 'title' => 'disable']),
             false,
             "Enable socket access to the wrapper - REQUIRED")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('true','false')));
 
         $form->addField(new InputField(
             "wrapperServerSocketPath",
@@ -68,7 +73,8 @@ class LiquidsoapController
             "text",
             $config['wrapperServerSocketPath'],
             "The directory where to create the wrapper socket file (without ending slash)")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new InputField(
             "wrapperServerSocketPermissions",
@@ -76,7 +82,8 @@ class LiquidsoapController
             "Wrapper Socket Permissions",
             "text", $config['wrapperServerSocketPermissions'],
             "The permissions to set to the created wrapper socket file")
-        );
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new DividerField());
 
@@ -88,7 +95,8 @@ class LiquidsoapController
             array(['value' => "true", 'title' => 'enable'],['value' => "false", 'title' => 'disable']),
             false,
             "Show stdout output in the logs")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('true','false')));
 
         $form->addField(new CheckboxField(
             "shoutzorServerTelnet",
@@ -98,7 +106,8 @@ class LiquidsoapController
             array(['value' => "true", 'title' => 'enable'],['value' => "false", 'title' => 'disable']),
             false,
             "Enable telnet access to shoutzor")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('true','false')));
 
         $form->addField(new CheckboxField(
             "shoutzorServerSocket",
@@ -108,7 +117,8 @@ class LiquidsoapController
             array(['value' => "true", 'title' => 'enable'],['value' => "false", 'title' => 'disable']),
             false,
             "Enable socket access to shoutzor - REQUIRED")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('true','false')));
 
         $form->addField(new InputField(
             "shoutzorServerSocketPath",
@@ -117,7 +127,8 @@ class LiquidsoapController
             "text",
             $config['shoutzorServerSocketPath'],
             "The directory where to create the shoutzor socket file (without ending slash)")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new InputField(
             "shoutzorServerSocketPermissions",
@@ -126,7 +137,8 @@ class LiquidsoapController
             "text",
             $config['shoutzorServerSocketPermissions'],
             "The permissions to set to the created shoutzor socket file")
-        );
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new DividerField());
 
@@ -137,7 +149,8 @@ class LiquidsoapController
             "text",
             $config['wrapperInputListeningMount'],
             "The mount that the wrapper and shoutzor should be using to communicate locally")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new InputField(
             "wrapperInputListeningPort",
@@ -146,7 +159,8 @@ class LiquidsoapController
             "text",
             $config['wrapperInputListeningPort'],
             "The port the wrapper and shoutzor should be using to communicate locally")
-        );
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new InputField(
             "wrapperInputListeningPassword",
@@ -155,7 +169,8 @@ class LiquidsoapController
             "password",
             $config['wrapperInputListeningPassword'],
             "The password the wrapper and shoutzor should be using to communicate locally")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new DividerField());
 
@@ -166,7 +181,8 @@ class LiquidsoapController
             "text",
             $config['wrapperOutputHost'],
             "The IP of the icecast server to stream to")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new InputField(
             "wrapperOutputMount",
@@ -175,7 +191,8 @@ class LiquidsoapController
             "text",
             $config['wrapperOutputMount'],
             "The mount of the icecast server to stream to")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new InputField(
             "wrapperOutputPort",
@@ -184,7 +201,8 @@ class LiquidsoapController
             "text",
             $config['wrapperOutputPort'],
             "The port of the icecast server to stream to")
-        );
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new InputField(
             "wrapperOutputPassword",
@@ -193,7 +211,8 @@ class LiquidsoapController
             "password",
             $config['wrapperOutputPassword'],
             "The password of the icecast server to stream to")
-        );
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new DividerField());
 
@@ -246,7 +265,7 @@ class LiquidsoapController
                     }
                 }
 
-                $new_config = "#\n# DO NOT MANUALLY EDIT THIS FILE - THIS FILE IS AUTOMATICALLY GENERATED \n#\n\n";
+                $new_config = "#\n# DO NOT MANUALLY EDIT THIS FILE - THIS FILE IS AUTOMATICALLY GENERATED \n# GENERATED AT: ".date("d-m-Y H:i:s")."\n#\n\n";
                 $new_config .= str_replace(array_keys($replace_values), array_values($replace_values), file_get_contents(__DIR__ . '/../../../shoutzor-requirements/liquidsoap/config.template'));
                 file_put_contents(__DIR__ . '/../../../shoutzor-requirements/liquidsoap/config.liq', $new_config);
 

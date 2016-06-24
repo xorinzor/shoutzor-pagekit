@@ -33,7 +33,7 @@ class FormGenerator {
      * Sets the pointer to the desired field
      */
     public function selectField($id) {
-        $this->fieldPointer = $this->fields[$id];
+        return $this->fieldPointer = $this->fields[$id];
     }
 
     /**
@@ -41,7 +41,7 @@ class FormGenerator {
      */
     public function addField(FormField $field) {
         $this->fields[$field->getId()] = $field;
-        $this->fieldPointer = $field;
+        return $this->fieldPointer = $field;
     }
 
     /**
