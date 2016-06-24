@@ -71,7 +71,7 @@ class ShoutzorController
             //Make sure no errors have occured during validation
             if($form->hasErrors() === false) {
                 foreach($form->getFields() as $field) {
-                    if($field->getName() !== null) {
+                    if(!empty($field->getName())) {
                         $config = App::config('shoutzor')->set($field->getName(), $field->getValue());
                     }
                 }

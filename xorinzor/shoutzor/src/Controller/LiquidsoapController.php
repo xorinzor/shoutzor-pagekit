@@ -35,6 +35,27 @@ class LiquidsoapController
         )->setValidationType(FormValidation::TYPE_STRING)
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
+        $form->addField(new InputField(
+            "socketPath",
+            "socketPath",
+            "Socket Path",
+            "text",
+            $config['socketPath'],
+            "The directory where to create the socket files (without ending slash)")
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new InputField(
+            "socketPermissions",
+            "socketPermissions",
+            "Socket Permissions",
+            "text", $config['socketPermissions'],
+            "The permissions to set to the created socket files")
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new DividerField());
+
         $form->addField(new CheckboxField(
             "wrapperLogStdout",
             "wrapperLogStdout",
@@ -64,28 +85,9 @@ class LiquidsoapController
             array($config['wrapperServerSocket']),
             array(['value' => "true", 'title' => 'enable'],['value' => "false", 'title' => 'disable']),
             false,
-            "Enable socket access to the wrapper - REQUIRED")
+            "Enable socket access to the wrapper - REQUIRED FOR CONTROLS TO WORK")
         )->setValidationType(FormValidation::TYPE_STRING)
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('true','false')));
-
-        $form->addField(new InputField(
-            "wrapperServerSocketPath",
-            "wrapperServerSocketPath",
-            "Wrapper Socket Path",
-            "text",
-            $config['wrapperServerSocketPath'],
-            "The directory where to create the wrapper socket file (without ending slash)")
-        )->setValidationType(FormValidation::TYPE_STRING)
-        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
-
-        $form->addField(new InputField(
-            "wrapperServerSocketPermissions",
-            "wrapperServerSocketPermissions",
-            "Wrapper Socket Permissions",
-            "text", $config['wrapperServerSocketPermissions'],
-            "The permissions to set to the created wrapper socket file")
-        )->setValidationType(FormValidation::TYPE_NUMERIC)
-        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new DividerField());
 
@@ -118,29 +120,9 @@ class LiquidsoapController
             array($config['shoutzorServerSocket']),
             array(['value' => "true", 'title' => 'enable'],['value' => "false", 'title' => 'disable']),
             false,
-            "Enable socket access to shoutzor - REQUIRED")
+            "Enable socket access to shoutzor - REQUIRED FOR CONTROLS TO WORK")
         )->setValidationType(FormValidation::TYPE_STRING)
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('true','false')));
-
-        $form->addField(new InputField(
-            "shoutzorServerSocketPath",
-            "shoutzorServerSocketPath",
-            "Shoutzor Socket Path",
-            "text",
-            $config['shoutzorServerSocketPath'],
-            "The directory where to create the shoutzor socket file (without ending slash)")
-        )->setValidationType(FormValidation::TYPE_STRING)
-        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
-
-        $form->addField(new InputField(
-            "shoutzorServerSocketPermissions",
-            "shoutzorServerSocketPermissions",
-            "Shoutzor Socket Permissions",
-            "text",
-            $config['shoutzorServerSocketPermissions'],
-            "The permissions to set to the created shoutzor socket file")
-        )->setValidationType(FormValidation::TYPE_NUMERIC)
-        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new DividerField());
 
@@ -261,7 +243,7 @@ class LiquidsoapController
                 $replace_values = array();
 
                 foreach($form->getFields() as $field) {
-                    if($field->getName() !== null) {
+                    if(!empty($field->getName())) {
                         $config = App::config('liquidsoap')->set($field->getName(), $field->getValue());
                         $replace_values['%'.$field->getName().'%'] = $field->getValue();
                     }

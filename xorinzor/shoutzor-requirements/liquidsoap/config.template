@@ -3,16 +3,16 @@ wrapperLogFilePath = "%logDirectoryPath%/wrapper.log"
 wrapperLogStdout = %wrapperLogStdout%
 wrapperServerTelnet = %wrapperServerTelnet%
 wrapperServerSocket = %wrapperServerSocket%
-wrapperServerSocketPath = "%wrapperServerSocketPath%/wrapper"
-wrapperServerSocketPermissions = %wrapperServerSocketPermissions%
+wrapperServerSocketPath = "%socketPath%/wrapper"
+wrapperServerSocketPermissions = %socketPermissions%
 
 #shoutzor.liq config system-variables
 shoutzorLogFilePath = "%logDirectoryPath%/shoutzor.log"
 shoutzorLogStdout = %shoutzorLogStdout%
 shoutzorServerTelnet = %shoutzorServerTelnet%
 shoutzorServerSocket = %shoutzorServerSocket%
-shoutzorServerSocketPath = "%shoutzorServerSocketPath%/shoutzor"
-shoutzorServerSocketPermissions = %shoutzorServerSocketPermissions%
+shoutzorServerSocketPath = "%socketPath%/shoutzor"
+shoutzorServerSocketPermissions = %socketPermissions%
 
 #global configuration variables
 wrapperInputListeningMount = "%wrapperInputListeningMount%"

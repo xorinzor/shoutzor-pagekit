@@ -37,9 +37,9 @@ return [
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\ShoutzorController'
         ],
 
-        '/shoutzor/audio' => [
-            'name' => '@shoutzor/admin/audio',
-            'controller' => 'Xorinzor\\Shoutzor\\Controller\\AudioController'
+        '/shoutzor/controls' => [
+            'name' => '@shoutzor/admin/controls',
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\ControlsController'
         ],
 
         '/shoutzor/liquidsoap' => [
@@ -79,11 +79,11 @@ return [
             'access' => 'shoutzor: manage shoutzor'
         ],
 
-        'shoutzor: audio' => [
+        'shoutzor: controls' => [
             'parent' => 'shoutzor',
-            'label' => 'Audio',
-            'url' => '@shoutzor/admin/audio',
-            'access' => 'shoutzor: manage audio settings'
+            'label' => 'Controls',
+            'url' => '@shoutzor/admin/controls',
+            'access' => 'shoutzor: Control Shoutzor'
         ],
 
         'shoutzor: liquidsoap' => [
@@ -149,16 +149,14 @@ return [
 
         'liquidsoap' => [
             'logDirectoryPath' => '/tmp/shoutzor',
-            'wrapperLogStdout' => true,
-            'wrapperServerTelnet' => false,
-            'wrapperServerSocket' => true,
-            'wrapperServerSocketPath' => '/tmp/shoutzor',
-            'wrapperServerSocketPermissions' => 511,
-            'shoutzorLogStdout' => true,
-            'shoutzorServerTelnet' => false,
-            'shoutzorServerSocket' => true,
-            'shoutzorServerSocketPath' => '/tmp/shoutzor',
-            'shoutzorServerSocketPermissions' => 511,
+            'socketPath' => '/tmp/shoutzor',
+            'socketPermissions' => 511,
+            'wrapperLogStdout' => "true",
+            'wrapperServerTelnet' => "false",
+            'wrapperServerSocket' => "true",
+            'shoutzorLogStdout' => "true",
+            'shoutzorServerTelnet' => "false",
+            'shoutzorServerSocket' => "true",
             'wrapperInputListeningMount' => '/streaminput',
             'wrapperInputListeningPort' => '1337',
             'wrapperInputListeningPassword' => 'hackme',
