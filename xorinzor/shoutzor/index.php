@@ -1,12 +1,15 @@
 <?php
 
 use Pagekit\Application;
+use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapControl;
 
 return [
     'name' => 'shoutzor',
     'type' => 'extension',
     'main' => function (Application $app) {
-        // bootstrap code
+        $app['liquidsoapControl'] = function(Application $app) {
+            return new liquidsoapControl();
+        };
     },
 
     'autoload' => [
@@ -33,27 +36,26 @@ return [
         ],
 
         '/shoutzor' => [
-            'name' => '@shoutzor/admin',
+            'name' => '@shoutzor/admin/shoutzor',
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\ShoutzorController'
         ],
 
-        '/shoutzor/controls' => [
+        '/controls' => [
             'name' => '@shoutzor/admin/controls',
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\ControlsController'
         ],
 
-        '/shoutzor/liquidsoap' => [
+        '/liquidsoap' => [
             'name' => '@shoutzor/admin/liquidsoap',
             'controller' => [
                 'Xorinzor\\Shoutzor\\Controller\\LiquidsoapController'
             ]
         ],
 
-        '/shoutzor/api' => [
+        '/shoutzorapi' => [
             'name' => '@shoutzor/api',
             'controller' => [
-                'Xorinzor\\Shoutzor\\Controller\\MusicApiController',
-                'Xorinzor\\Shoutzor\\Controller\\MusicconverterApiController'
+                'Xorinzor\\Shoutzor\\Controller\\ApiController'
             ]
         ]
     ],
@@ -67,29 +69,28 @@ return [
         'shoutzor' => [
             'label' => 'Shoutzor',
             'icon' => 'shoutzor:icon.png',
-            'url' => '@shoutzor/admin',
-            'access' => 'shoutzor: manage shoutzor'
+            'url' => '@shoutzor/admin/shoutzor/index',
+            'access' => 'shoutzor: manage shoutzor settings'
         ],
 
         'shoutzor: settings' => [
             'parent' => 'shoutzor',
             'label' => 'Shoutzor',
-            'icon' => 'shoutzor:icon.png',
-            'url' => '@shoutzor/admin',
-            'access' => 'shoutzor: manage shoutzor'
+            'url' => '@shoutzor/admin/shoutzor/index',
+            'access' => 'shoutzor: manage shoutzor settings'
         ],
 
         'shoutzor: controls' => [
             'parent' => 'shoutzor',
             'label' => 'Controls',
-            'url' => '@shoutzor/admin/controls',
-            'access' => 'shoutzor: Control Shoutzor'
+            'url' => '@shoutzor/admin/controls/index',
+            'access' => 'shoutzor: manage shoutzor controls'
         ],
 
         'shoutzor: liquidsoap' => [
             'parent' => 'shoutzor',
             'label' => 'Liquidsoap',
-            'url' => '@shoutzor/admin/liquidsoap',
+            'url' => '@shoutzor/admin/liquidsoap/index',
             'access' => 'shoutzor: manage liquidsoap settings'
         ]
     ],
@@ -102,11 +103,11 @@ return [
 
         // Unique name.
         // Convention: extension name and speaking name of this permission (spaces allowd)
-        'shoutzor: manage shoutzor' => [
+        'shoutzor: manage shoutzor settings' => [
             'title' => 'Manage Shoutzor Settings'
         ],
 
-        'shoutzor: manage audio settings' => [
+        'shoutzor: manage shoutzor controls' => [
             'title' => 'Manage Shoutzor Audio Settings'
         ],
 

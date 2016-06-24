@@ -3,7 +3,7 @@
 namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
-use Xorinzor\Shoutzor\App\Liquidsoap;
+use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapCommunicator;
 use Xorinzor\Shoutzor\App\FormBuilder\FormGenerator;
 use Xorinzor\Shoutzor\App\FormBuilder\FormValidation;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\InputField;
@@ -15,16 +15,16 @@ use Exception;
  */
 class ControlsController
 {
+    /**
+     * @Route("/", name="index")
+     */
     public function indexAction()
     {
-        $baseConfig = App::module('shoutzor')->config('liquidsoap');
-        $config = App::config('liquidsoap')->toArray();
-        $config = array_merge($baseConfig, $config);
-        $config = array_merge($config, $_POST); //Set the value to the new POST data
+        $config = App::module('shoutzor')->config('liquidsoap');
 
         try {
-            $wrapperLiquidsoap = new Liquidsoap($config['socketPath'] . '/wrapper');
-            $shoutzorLiquidsoap = new Liquidsoap($config['socketPath'] . '/shoutzor');
+            $wrapperLiquidsoap = new LiquidsoapCommunicator($config['socketPath'] . '/wrapper');
+            $shoutzorLiquidsoap = new LiquidsoapCommunicator($config['socketPath'] . '/shoutzor');
 
             $wrapperActive = $wrapperLiquidsoap->isUp();
             $shoutzorActive = $wrapperLiquidsoap->isUp();
@@ -87,7 +87,10 @@ class ControlsController
         ];
     }
 
-    public function toggleWrapper() {
-        
+    /**
+     * @Route("/toggle", name="toggle", requirements={"type"="wrapper|shoutzor","operation"="start|stop"}, methods="POST")
+     */
+    public function toggleAction($type) {
+
     }
 }

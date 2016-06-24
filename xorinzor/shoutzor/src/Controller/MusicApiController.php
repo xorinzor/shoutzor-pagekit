@@ -9,22 +9,10 @@ use Symfony\Component\Process\Process;
 
 require_once(__DIR__ . '/../Vendor/getid3/getid3.php');
 
-/**
- * @Route("music", name="music")
- */
 class MusicApiController
 {
     /**
-     * @Route("/", methods="GET")
-     * @Request({"filter": "array", "page":"int"})
-     */
-    public function indexAction($filter = [], $page = 0)
-    {
-        return array();
-    }
-
-    /**
-     * @Route("/upload", methods="POST")
+     * @Route("/upload", name="upload", methods="POST")
      */
     public function uploadAction()
     {

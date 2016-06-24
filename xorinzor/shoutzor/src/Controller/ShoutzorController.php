@@ -14,14 +14,15 @@ use Xorinzor\Shoutzor\App\FormBuilder\Fields\DividerField;
  */
 class ShoutzorController
 {
+    /**
+     * @Route("/", name="index")
+     */
     public function indexAction()
     {
 
         $request = App::request();
 
-        $baseConfig = App::module('shoutzor')->config('shoutzor');
-        $config = App::config('shoutzor')->toArray();
-        $config = array_merge($baseConfig, $config);
+        $config = App::module('shoutzor')->config('shoutzor');
         $config = array_merge($config, $_POST);
 
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
@@ -70,11 +71,16 @@ class ShoutzorController
 
             //Make sure no errors have occured during validation
             if($form->hasErrors() === false) {
+
+                $configValues = array();
+
                 foreach($form->getFields() as $field) {
                     if(!empty($field->getName())) {
-                        $config = App::config('shoutzor')->set($field->getName(), $field->getValue());
+                        $configValues[$field->getName()] = $field->getValue();
                     }
                 }
+
+                App::config('shoutzor')->set('shoutzor', $configValues);
 
                 //Do stuff
                 $alert = array('type' => 'success', 'msg' => __('Changes saved. Make sure the applicable liquidsoap scripts are restarted for the changes to take effect'));

@@ -7,30 +7,20 @@ use \Exception;
 use Symfony\Component\Process\Process;
 use Xorinzor\Shoutzor\Model\Music;
 
-/**
- * @Route("musicconverter", name="musicconverter")
- */
 class MusicconverterApiController
 {
     private $telnet;
 
     /**
-     * @Route("/", methods="GET")
+     * @Route("/", name="index", methods="GET")
      */
     public function indexAction()
     {
-        try {
-            $this->ensureLocalhost();
-
-            /* return server status */
-            return array('result' => true);
-        } catch(Exception $e) {
-            App::abort(400, $e->getMessage());
-        }
+        return array('result' => false, 'message' => 'Invalid method provided');
     }
 
     /**
-     * @Route("/autoparse", methods="GET")
+     * @Route("/autoparse", name="autoparse", methods="GET")
      */
     public function autoparseAction() {
         try {
@@ -62,7 +52,7 @@ class MusicconverterApiController
     }
 
     /**
-     * @Route("/parse", methods="GET")
+     * @Route("/parse", name="parse", methods="GET")
      * @Request({"music": "int"})
      */
     public function parseAction($music = 0)
@@ -143,8 +133,6 @@ class MusicconverterApiController
      */
     protected function ensureLocalhost()
     {
-        return true;
-
         $whitelist = array(
             '127.0.0.1',
             '::1'
