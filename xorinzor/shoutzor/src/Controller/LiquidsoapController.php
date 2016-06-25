@@ -3,6 +3,7 @@
 namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
+use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 use Xorinzor\Shoutzor\App\FormBuilder\FormGenerator;
 use Xorinzor\Shoutzor\App\FormBuilder\FormValidation;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\InputField;
@@ -255,7 +256,8 @@ class LiquidsoapController
                 App::config('shoutzor')->set('liquidsoap', $configValues);
 
                 //Generate our new config file
-                App::liquidsoapControl()->generateConfigFile($replace_values);
+                $liquidsoapManager = new liquidsoapManager();
+                $liquidsoapManager->generateConfigFile($replace_values);
 
                 //Show success message
                 $alert = array('type' => 'success', 'msg' => __('Changes saved. Make sure the applicable liquidsoap scripts are restarted for the changes to take effect'));

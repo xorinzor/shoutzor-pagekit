@@ -24,8 +24,11 @@ class ControlsController
 
         $liquidsoapManager = new LiquidsoapManager();
 
+        $liquidsoapManager->startScript('wrapper');
+
         $wrapperActive = $liquidsoapManager->isUp('wrapper');
-        $shoutzorActive = $liquidsoapManager->isUp('shoutzor');
+        $shoutzorActive = false;
+        //$shoutzorActive = $liquidsoapManager->isUp('shoutzor');
 
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
 

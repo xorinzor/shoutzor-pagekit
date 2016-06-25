@@ -11,23 +11,32 @@ class LiquidsoapCommunicator {
 
     public function __construct($socketLocation) {
         $this->socketLocation = $socketLocation;
-        $this->socket = $this->createSocket();
+
+		try {
+	        $this->socket = $this->createSocket();
+		} catch(Exception $e) {
+			throw $e;
+		}
     }
 
     public function __destruct() {
-        socket_close($this->socket);
+		if($this->socket !== null) {
+        	socket_close($this->socket);
+		}
     }
 
     private function createSocket() {
-        $this->socket = socket_create(AF_UNIX,SOCK_STREAM,0);
+        $sock = socket_create(AF_UNIX, SOCK_STREAM, 0);
 
-		if($this->socket == FALSE) {
-			throw new Exception("Unable to create socket: " . socket_strerror(socket_last_error()));
+		if($sock == FALSE) {
+			throw new Exception("Unable to create socket: " . socket_strerror(socket_last_error($sock)));
 		}
 
-		if(!socket_connect($this->socket, $this->socketLocation, null)) {
-			throw new Exception('Unable to connect to '. $this->socketLocation . socket_strerror(socket_last_error()));
+		if(!socket_connect($sock, $this->socketLocation, null)) {
+			throw new Exception('Unable to connect to '. $this->socketLocation . socket_strerror(socket_last_error($sock)));
 		}
+
+		return $sock;
     }
 
     private function sendCommand($command, $failed = false) {
@@ -38,7 +47,7 @@ class LiquidsoapCommunicator {
 
 		if($sent === false)
         {
-			throw Exception("Unable to write to socket: " .socket_strerror(socket_last_error()));
+			throw Exception("Unable to write to socket: " .socket_strerror(socket_last_error($this->socket)));
 			return false;
 		}
 
@@ -49,7 +58,7 @@ class LiquidsoapCommunicator {
 			$length -= $sent;
 
             //Cancel current transaction
-            socket_write($this->socket,"exit\n\0",$length);
+            socket_write($this->socket, "exit\n\0", $length);
 
             //This command failed before, and did again now
             //To prevent a loop, return false
@@ -68,7 +77,7 @@ class LiquidsoapCommunicator {
                 //Liquidsoap send an END\r message for each interaction
 				if ($buffer == "END\r")
                 {
-					socket_write($this->socket,"exit\n\0",$length);
+					socket_write($this->socket, "exit\n\0", $length);
 					break;
 				}
 
@@ -80,6 +89,10 @@ class LiquidsoapCommunicator {
     }
 
     public function command($cmd) {
+		if($this->socket == null) {
+			return false;
+		}
+
 		try {
     		return $this->sendCommand($cmd);
     	} catch(Exception $e) {

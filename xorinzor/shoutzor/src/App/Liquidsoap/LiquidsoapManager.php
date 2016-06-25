@@ -4,17 +4,21 @@ namespace Xorinzor\Shoutzor\App\Liquidsoap;
 
 use Pagekit\Application as App;
 use Exception;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class LiquidsoapManager {
 
     //The directory where our liquidsoap files and scripts are located
-    private $liquidsoapDirectory = __DIR__ . '/../../../../shoutzor-requirements/liquidsoap/';
+    private $liquidsoapDirectory;
     private $wrapperConnection;
     private $shoutzorConnection;
     private $validTypes = array('wrapper', 'shoutzor');
 
     public function __construct() {
         $config = App::module('shoutzor')->config('liquidsoap');
+
+        $this->liquidsoapDirectory = realpath(__DIR__ . '/../../../../shoutzor-requirements/liquidsoap/') . '/';
 
         //Default values
         $this->wrapperConnection = null;
@@ -24,7 +28,7 @@ class LiquidsoapManager {
             $this->wrapperConnection = new LiquidsoapCommunicator($config['socketPath'] . '/wrapper');
             $this->shoutzorConnection = new LiquidsoapCommunicator($config['socketPath'] . '/shoutzor');
         } catch(Exception $e) {
-
+            //One of the connections is down
         }
     }
 
@@ -76,7 +80,7 @@ class LiquidsoapManager {
 
     public function isUp($type) {
         if($conn = $this->getConnection($type)) {
-            return $this->command('uptime', $customsocket);
+            return $conn->command('uptime');
         } else {
             return false;
         }
@@ -91,8 +95,15 @@ class LiquidsoapManager {
             return true;
         }
 
-        //Start the liquidsoap script in a screen session
-        exec("screen -dmS $type liquidsoap " . $this->liquidsoapDirectory . "$type.liq"); //Start the tracklist
+        //@TODO - IT NO WORK!
+        $process = new Process("nohup screen -dmS $type liquidsoap " . $this->liquidsoapDirectory . "$type.liq 2>&1");
+        try {
+            $process->mustRun();
+
+            echo $process->getOutput();
+        } catch (ProcessFailedException $e) {
+            echo $e->getMessage();
+        }
 
         //Give the script a moment to start-up
         sleep(5);
