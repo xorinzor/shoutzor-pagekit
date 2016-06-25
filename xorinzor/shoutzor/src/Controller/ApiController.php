@@ -4,10 +4,10 @@ namespace Xorinzor\Shoutzor\Controller;
 use Pagekit\Application as App;
 
 use Xorinzor\Shoutzor\Model\Music;
+use Xorinzor\Shoutzor\App\Parser;
 
 use ReflectionMethod;
 use Exception;
-use getID3;
 
 class ApiController
 {
@@ -126,6 +126,7 @@ class ApiController
      */
     public function apiAction()
     {
+        //Check whether the param values should be fetched from GET or POST
         if(App::request()->isMethod('POST'))
         {
             $params = App::request()->request->all();
@@ -165,98 +166,111 @@ class ApiController
      * @method autoparse
      */
     public function autoparse() {
-        try {
-            $this->ensureLocalhost();
-
-            $root_path = $this->getPath(App::path() . '/' . App::module('system/finder')->config('storage'));
-            $path = $root_path . 'last_run.txt';
-
-            if(!file_exists($path)) {
-                file_put_contents($path, '0');
-            }
-
-            if(file_get_contents($path) > strtotime("-1 minute")) {
-                throw new Exception(__('A parser is already running or has been running too recently'));
-            }
-
-            $toParse = Music::where(['status = :status'], ['status' => Music::STATUS_UPLOADED])->get();
-
-            foreach($toParse as $item) {
-                file_put_contents($path, time());
-                $this->parseAction($item->id);
-            }
-
-            return $this->formatOutput(true);
-
-        } catch(Exception $e) {
-            return $this->formatOutput($e->getMessage(), self::ERROR_IN_REQUEST);
+        //Make sure it's the server that requested this method
+        if($this->ensureLocalhost() === false) {
+            return $this->formatOutput(__('You have no access to this method'), self::METHOD_NOT_AVAILABLE);
         }
+
+        //Get our configuration values
+        $config = App::module('shoutzor')->config('shoutzor');
+        $lastRun = $config['parserLastRun'];
+
+        //Check if the last-run time was more then 1 minute ago to make sure no other parser processes are running
+        if($lastRun > strtotime("-1 minute")) {
+            return $this->formatOutput(__('A parser is already running or has been running too recently'), self::ERROR_IN_REQUEST);
+        }
+
+        //Get a list of items that need to be parsed
+        $toParse = Music::where(['status = :status'], ['status' => Music::STATUS_UPLOADED])
+                    ->where(['status = :status'], ['status' => Music::STATUS_ERROR])
+                    ->limit($config['parserMaxItems'])->get();
+
+        //Parse each item
+        foreach($toParse as $item) {
+            //Update the parserLastRun value to the current time
+            App::config('shoutzor')->set('shoutzor', ['parserLastRun' => time()]);
+
+            //Parse the item
+            $this->parse(['id' => $item->id]);
+        }
+
+        //Return true
+        return $this->formatOutput(true);
     }
 
     /**
      * Parses and converts music files
      * @method parse
-     * @param music the ID of the music object to parse
+     * @param id the ID of the media object to parse
      */
-    public function parse($music = 0)
+    public function parse($params)
     {
-        try {
-            $this->ensureLocalhost();
+        if($this->ensureLocalhost() === false) {
+            return $this->formatOutput(__('You have no access to this method'), self::METHOD_NOT_AVAILABLE);
+        }
 
-            //Check if the requested Music ID exists
-            $music = Music::find($music);
-            if($music == null || !$music) {
-                throw new Exception(__('Music with this ID does not exist'));
-            }
+        if(is_int($params['id']) === false) {
+            return $this->formatOutput(__('Not a valid numerical value provided for the media ID'), self::INVALID_PARAMETER_VALUE);
+        }
 
-            $music->save(array(
-                'status' => Music::STATUS_PROCESSING
-            ));
+        //Fetch media object with provided ID
+        $music = Music::find($params['id']);
 
-            //Our main storage path
-            $root_path = $this->getPath(App::path() . '/' . App::module('system/finder')->config('storage'));
+        //Make sure the requested media object exists
+        if($music == null || !$music) {
+            return $this->formatOutput(__('Media object with this ID does not exist'), self::ITEM_NOT_FOUND);
+        }
 
-            //And a temporary directory within the storage
-            $filepath = $root_path  . 'temp/' . $music->filename;
+        if($music->status === Music::STATUS_FINISHED) {
+            return $this->formatOutput(__('This media object has already been parsed'), self::ERROR_IN_REQUEST);
+        }
 
-            //Make sure our root path exists and is writable
-            if((!is_dir($root_path) && !mkdir($root_path)) ||  !is_writable($root_path)) {
-                throw new Exception(__('Directory '.$root_path.' is not writable, Permission denied'));
-            }
+        //Set our media file to the processing status
+        $music->save(array(
+            'status' => Music::STATUS_PROCESSING
+        ));
 
-            if (!is_readable($filepath)) {
-                throw new Exception(__('Cannot read music file '.$filepath.', Permission denied.'));
-            }
+        //Initialize our parser class
+        $parser = new Parser();
 
-            //Make sure this file hasn't already been uploaded
-            $calculated = hash_file('crc32b', $filepath);
-            if(Music::where(['(status = ' . Music::STATUS_FINISHED . ' OR status = ' . Music::STATUS_PROCESSING . ') AND crc = :hash'], ['hash' => $calculated])->count() > 0) {
-                $music->save(array(
-                    status => Music::STATUS_DUPLICATE
-                ));
+        //Our main storage path
+        $path = $parser->getMusicDir();
 
-                unlink($filepath);
-                throw new Exception(__('This song has already been uploaded'));
-            }
+        //Get the path from the file in the temporary Directory
+        $filepath = $parser->getTempMusicDir() . '/' . $music->filename;
 
-            /*
+        //Make sure our root path exists and is writable
+        if((!is_dir($path) && !mkdir($path)) ||  !is_writable($path)) {
+            return $this->formatOutput(__('Directory '.$path.' is not writable, Permission denied'), self::ERROR_IN_REQUEST);
+        }
+
+        //Make sure our file exists
+        if (!file_exists($filepath)) {
+            return $this->formatOutput(__('Media file '.$filepath.' does not exist'), self::ERROR_IN_REQUEST);
+        }
+
+        //Make sure our file is readable
+        if (!is_readable($filepath)) {
+            return $this->formatOutput(__('Cannot read music file '.$filepath.', Permission denied'), self::ERROR_IN_REQUEST);
+        }
+
+        //Since its just an audio file, parse immediately
+        $music->status = $parser->parse($music);
+
+        //If the parse succeeded, save it in the database
+        if($music->status == Music::STATUS_FINISHED || $music->status == Music::STATUS_ERROR) {
+            $music->save();
+        }
+
+        //If the parse failed, the status will be set to the relevant code. Also no need to save the record
+
+        /*
+            @TODO
             Perhaps implement some form of converting to mp3 here?
             Or preserve this method for downloading of youtube videos, and converting those to mp3's
+        */
 
-            $music->save(array(
-                'status' => Music::STATUS_ERROR
-            ));
-            */
-
-            $music->save(array(
-                'status' => Music::STATUS_FINISHED
-            ));
-
-            return $this->formatOutput(true);
-
-        } catch(Exception $e) {
-            return $this->formatOutput($e->getMessage(), self::ERROR_IN_REQUEST);
-        }
+        return $this->formatOutput((array) $music);
     }
 
     /**
@@ -276,42 +290,28 @@ class ApiController
             return $this->formatOutput(__('You have no permission to upload files'), self::METHOD_NOT_AVAILABLE);
         }
 
-        //Our main storage path
-        $root_path = $this->getPath(App::path() . '/' . App::module('system/finder')->config('storage'));
-
-        //And a temporary directory within the storage
-        $temp_path = $root_path  . 'temp/';
-
-        //Make sure our root path exists and is writable
-        if((!is_dir($root_path) && !mkdir($root_path)) ||  !is_writable($root_path)) {
-            return $this->formatOutput(__('Directory '.$root_path.' is not writable, Permission denied'), self::ERROR_IN_REQUEST);
-        }
+        //Our temporary storage path
+        $path = $parser->getTempMusicDir();
 
         //Make sure our temporary directory exists and is writable
-        if((!is_dir($temp_path) && !mkdir($temp_path)) || !is_writable($temp_path)) {
-            return $this->formatOutput(__('Directory '.$temp_path.' is not writable, Permission denied'), self::ERROR_IN_REQUEST);
+        if((!is_dir($path) && !mkdir($path)) || !is_writable($path)) {
+            return $this->formatOutput(__('Directory '.$path.' is not writable, Permission denied'), self::ERROR_IN_REQUEST);
         }
 
         //Get the uploaded file
         $file = App::request()->files->get('musicfile');
 
-        //If no file is uploaded
-        if ($file === null) {
-            return $this->formatOutput(__('The uploaded file is not valid'), self::INVALID_PARAMETER_VALUE);
-        }
-
         //Make sure the uploaded file is uploaded correctly
-        if($file->isValid() === false) {
+        if($file !== null && $file->isValid() !== false) {
             return $this->formatOutput(__('The uploaded file has not been uploaded correctly'), self::INVALID_PARAMETER_VALUE);
         }
 
         $filename = md5(uniqid()).'.'.$file->getClientOriginalName();
 
         //Save the file into our temporary directory
-        $file->move($temp_path, $filename);
+        $file->move($path, $filename);
 
-        $music = Music::create();
-        $music->save(array(
+        $music = Music::create([
             'title' => $file->getClientOriginalName(),
             'artist_id' => 0,
             'filename' => $filename,
@@ -321,128 +321,22 @@ class ApiController
             'amount_requested' => 0,
             'crc' => '',
             'duration' => 0
-        ));
+        ]);
 
-        $fileId = $music->id;
+        //Initialize our parser class
+        $parser = new Parser();
 
-        //Prevent Divide by zero error
-        $filesize = ($file->getClientSize() == 0) ? 1 : $file->getClientSize();
+        //Since its just an audio file, parse immediately
+        $music->status = $parser->parse($music);
 
-        $result = array(
-            'id' => $fileId,
-            'filename' => $file->getClientOriginalName(),
-            'size' => $filesize / (1024 * 1024) //Filesize in MB
-        );
+        //If the parse succeeded, save it in the database
+        if($music->status == Music::STATUS_FINISHED || $music->status == Music::STATUS_ERROR) {
+            $music->save();
+        }
+
+        //If the parse failed, the status will be set to the relevant code. Also no need to save the record
 
         //No problems, return result
         return $this->formatOutput((array) $music);
-    }
-
-    /**
-     * THE OLD UPLOAD METHOD, PARTS OF THIS NEED TO BE MOVED TO THE PARSE METHOD / CLASS
-     */
-    public function uploadOld($params)
-    {
-        try {
-            require_once(__DIR__ . '/../Vendor/getid3/getid3.php');
-
-            //Make sure file uploads are enabled
-            if(App::module('shoutzor')->config('shoutzor.upload') == 0) {
-                throw new Exception(__('File uploads have been disabled'));
-            }
-
-            //Make sure file uploads are enabled
-            if(!App::user()->hasAccess("shoutzor: upload files")) {
-                throw new Exception(__('You have no permission to upload files'));
-            }
-
-            //Our main storage path
-            $root_path = $this->getPath(App::path() . '/' . App::module('system/finder')->config('storage'));
-
-            //And a temporary directory within the storage
-            $path = $root_path  . 'temp/';
-
-            //Make sure our root path exists and is writable
-            if((!is_dir($root_path) && !mkdir($root_path)) ||  !is_writable($root_path)) {
-                throw new Exception(__('Directory '.$root_path.' is not writable, Permission denied'));
-            }
-
-            //Make sure our temporary directory exists and is writable
-            if((!is_dir($path) && !mkdir($path)) || !is_writable($path)) {
-                throw new Exception(__('Directory '.$path.' is not writable, Permission denied'));
-            }
-
-            //Get the uploaded file
-            $file = App::request()->files->get('musicfile');
-
-            //If no file is uploaded, throw error
-            if ($file === null) {
-                throw new Exception(__('No file uploaded'));
-            }
-
-            if($file->isValid()) {
-                $filename = md5(uniqid()).'.'.$file->getClientOriginalName();
-                $file->move($path, $filename);
-
-                $exists = false;
-                $crc = hash_file('crc32', $path . $filename);
-                $music = Music::where(['crc = :hash'], ['hash' => $crc]);
-
-                if($music->count() > 0) {
-                    $exists = true;
-                    $music = $music->first();
-                }
-
-                if($exists == false) {
-                    //move it from the temp directory to the main storage directory
-                    rename($path.$filename, $root_path.$filename);
-
-                    $id3 = new getID3();
-                    $info = $id3->analyze($root_path.$filename);
-                    $time = $info['playtime_string'];
-                    $duration = explode(":", $time);
-                    if(isset($duration[2])) {
-                        $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60 + round($duration[2]);
-                    } else {
-                        $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60;
-                    }
-                } else {
-                    $duration_in_seconds = $music->duration;
-                }
-
-                $music = Music::create();
-                $music->save(array(
-                    'title' => $file->getClientOriginalName(),
-                    'artist_id' => 0,
-                    'filename' => $filename,
-                    'uploader_id' => App::user()->id,
-                    'created' => (new \DateTime())->format('Y-m-d H:i:s'),
-                    'status' => ($exists) ? Music::STATUS_DUPLICATE : Music::STATUS_FINISHED,
-                    'amount_requested' => 0,
-                    'crc' => $crc,
-                    'duration' => $duration_in_seconds
-                ));
-
-                $fileId = $music->id;
-            } else {
-                $fileId = 0;
-            }
-
-            //Prevent Divide by zero error
-            $filesize = ($file->getClientSize() == 0) ? 1 : $file->getClientSize();
-
-            $result = array(
-                'id' => $fileId,
-                'filename' => $file->getClientOriginalName(),
-                'size' => $filesize / (1024 * 1024), //Filesize in MB
-                'isValid' => (($fileId == 0) ? false : true)
-            );
-
-            //No problems, return result
-            return $this->formatOutput($result);
-
-        } catch(Exception $e) {
-            return $this->formatOutput($e->getMessage(), self::ERROR_IN_REQUEST);
-        }
     }
 }

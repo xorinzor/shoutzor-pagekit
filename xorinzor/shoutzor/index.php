@@ -157,7 +157,10 @@ return [
 
         'shoutzor' => [
             'upload' => 1,
-            'request' => 1
+            'request' => 1,
+            'musicDir' => '/tmp/shoutzor/music',
+            'parserLastRun' => 0,
+            'parserMaxItems' => 10
         ],
 
         'liquidsoap' => [
