@@ -7,6 +7,8 @@
 
 <div id="upload-rules" class="uk-alert uk-alert-danger"><strong>Warning!</strong> Do NOT upload 18+ content or other harmful content, this will NOT be tolerated.</div>
 
+<div id="upload-rules" class="uk-alert uk-alert-info"><strong>Notice</strong> The maximum file size is <?= $maxFileSize; ?></div>
+
 <div id="upload-drop" class="uk-placeholder uk-placeholder-large uk-text-center">
     <i class="uk-icon-cloud-upload uk-icon-medium uk-text-muted uk-margin-small-right"></i> Drop your file(s) here or <a class="uk-form-file">Select a file<input id="upload-select" type="file"></a>
 </div>
@@ -22,10 +24,10 @@
             uploadList      = $("#uploadList"),
             uploadListEmpty = $("#uploadListEmpty"),
             settings        = {
-                action: '<?= $view->url('@shoutzor/api/music/upload'); ?>', // upload url
+                action: '<?= $view->url('@shoutzor/api/index'); ?>', // upload url
                 single: true,
                 param: 'musicfile',
-                params: {},
+                params: { method: "upload" },
                 type: 'json',
                 allow : '*.(wav|mp3|oga|flac|m4a|wma)', // allow only audio and video files
 
@@ -52,15 +54,21 @@
                         return;
                     }
 
+                    if(response.info.code != 200) {
+                        //Something happened in our API
+                        $("#upload-error").removeClass("uk-hidden");
+                        return;
+                    }
+
                     //Hide the message telling us that the list is empty if we are adding one now
                     if(uploadList.find("li:not(#uploadListEmpty)").length == 0) {
                         uploadListEmpty.addClass("uk-hidden");
                     }
 
                     uploadList.prepend(
-                        '<li data-uploadid="'+response.info.id+'">'+
+                        '<li data-uploadid="'+response.data.id+'">'+
                             '<div class="uploaded-item">'+
-                                '<p><div class="uk-badge uk-badge-warning">Waiting</div> <strong>'+response.info.filename+'</strong></p>'+
+                                '<p><div class="uk-badge uk-badge-warning">Waiting</div> <strong>'+response.data.title+'</strong></p>'+
                                 '<div class="uk-progress uk-progress-warning uk-progress-striped uk-active">'+
                                     '<div class="uk-progress-bar" style="width: 100%;">Waiting to be processed..</div>'+
                                 '</div>'+

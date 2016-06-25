@@ -44,6 +44,11 @@ class ApiController
         'message'   => 'Invalid secret token provided'
     ];
 
+    const METHOD_NOT_AVAILABLE = [
+        'code'      => self::CODE_FORBIDDEN,
+        'message'   => 'You do not have the permissions to access this method'
+    ];
+
     const ITEM_NOT_FOUND = [
         'code'      => self::CODE_NOT_FOUND,
         'message'   => 'The API method could not find the object related to the provided parameters'
@@ -117,7 +122,7 @@ class ApiController
     /* API Methods */
 
     /**
-     * @Route("/", name="main", methods={"GET", "POST"})
+     * @Route("/", name="index", methods={"GET", "POST"})
      */
     public function apiAction()
     {
@@ -261,6 +266,83 @@ class ApiController
      */
     public function upload($params)
     {
+        //Make sure file uploads are enabled
+        if(App::module('shoutzor')->config('shoutzor.upload') == 0) {
+            return $this->formatOutput(__('File uploads have been disabled'), self::METHOD_NOT_AVAILABLE);
+        }
+
+        //Make sure file uploads are enabled
+        if(!App::user()->hasAccess("shoutzor: upload files")) {
+            return $this->formatOutput(__('You have no permission to upload files'), self::METHOD_NOT_AVAILABLE);
+        }
+
+        //Our main storage path
+        $root_path = $this->getPath(App::path() . '/' . App::module('system/finder')->config('storage'));
+
+        //And a temporary directory within the storage
+        $temp_path = $root_path  . 'temp/';
+
+        //Make sure our root path exists and is writable
+        if((!is_dir($root_path) && !mkdir($root_path)) ||  !is_writable($root_path)) {
+            return $this->formatOutput(__('Directory '.$root_path.' is not writable, Permission denied'), self::ERROR_IN_REQUEST);
+        }
+
+        //Make sure our temporary directory exists and is writable
+        if((!is_dir($temp_path) && !mkdir($temp_path)) || !is_writable($temp_path)) {
+            return $this->formatOutput(__('Directory '.$temp_path.' is not writable, Permission denied'), self::ERROR_IN_REQUEST);
+        }
+
+        //Get the uploaded file
+        $file = App::request()->files->get('musicfile');
+
+        //If no file is uploaded
+        if ($file === null) {
+            return $this->formatOutput(__('The uploaded file is not valid'), self::INVALID_PARAMETER_VALUE);
+        }
+
+        //Make sure the uploaded file is uploaded correctly
+        if($file->isValid() === false) {
+            return $this->formatOutput(__('The uploaded file has not been uploaded correctly'), self::INVALID_PARAMETER_VALUE);
+        }
+
+        $filename = md5(uniqid()).'.'.$file->getClientOriginalName();
+
+        //Save the file into our temporary directory
+        $file->move($temp_path, $filename);
+
+        $music = Music::create();
+        $music->save(array(
+            'title' => $file->getClientOriginalName(),
+            'artist_id' => 0,
+            'filename' => $filename,
+            'uploader_id' => App::user()->id,
+            'created' => (new \DateTime())->format('Y-m-d H:i:s'),
+            'status' => Music::STATUS_UPLOADED,
+            'amount_requested' => 0,
+            'crc' => '',
+            'duration' => 0
+        ));
+
+        $fileId = $music->id;
+
+        //Prevent Divide by zero error
+        $filesize = ($file->getClientSize() == 0) ? 1 : $file->getClientSize();
+
+        $result = array(
+            'id' => $fileId,
+            'filename' => $file->getClientOriginalName(),
+            'size' => $filesize / (1024 * 1024) //Filesize in MB
+        );
+
+        //No problems, return result
+        return $this->formatOutput((array) $music);
+    }
+
+    /**
+     * THE OLD UPLOAD METHOD, PARTS OF THIS NEED TO BE MOVED TO THE PARSE METHOD / CLASS
+     */
+    public function uploadOld($params)
+    {
         try {
             require_once(__DIR__ . '/../Vendor/getid3/getid3.php');
 
@@ -304,8 +386,11 @@ class ApiController
 
                 $exists = false;
                 $crc = hash_file('crc32', $path . $filename);
-                if(Music::where(['crc = :hash'], ['hash' => $crc])->count() > 0) {
+                $music = Music::where(['crc = :hash'], ['hash' => $crc]);
+
+                if($music->count() > 0) {
                     $exists = true;
+                    $music = $music->first();
                 }
 
                 if($exists == false) {
@@ -321,6 +406,8 @@ class ApiController
                     } else {
                         $duration_in_seconds = $duration[0] * 3600 + $duration[1] * 60;
                     }
+                } else {
+                    $duration_in_seconds = $music->duration;
                 }
 
                 $music = Music::create();
@@ -330,7 +417,7 @@ class ApiController
                     'filename' => $filename,
                     'uploader_id' => App::user()->id,
                     'created' => (new \DateTime())->format('Y-m-d H:i:s'),
-                    'status' => ($exists) ? Music::STATUS_DUPLICATE : (($is_video) ? Music::STATUS_UPLOADED : Music::STATUS_FINISHED),
+                    'status' => ($exists) ? Music::STATUS_DUPLICATE : Music::STATUS_FINISHED,
                     'amount_requested' => 0,
                     'crc' => $crc,
                     'duration' => $duration_in_seconds

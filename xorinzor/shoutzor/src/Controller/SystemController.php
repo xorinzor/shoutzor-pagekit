@@ -29,6 +29,11 @@ class SystemController
         $wrapperActive = $liquidsoapManager->isUp('wrapper');
         $shoutzorActive = $liquidsoapManager->isUp('shoutzor');
 
+        $liquidsoapManager->startScript('wrapper');
+        $liquidsoapManager->startScript('shoutzor');
+
+
+
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
 
         $form->addField(new DivField(

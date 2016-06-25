@@ -13,6 +13,8 @@ class SiteController
      */
     public function indexAction()
     {
+        $config = App::module('shoutzor')->config('liquidsoap');
+
         $uploaded = Music::where(['status = :finished'], ['finished' => Music::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->limit(8)->get();
         $requested = Music::where(['amount_requested > 0 AND status = :finished'], ['finished' => Music::STATUS_FINISHED])->orderBy('amount_requested', 'DESC')->related(['artist', 'user'])->limit(8)->get();
 
@@ -22,7 +24,8 @@ class SiteController
                 'name' => 'shoutzor:views/index.php'
             ],
             'uploaded' => $uploaded,
-            'requested' => $requested
+            'requested' => $requested,
+            'm3uFile' => 'http://'.$_SERVER['SERVER_NAME'] . ':8000' . $config['wrapperOutputMount'] . '.m3u'
         ];
     }
 
@@ -39,8 +42,8 @@ class SiteController
                 'title' => __('Upload Manager'),
                 'name' => 'shoutzor:views/uploadmanager.php'
             ],
-
-            'uploads' => $uploads
+            'uploads' => $uploads,
+            'maxFileSize' => $this->formatBytes($this->file_upload_max_size())
         ];
     }
 
@@ -97,5 +100,48 @@ class SiteController
     function forbiddenAction()
     {
         App::abort(401, __('Permission denied.'));
+    }
+
+    function formatBytes($bytes, $precision = 2) {
+        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        $bytes /= pow(1024, $pow);
+
+        return round($bytes, $precision) . ' ' . $units[$pow];
+    }
+
+    // Returns a file size limit in bytes based on the PHP upload_max_filesize
+    // and post_max_size
+    private function file_upload_max_size() {
+        static $max_size = -1;
+
+        if ($max_size < 0) {
+            // Start with post_max_size.
+            $max_size = $this->parse_size(ini_get('post_max_size'));
+
+            // If upload_max_size is less, then reduce. Except if upload_max_size is
+            // zero, which indicates no limit.
+            $upload_max = $this->parse_size(ini_get('upload_max_filesize'));
+            if ($upload_max > 0 && $upload_max < $max_size) {
+                $max_size = $upload_max;
+            }
+        }
+        return $max_size;
+    }
+
+    private function parse_size($size) {
+        $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
+        $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+        if ($unit) {
+            // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
+            return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+        }
+        else {
+            return round($size);
+        }
     }
 }

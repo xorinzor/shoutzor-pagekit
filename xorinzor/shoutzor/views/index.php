@@ -3,7 +3,7 @@
 
 <div class="uk-panel uk-panel-box music-box">
     <div class="uk-panel-title">
-        <p>Now Playing <a href="http://<?= $_SERVER['SERVER_NAME']; ?>:8000/shoutzor.m3u" class="tuneIn uk-button-small uk-button-primary"><i class="uk-icon-play"></i> Tune In</a></p>
+        <p>Now Playing <a href="<?= $m3uFile; ?>" class="tuneIn uk-button-small uk-button-primary"><i class="uk-icon-play"></i> Tune In</a></p>
     </div>
     <p id="nowplaying">Loading "now playing" information..</p>
 </div>
