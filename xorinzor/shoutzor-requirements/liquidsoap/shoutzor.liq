@@ -105,12 +105,12 @@ def append_type(m) =
 end
 
 def blank_handler()
-  system("curl http://localhost/liquidsoap/autofix/")
+  system("curl http://localhost/shoutzorapi?method=autofix > /dev/null &")
 end
 
-#def metadatahandler(m)
-#	system("curl http://localhost/liquidsoap/getnexttrack/ > /dev/null &")
-#end
+def metadatahandler(m)
+	system("curl http://localhost/shoutzorapi?method=nexttrack > /dev/null &")
+end
 
 #In case nothing works anymore, say this
 unfallibleSource = single("say: Shoutzor is experiencing technical difficulties, please stand by")
@@ -121,7 +121,7 @@ input = request.queue(id="shoutzorqueue")
 # Attach a skip command to the source input:
 add_skip_command(input)
 
-#input = on_metadata(metadatahandler, input)
+input = on_metadata(metadatahandler, input)
 
 #apply crossfade
 input = smart_crossthing(start_next=5., fade_out=7., fade_in=5., conservative=true, input)

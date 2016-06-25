@@ -40,6 +40,11 @@ return [
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\ShoutzorController'
         ],
 
+        '/system' => [
+            'name' => '@shoutzor/admin/system',
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\SystemController'
+        ],
+
         '/controls' => [
             'name' => '@shoutzor/admin/controls',
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\ControlsController'
@@ -78,6 +83,13 @@ return [
             'label' => 'Shoutzor',
             'url' => '@shoutzor/admin/shoutzor/index',
             'access' => 'shoutzor: manage shoutzor settings'
+        ],
+
+        'shoutzor: system' => [
+            'parent' => 'shoutzor',
+            'label' => 'System',
+            'url' => '@shoutzor/admin/system/index',
+            'access' => 'shoutzor: manage shoutzor system'
         ],
 
         'shoutzor: controls' => [

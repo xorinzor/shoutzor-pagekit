@@ -11,6 +11,7 @@ class LiquidsoapManager {
 
     //The directory where our liquidsoap files and scripts are located
     private $liquidsoapDirectory;
+    private $pidFileDirectory;
     private $wrapperConnection;
     private $shoutzorConnection;
     private $validTypes = array('wrapper', 'shoutzor');
@@ -19,6 +20,7 @@ class LiquidsoapManager {
         $config = App::module('shoutzor')->config('liquidsoap');
 
         $this->liquidsoapDirectory = realpath(__DIR__ . '/../../../../shoutzor-requirements/liquidsoap/') . '/';
+        $this->pidFileDirectory = '/usr/local/var/run/liquidsoap/';
 
         //Default values
         $this->wrapperConnection = null;
@@ -95,21 +97,10 @@ class LiquidsoapManager {
             return true;
         }
 
-        //@TODO - IT NO WORK!
-        $process = new Process("nohup screen -dmS $type liquidsoap " . $this->liquidsoapDirectory . "$type.liq 2>&1");
-        try {
-            $process->mustRun();
+        $process = new Process("cd $this->liquidsoapDirectory && HOME=/tmp/shoutzor/ liquidsoap -d $type.liq");
+        $process->run();
 
-            echo $process->getOutput();
-        } catch (ProcessFailedException $e) {
-            echo $e->getMessage();
-        }
-
-        //Give the script a moment to start-up
-        sleep(5);
-
-        //Make sure the connection is up
-        return $this->isUp($type) !== false;
+        return true;
     }
 
     public function stopScript($type) {
@@ -122,12 +113,19 @@ class LiquidsoapManager {
         }
 
         //Close the screen session
-        exec("screen -X -S $type quit");
+        $process = new Process("kill -TERM `cat " . $this->pidFileDirectory . $type . ".pid`");
+        $process->run();
 
-        //Make sure the connection isn't still up
-        return $this->isUp($type) === false;
+        return true;
     }
 
+    public function getPidFileDirectory() {
+        return $this->pidFileDirectory;
+    }
+
+    public function getLiquidsoapDirectory() {
+        return $this->liquidsoapDirectory;
+    }
 
     public function generateConfigFile($values) {
         //Add a header to the config file

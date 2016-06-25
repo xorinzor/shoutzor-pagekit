@@ -7,6 +7,8 @@ use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 use Xorinzor\Shoutzor\App\FormBuilder\FormGenerator;
 use Xorinzor\Shoutzor\App\FormBuilder\FormValidation;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\InputField;
+use Xorinzor\Shoutzor\App\FormBuilder\Fields\DivField;
+use Xorinzor\Shoutzor\App\FormBuilder\Fields\DividerField;
 
 use Exception;
 
@@ -24,53 +26,43 @@ class ControlsController
 
         $liquidsoapManager = new LiquidsoapManager();
 
-        $liquidsoapManager->startScript('wrapper');
-
         $wrapperActive = $liquidsoapManager->isUp('wrapper');
-        $shoutzorActive = false;
-        //$shoutzorActive = $liquidsoapManager->isUp('shoutzor');
+        $shoutzorActive = $liquidsoapManager->isUp('shoutzor');
 
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
 
         $form->addField(new InputField(
-            "wrapperToggle",
-            "wrapperToggle",
-            ($wrapperActive) ? "Deactivate Wrapper" : "Activate Wrapper",
+            "playMusic",
+            "playMusic",
+            "Play Music",
             "button",
-            ($wrapperActive) ? "Deactivate Wrapper" : "Activate Wrapper",
-            "(De)activates the wrapper liquidsoap script",
-            ($wrapperActive) ? "uk-button uk-button-danger" : "uk-button uk-button-primary",
-            'onclick="toggleWrapper();"')
-        )->setValidationType(FormValidation::TYPE_STRING)
-        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
-
-        if($wrapperActive === false) {
-            $form->setError("The wrapper is inactive!");
-        } else {
-            $form->setSuccess("The wrapper is up and running!");
-        }
+            "Play Music",
+            "Sends the &quot;play&quot; command",
+            "uk-button uk-button-primary",
+            'onclick="playMusic();"')
+        );
 
         $form->addField(new InputField(
-            "shoutzorToggle",
-            "shoutzorToggle",
-            ($shoutzorActive) ? "Deactivate Shoutzor" : "Activate Shoutzor",
+            "pauseMusic",
+            "pauseMusic",
+            "Pause Music",
             "button",
-            ($shoutzorActive) ? "Deactivate Shoutzor" : "Activate Shoutzor",
-            "(De)activates the shoutzor liquidsoap script",
-            ($shoutzorActive) ? "uk-button uk-button-danger" : "uk-button uk-button-primary",
-            'onclick="toggleShoutzor();"')
-        )->setValidationType(FormValidation::TYPE_STRING)
-        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+            "Pause Music",
+            "Sends the &quot;pause&quot; command",
+            "uk-button uk-button-primary",
+            'onclick="pauseMusic();"')
+        );
 
-        if($shoutzorActive === false) {
-            if($wrapperActive === false) {
-                $form->setError("The wrapper needs to be active first!");
-            } else {
-                $form->setError("Shoutzor is inactive!");
-            }
-        } else {
-            $form->setSuccess("Shoutzor is up and running!");
-        }
+        $form->addField(new InputField(
+            "skipTrack",
+            "skipTrack",
+            "Skip Track",
+            "button",
+            "Skip Track",
+            "Sends the &quot;skip track&quot; command",
+            "uk-button uk-button-primary",
+            'onclick="skipTrack();"')
+        );
 
         $content = $form->render();
 
