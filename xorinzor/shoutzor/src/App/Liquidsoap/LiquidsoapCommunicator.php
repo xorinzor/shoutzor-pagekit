@@ -11,8 +11,15 @@ class LiquidsoapCommunicator {
 
     public function __construct($socketLocation) {
         $this->socketLocation = $socketLocation;
-		$this->socket = null;
+		$this->socket = $this->createSocket();
     }
+
+	public function __destruct() {
+		if($this->socket !== null) {
+			$this->socketWrite("exit");
+			socket_close($this->socket);
+		}
+	}
 
     private function createSocket() {
         $sock = socket_create(AF_UNIX, SOCK_STREAM, 0);
@@ -28,75 +35,79 @@ class LiquidsoapCommunicator {
 		return $sock;
     }
 
-	private function closeSocket() {
-		if($this->socket !== null) {
-        	socket_close($this->socket);
+	/**
+	 * Function that writes a message fully to the socket, even if its too long
+	 */
+	private function socketWrite($message) {
+		if($this->socket == null) {
+			return false;
 		}
+
+		//String terminator
+		$message .= "\n";
+
+		//Get the length of our message
+		$length = strlen($message);
+
+		while (true) {
+			$sent = socket_write($this->socket, $message, $length);
+
+			if ($sent === false) {
+				break;
+			}
+
+			// Check if the entire message has been sent
+			if ($sent < $length) {
+				//Not the entire message has been sent yet
+				//Get the part of the massage that has yet to be sent
+				$message = substr($message, $sent);
+
+				//Get the length of the part that has yet to be sent
+				$length -= $sent;
+			} else {
+				//Everything is sent, exit loop
+				break;
+			}
+		}
+
+		return true;
 	}
 
     private function sendCommand($command, $failed = false) {
-		$msg = "$command\n\0";
-		$length = strlen($msg);
-		$retval = array();
-		$sent = socket_write($this->socket,$msg,$length);
+		$sent = $this->socketWrite($command);
 
-		if($sent === false)
-        {
+		if($sent === false) {
 			throw Exception("Unable to write to socket: " .socket_strerror(socket_last_error($this->socket)));
 			return false;
 		}
 
-		if($sent < $length)
-        {
-            //Not everything got through, resending
-			$msg = substr($msg, $sent);
-			$length -= $sent;
 
-            //Cancel current transaction
-            socket_write($this->socket, "exit\n\0", $length);
+		$retval = array();
 
-            //This command failed before, and did again now
-            //To prevent a loop, return false
-            if($failed) {
-                return false;
-            } else {
-                //This was the first attempt at the command
-                //Re-executing the command
-                return $this->sendCommand($command, true);
-            }
-		}
-        else
-        {
-			while ($buffer = socket_read($this->socket, 4096, PHP_NORMAL_READ))
-            {
-                //Liquidsoap send an END\r message for each interaction
-				if ($buffer == "END\r")
-                {
-					socket_write($this->socket, "exit\n\0", $length);
-					break;
-				}
-
-				$retval[] = trim($buffer);
+		//Read output
+		while ($buffer = socket_read($this->socket, 512, PHP_NORMAL_READ)) {
+            //Liquidsoap send an END\r message for each interaction
+			if ($buffer == "END\r") {
+				break;
 			}
 
-			return $retval;
+			$retval[] = trim($buffer);
 		}
+
+		return $retval;
     }
 
     public function command($cmd) {
-		try {
-			$this->socket = $this->createSocket();
+		if($this->socket == null) {
+			return false;
+		}
 
-			if($this->socket == null) {
-				return false;
-			}
-			
+		try {
     		$result = $this->sendCommand($cmd);
     	} catch(Exception $e) {
 			$result = false;
     	}
 
-		$this->closeSocket();
 		return $result;
     }
 }

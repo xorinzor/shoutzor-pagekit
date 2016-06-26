@@ -12,12 +12,15 @@ class LiquidsoapManager {
     //The directory where our liquidsoap files and scripts are located
     private $liquidsoapDirectory;
     private $pidFileDirectory;
+    private $socketPath;
     private $wrapperConnection;
     private $shoutzorConnection;
     private $validTypes = array('wrapper', 'shoutzor');
 
     public function __construct() {
         $config = App::module('shoutzor')->config('liquidsoap');
+
+        $this->socketPath = $config['socketPath'];
 
         $this->liquidsoapDirectory = realpath(__DIR__ . '/../../../../shoutzor-requirements/liquidsoap/') . '/';
         $this->pidFileDirectory = '/usr/local/var/run/liquidsoap/';
@@ -27,8 +30,8 @@ class LiquidsoapManager {
         $this->shoutzorConnection = null;
 
         try {
-            $this->wrapperConnection = new LiquidsoapCommunicator($config['socketPath'] . '/wrapper');
-            $this->shoutzorConnection = new LiquidsoapCommunicator($config['socketPath'] . '/shoutzor');
+            $this->wrapperConnection = new LiquidsoapCommunicator($this->socketPath . '/wrapper');
+            $this->shoutzorConnection = new LiquidsoapCommunicator($this->socketPath . '/shoutzor');
         } catch(Exception $e) {
             //One of the connections is down
         }
@@ -107,6 +110,16 @@ class LiquidsoapManager {
 
         $process = new Process("cd $this->liquidsoapDirectory && HOME=/tmp/shoutzor/ liquidsoap -d $type.liq");
         $process->run();
+
+        //Sleep a few seconds to give the script time to boot up
+        sleep(2);
+
+        //Reinitialize our connection to the socket for the type of script
+        try {
+            $this->{$type . "Connection"} = new LiquidsoapCommunicator($this->socketPath . '/' . $type);
+        } catch(Exception $e) {
+            //The socket isn't up yet apparently
+        }
 
         return true;
     }
