@@ -108,7 +108,7 @@ class LiquidsoapManager {
             return true;
         }
 
-        $process = new Process("cd $this->liquidsoapDirectory && HOME=/tmp/shoutzor/ liquidsoap -d $type.liq");
+        $process = new Process("cd $this->liquidsoapDirectory && HOME=". $this->socketPath ."/ liquidsoap -d $type.liq");
         $process->run();
 
         //Sleep a few seconds to give the script time to boot up
