@@ -10,6 +10,7 @@ use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 
 use ReflectionMethod;
 use Exception;
+use DateTime;
 
 class ApiController
 {
@@ -292,6 +293,9 @@ class ApiController
             return $this->formatOutput(__('You have no permission to upload files'), self::METHOD_NOT_AVAILABLE);
         }
 
+        //Initialize our parser class
+        $parser = new Parser();
+
         //Our temporary storage path
         $path = $parser->getTempMusicDir();
 
@@ -304,11 +308,15 @@ class ApiController
         $file = App::request()->files->get('musicfile');
 
         //Make sure the uploaded file is uploaded correctly
-        if($file !== null && $file->isValid() !== false) {
+        if($file === null) {
+            return $this->formatOutput(__('No file has been uploaded with name: musicfile'), self::INVALID_PARAMETER_VALUE);
+        }
+
+        if($file->isValid() === false) {
             return $this->formatOutput(__('The uploaded file has not been uploaded correctly'), self::INVALID_PARAMETER_VALUE);
         }
 
-        $filename = md5(uniqid()).'.'.$file->getClientOriginalName();
+        $filename = md5(uniqid("", true)).'.'.$file->getClientOriginalName();
 
         //Save the file into our temporary directory
         $file->move($path, $filename);
@@ -318,15 +326,12 @@ class ApiController
             'artist_id' => 0,
             'filename' => $filename,
             'uploader_id' => App::user()->id,
-            'created' => (new \DateTime())->format('Y-m-d H:i:s'),
+            'created' => new DateTime(),
             'status' => Music::STATUS_UPLOADED,
             'amount_requested' => 0,
             'crc' => '',
             'duration' => 0
         ]);
-
-        //Initialize our parser class
-        $parser = new Parser();
 
         //Since its just an audio file, parse immediately
         $music->status = $parser->parse($music);

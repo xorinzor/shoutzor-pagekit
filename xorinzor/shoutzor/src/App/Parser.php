@@ -30,7 +30,12 @@ class Parser {
     }
 
     public function parse(Music &$music) {
-        $music->hash = $this->calculateHash($music->file);
+        //If a media file is already finished there is no point in parsing it
+        if($music->status === Music::STATUS_FINISHED) {
+            return Music::STATUS_FINISHED;
+        }
+
+        $music->hash = $this->calculateHash($this->tempMusicDir . '/' . $music->filename);
 
         //It's a duplicate, remove it and return the result code
         if($existing = $this->exists($music)) {
@@ -77,7 +82,7 @@ class Parser {
      * Calculates the duration (in seconds) of a file
      */
     public function getDuration(Music $music) {
-        $info = $this->id3->analyze($this->tempMusicDir . '/' . $filename);
+        $info = $this->id3->analyze($this->tempMusicDir . '/' . $music->filename);
         $time = $info['playtime_string'];
         $duration = explode(":", $time);
 
