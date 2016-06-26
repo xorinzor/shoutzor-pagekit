@@ -3,7 +3,7 @@
 namespace Xorinzor\Shoutzor\App;
 
 use Pagekit\Application as App;
-use Xorinzor\Shoutzor\Model\Music;
+use Xorinzor\Shoutzor\Model\Media;
 
 use getID3;
 
@@ -12,7 +12,7 @@ require_once(__DIR__ . '/../Vendor/getid3/getid3.php');
 class Parser {
 
     private $id3;
-    private $musicDir;
+    private $mediaDir;
     private $tempMusicDir;
 
     public function __construct() {
@@ -29,40 +29,40 @@ class Parser {
         return $this->tempMusicDir;
     }
 
-    public function parse(Music &$music) {
+    public function parse(Music &$media) {
         //If a media file is already finished there is no point in parsing it
-        if($music->status === Music::STATUS_FINISHED) {
-            return Music::STATUS_FINISHED;
+        if($media->status === Media::STATUS_FINISHED) {
+            return Media::STATUS_FINISHED;
         }
 
-        $music->hash = $this->calculateHash($this->tempMusicDir . '/' . $music->filename);
+        $media->hash = $this->calculateHash($this->tempMusicDir . '/' . $media->filename);
 
         //It's a duplicate, remove it and return the result code
-        if($existing = $this->exists($music)) {
+        if($existing = $this->exists($media)) {
             //Remove the temporary file
-            unlink($this->tempMusicDir . '/' . $music->filename);
+            unlink($this->tempMusicDir . '/' . $media->filename);
 
             //Return the duplicate statuscode
-            return Music::STATUS_DUPLICATE;
+            return Media::STATUS_DUPLICATE;
         }
 
         //Analyze the duration of the media file
-        $music->duration = $this->getDuration($music);
+        $media->duration = $this->getDuration($media);
 
         //Not a duplicate, move the file from the temp to the permanent directory.
         //Until a file finishes parsing completely, the file will never be moved to the permanent directory
-        rename($this->tempMusicDir . '/' . $music->filename, $this->musicDir . '/' . $music->filename);
+        rename($this->tempMusicDir . '/' . $media->filename, $this->musicDir . '/' . $media->filename);
 
         //Return the finished statuscode
-        return Music::STATUS_FINISHED;
+        return Media::STATUS_FINISHED;
     }
 
     /**
      * Checks if the provided instance is unique
      * @return false|Music
      */
-    public function exists(Music $music) {
-        $obj = Music::where('crc = :hash AND status = :status', ['hash' => $music->hash, 'status' => Music::STATUS_FINISHED]);
+    public function exists(Music $media) {
+        $obj = Media::where('crc = :hash AND status = :status', ['hash' => $media->hash, 'status' => Media::STATUS_FINISHED]);
 
         if($obj->count() == 0) {
             return false;
@@ -81,8 +81,8 @@ class Parser {
     /**
      * Calculates the duration (in seconds) of a file
      */
-    public function getDuration(Music $music) {
-        $info = $this->id3->analyze($this->tempMusicDir . '/' . $music->filename);
+    public function getDuration(Music $media) {
+        $info = $this->id3->analyze($this->tempMusicDir . '/' . $media->filename);
         $time = $info['playtime_string'];
         $duration = explode(":", $time);
 

@@ -3,7 +3,7 @@
 namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
-use Xorinzor\Shoutzor\Model\Music;
+use Xorinzor\Shoutzor\Model\Media;
 
 class SiteController
 {
@@ -15,8 +15,8 @@ class SiteController
     {
         $config = App::module('shoutzor')->config('liquidsoap');
 
-        $uploaded = Music::where(['status = :finished'], ['finished' => Music::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->limit(8)->get();
-        $requested = Music::where(['amount_requested > 0 AND status = :finished'], ['finished' => Music::STATUS_FINISHED])->orderBy('amount_requested', 'DESC')->related(['artist', 'user'])->limit(8)->get();
+        $uploaded = Media::where(['status = :finished'], ['finished' => Media::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->limit(8)->get();
+        $requested = Media::where(['amount_requested > 0 AND status = :finished'], ['finished' => Media::STATUS_FINISHED])->orderBy('amount_requested', 'DESC')->related(['artist', 'user'])->limit(8)->get();
 
         return [
             '$view' => [
@@ -35,7 +35,7 @@ class SiteController
     public function uploadManagerAction()
     {
 
-        $uploads = Music::where(['uploader_id = :uploader AND status != :finished'], ['uploader' => App::user()->id, 'finished' => Music::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->get();
+        $uploads = Media::where(['uploader_id = :uploader AND status != :finished'], ['uploader' => App::user()->id, 'finished' => Media::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->get();
 
         return [
             '$view' => [
@@ -61,7 +61,7 @@ class SiteController
                 ]
             ];
         }
-        $query = Music::where(['status = :finished AND (title LIKE :search OR filename LIKE :search)'], ['finished' => Music::STATUS_FINISHED, 'search' => "%{$q}%"])
+        $query = Media::where(['status = :finished AND (title LIKE :search OR filename LIKE :search)'], ['finished' => Media::STATUS_FINISHED, 'search' => "%{$q}%"])
                 ->orderBy('created', 'DESC');
 
         $total = $query->count();

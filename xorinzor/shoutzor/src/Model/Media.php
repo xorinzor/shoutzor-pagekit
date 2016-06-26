@@ -8,7 +8,7 @@ use Pagekit\Database\ORM\ModelTrait;
 /**
  * @Entity(tableClass="@shoutzor_music")
  */
-class Music implements \JsonSerializable{
+class Media implements \JsonSerializable{
 
     use ModelTrait;
 

@@ -3,7 +3,7 @@ namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
 
-use Xorinzor\Shoutzor\Model\Music;
+use Xorinzor\Shoutzor\Model\Media;
 use Xorinzor\Shoutzor\Model\Request;
 use Xorinzor\Shoutzor\App\Parser;
 use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
@@ -184,8 +184,8 @@ class ApiController
         }
 
         //Get a list of items that need to be parsed
-        $toParse = Music::where(['status = :status'], ['status' => Music::STATUS_UPLOADED])
-                    ->where(['status = :status'], ['status' => Music::STATUS_ERROR])
+        $toParse = Media::where(['status = :status'], ['status' => Media::STATUS_UPLOADED])
+                    ->where(['status = :status'], ['status' => Media::STATUS_ERROR])
                     ->limit($config['parserMaxItems'])->get();
 
         //Parse each item
@@ -212,25 +212,25 @@ class ApiController
             return $this->formatOutput(__('You have no access to this method'), self::METHOD_NOT_AVAILABLE);
         }
 
-        if(is_int($params['id']) === false) {
+        if(FormValidation::isDigit($params['id'])) {
             return $this->formatOutput(__('Not a valid numerical value provided for the media ID'), self::INVALID_PARAMETER_VALUE);
         }
 
         //Fetch media object with provided ID
-        $music = Music::find($params['id']);
+        $media = Media::find($params['id']);
 
         //Make sure the requested media object exists
-        if($music == null || !$music) {
+        if(!$media instanceof Media) {
             return $this->formatOutput(__('No media object with the provided ID exists'), self::ITEM_NOT_FOUND);
         }
 
-        if($music->status === Music::STATUS_FINISHED) {
+        if($media->status === Media::STATUS_FINISHED) {
             return $this->formatOutput(__('This media object has already been parsed'), self::ERROR_IN_REQUEST);
         }
 
         //Set our media file to the processing status
-        $music->save(array(
-            'status' => Music::STATUS_PROCESSING
+        $media->save(array(
+            'status' => Media::STATUS_PROCESSING
         ));
 
         //Initialize our parser class
@@ -240,7 +240,7 @@ class ApiController
         $path = $parser->getMusicDir();
 
         //Get the path from the file in the temporary Directory
-        $filepath = $parser->getTempMusicDir() . '/' . $music->filename;
+        $filepath = $parser->getTempMusicDir() . '/' . $media->filename;
 
         //Make sure our root path exists and is writable
         if((!is_dir($path) && !mkdir($path)) ||  !is_writable($path)) {
@@ -254,15 +254,15 @@ class ApiController
 
         //Make sure our file is readable
         if (!is_readable($filepath)) {
-            return $this->formatOutput(__('Cannot read music file '.$filepath.', Permission denied'), self::ERROR_IN_REQUEST);
+            return $this->formatOutput(__('Cannot read media file '.$filepath.', Permission denied'), self::ERROR_IN_REQUEST);
         }
 
         //Since its just an audio file, parse immediately
-        $music->status = $parser->parse($music);
+        $media->status = $parser->parse($media);
 
         //If the parse succeeded, save it in the database
-        if($music->status == Music::STATUS_FINISHED || $music->status == Music::STATUS_ERROR) {
-            $music->save();
+        if($media->status == Media::STATUS_FINISHED || $media->status == Media::STATUS_ERROR) {
+            $media->save();
         }
 
         //If the parse failed, the status will be set to the relevant code. Also no need to save the record
@@ -273,7 +273,7 @@ class ApiController
             Or preserve this method for downloading of youtube videos, and converting those to mp3's
         */
 
-        return $this->formatOutput((array) $music);
+        return $this->formatOutput((array) $media);
     }
 
     /**
@@ -321,30 +321,30 @@ class ApiController
         //Save the file into our temporary directory
         $file->move($path, $filename);
 
-        $music = Music::create([
+        $media = Media::create([
             'title' => $file->getClientOriginalName(),
             'artist_id' => 0,
             'filename' => $filename,
             'uploader_id' => App::user()->id,
             'created' => new DateTime(),
-            'status' => Music::STATUS_UPLOADED,
+            'status' => Media::STATUS_UPLOADED,
             'amount_requested' => 0,
             'crc' => '',
             'duration' => 0
         ]);
 
         //Since its just an audio file, parse immediately
-        $music->status = $parser->parse($music);
+        $media->status = $parser->parse($media);
 
         //If the parse succeeded, save it in the database
-        if($music->status == Music::STATUS_FINISHED || $music->status == Music::STATUS_ERROR) {
-            $music->save();
+        if($media->status == Media::STATUS_FINISHED || $media->status == Media::STATUS_ERROR) {
+            $media->save();
         }
 
         //If the parse failed, the status will be set to the relevant code. Also no need to save the record
 
         //No problems, return result
-        return $this->formatOutput((array) $music);
+        return $this->formatOutput((array) $media);
     }
 
     public function request($params) {
@@ -364,13 +364,13 @@ class ApiController
         }
 
         //Check if the requested Music ID exists
-        $music = Music::find($params['id']);
-        if($music == null || !$music) {
+        $media = Media::find($params['id']);
+        if($media == null || !$media) {
             return $this->formatOutput(__('No media object with the provided ID exists'), self::ITEM_NOT_FOUND);
         }
 
         //Get the path to the file
-        $filepath = App::module('shoutzor')->config('shoutzor')['musicDir'] . '/' . $music->filename;
+        $filepath = App::module('shoutzor')->config('shoutzor')['mediaDir'] . '/' . $media->filename;
 
         //Make sure the file is readable
         if (!is_readable($filepath)) {
@@ -379,7 +379,7 @@ class ApiController
 
 
         //Check if the song hasnt been requested too soon ago
-        $isRequestable = (Request::where(['music_id = :id AND requesttime < NOW() - INTERVAL 30 MINUTE'], ['id' => $music->id])->count() > 0) ? false : true;
+        $isRequestable = (Request::where(['music_id = :id AND requesttime < NOW() - INTERVAL 30 MINUTE'], ['id' => $media->id])->count() > 0) ? false : true;
         if (!$isRequestable) {
             return $this->formatOutput(__('This song has been requested too recently'), self::ERROR_IN_REQUEST);
         }
@@ -397,7 +397,7 @@ class ApiController
         //Save request in the database
         $request = Request::create();
         $request->save(array(
-            'music_id' => $music->id,
+            'music_id' => $media->id,
             'requester_id' => App::user()->id,
             'requesttime' => (new \DateTime())->format('Y-m-d H:i:s')
         ));

@@ -182,39 +182,39 @@ class FormValidation {
 
     /* type validation methods */
 
-    private function isNumeric($input)
+    public static function isNumeric($input)
     {
         return is_numeric($input) === true;
     }
 
-    private function isDigit($input)
+    public static function isDigit($input)
     {
         return ctype_digit($input) === true;
     }
 
-    private function isString($input)
+    public static function isString($input)
     {
         return is_string($input) === true;
     }
 
-    private function isBoolean($input)
+    public static function isBoolean($input)
     {
         return is_bool($input) === true;
     }
 
     /* type requirements */
 
-    private function isNotEmpty($input)
+    public static function isNotEmpty($input)
     {
         return is_null($input) === false && empty($input) === false;
     }
 
-    private function isBetween($input, $min, $max)
+    public static function isBetween($input, $min, $max)
     {
         return ($input >= $min && $input <= $max);
     }
 
-    private function hasValue($input, $values) {
+    public static function hasValue($input, $values) {
         return in_array($input, $values);
     }
 }

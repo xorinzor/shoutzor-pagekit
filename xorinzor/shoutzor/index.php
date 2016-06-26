@@ -158,7 +158,7 @@ return [
         'shoutzor' => [
             'upload' => 1,
             'request' => 1,
-            'musicDir' => '/tmp/shoutzor/music',
+            'mediaDir' => '/tmp/shoutzor/media',
             'parserLastRun' => 0,
             'parserMaxItems' => 10
         ],

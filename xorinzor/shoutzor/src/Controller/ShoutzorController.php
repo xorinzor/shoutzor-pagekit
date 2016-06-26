@@ -54,8 +54,8 @@ class ShoutzorController
         $form->addField(new DividerField());
 
         $form->addField(new InputField(
-            "musicDir",
-            "musicDir",
+            "mediaDir",
+            "mediaDir",
             "Media Storage Directory",
             "text",
             $config['musicDir'],

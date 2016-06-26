@@ -16,7 +16,7 @@ class Request implements \JsonSerializable{
     public $id;
 
     /** @Column(type="integer") @Music_id */
-    public $music_id;
+    public $media_id;
 
     /** @Column(type="integer") @Requester_id */
     public $requester_id;
@@ -27,7 +27,7 @@ class Request implements \JsonSerializable{
     /**
      * @BelongsTo(targetEntity="Xorinzor\Shoutzor\Model\Music", keyFrom="music_id")
      */
-    public $music;
+    public $media;
 
     /**
      * @BelongsTo(targetEntity="Pagekit\User\Model\User", keyFrom="requester_id")

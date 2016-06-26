@@ -9,31 +9,31 @@ $statusid = array(
 );
 
 $status = array(
-    \Xorinzor\Shoutzor\Model\Music::STATUS_UPLOADED => array(
+    \Xorinzor\Shoutzor\Model\Media::STATUS_UPLOADED => array(
         'label' => 'Waiting',
         'progressbar' => 'Waiting to be processed..',
         'labelclass' => 'uk-badge-warning',
         'progressbarclass' => 'uk-progress-warning uk-progress-striped uk-active'
     ),
-    \Xorinzor\Shoutzor\Model\Music::STATUS_PROCESSING => array(
+    \Xorinzor\Shoutzor\Model\Media::STATUS_PROCESSING => array(
         'label' => 'Processing',
         'progressbar' => 'Processing..',
         'labelclass' => '',
         'progressbarclass' => 'uk-progress-striped uk-active'
     ),
-    \Xorinzor\Shoutzor\Model\Music::STATUS_FINISHED => array(
+    \Xorinzor\Shoutzor\Model\Media::STATUS_FINISHED => array(
         'label' => 'Finished',
         'progressbar' => 'Finished',
         'labelclass' => 'uk-badge-success',
         'progressbarclass' => 'uk-progress-success'
     ),
-    \Xorinzor\Shoutzor\Model\Music::STATUS_ERROR => array(
+    \Xorinzor\Shoutzor\Model\Media::STATUS_ERROR => array(
         'label' => 'Error',
         'progressbar' => 'An error occurred while processing, please try again',
         'labelclass' => 'uk-badge-danger',
         'progressbarclass' => 'uk-progress-danger'
     ),
-    \Xorinzor\Shoutzor\Model\Music::STATUS_DUPLICATE => array(
+    \Xorinzor\Shoutzor\Model\Media::STATUS_DUPLICATE => array(
         'label' => 'Duplicate',
         'progressbar' => 'This song has already been uploaded',
         'labelclass' => 'uk-badge-danger',
