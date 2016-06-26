@@ -58,7 +58,7 @@ class ShoutzorController
             "mediaDir",
             "Media Storage Directory",
             "text",
-            $config['musicDir'],
+            $config['mediaDir'],
             "The directory where uploads should be stored")
         )->setValidationType(FormValidation::TYPE_STRING)
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));

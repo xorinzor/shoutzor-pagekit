@@ -206,7 +206,7 @@ class FormValidation {
 
     public static function isNotEmpty($input)
     {
-        return is_null($input) === false && empty($input) === false;
+        return is_null($input) === false && ($input === 0 && empty($input) === true) === false;
     }
 
     public static function isBetween($input, $min, $max)

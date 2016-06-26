@@ -237,10 +237,10 @@ class ApiController
         $parser = new Parser();
 
         //Our main storage path
-        $path = $parser->getMusicDir();
+        $path = $parser->getMediaDir();
 
         //Get the path from the file in the temporary Directory
-        $filepath = $parser->getTempMusicDir() . '/' . $media->filename;
+        $filepath = $parser->getTempMediaDir() . '/' . $media->filename;
 
         //Make sure our root path exists and is writable
         if((!is_dir($path) && !mkdir($path)) ||  !is_writable($path)) {
@@ -297,7 +297,7 @@ class ApiController
         $parser = new Parser();
 
         //Our temporary storage path
-        $path = $parser->getTempMusicDir();
+        $path = $parser->getTempMediaDir();
 
         //Make sure our temporary directory exists and is writable
         if((!is_dir($path) && !mkdir($path)) || !is_writable($path)) {
