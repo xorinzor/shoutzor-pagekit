@@ -117,6 +117,10 @@ class LiquidsoapManager {
         //Reinitialize our connection to the socket for the type of script
         try {
             $this->{$type . "Connection"} = new LiquidsoapCommunicator($this->socketPath . '/' . $type);
+
+            if($type == 'shoutzor') {
+                $this->command('shoutzor', 'sound.select 0 true');
+            }
         } catch(Exception $e) {
             //The socket isn't up yet apparently
         }

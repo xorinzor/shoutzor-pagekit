@@ -347,6 +347,11 @@ class ApiController
         return $this->formatOutput((array) $media);
     }
 
+    /**
+     * Handles the file uploads
+     * @method request
+     * @param id the ID from the media file thats requested
+     */
     public function request($params) {
         //Make sure file uploads are enabled
         if(!App::user()->hasAccess("shoutzor: add requests")) {
@@ -403,5 +408,44 @@ class ApiController
         ));
 
         return $this->formatOutput(true);
+    }
+
+    /**
+     * Runs a liquidsoap command
+     * @method liquidsoapcommand
+     * @param type the type of the script to start
+     * @param command the command to run
+     * @param options extra options to provide with the command
+     */
+    public function liquidsoapcommand($params) {
+        $liquidsoapManager = new LiquidsoapManager();
+
+        switch($params['command']) {
+            case "start":
+                $result = $liquidsoapManager->startScript($params['type']);
+                break;
+
+            case "stop":
+                $result = $liquidsoapManager->stopScript($params['type']);
+                break;
+
+            case "volume":
+                $result = $liquidsoapManager->setVolume($params['type'], $params['options']);
+                break;
+
+            case "next":
+                $result = $liquidsoapManager->nextTrack();
+                break;
+
+            default:
+                return $this->formatOutput(__('Invalid command provided'), self::CODE_BAD_REQUEST);
+                break;
+        }
+
+        if($result) {
+            return $this->formatOutput($result);
+        }
+
+        return $this->formatOutput(false, self::ERROR_IN_REQUEST);
     }
 }
