@@ -257,7 +257,6 @@ class LiquidsoapController
 
                 //Generate our new config file
                 $liquidsoapManager = new liquidsoapManager();
-                $liquidsoapManager->stopScript('shoutzor');
                 $liquidsoapManager->generateConfigFile($replace_values);
 
                 //Show success message
