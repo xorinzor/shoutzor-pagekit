@@ -11,18 +11,7 @@ class LiquidsoapCommunicator {
 
     public function __construct($socketLocation) {
         $this->socketLocation = $socketLocation;
-
-		try {
-	        $this->socket = $this->createSocket();
-		} catch(Exception $e) {
-			throw $e;
-		}
-    }
-
-    public function __destruct() {
-		if($this->socket !== null) {
-        	socket_close($this->socket);
-		}
+		$this->socket = null;
     }
 
     private function createSocket() {
@@ -38,6 +27,12 @@ class LiquidsoapCommunicator {
 
 		return $sock;
     }
+
+	private function closeSocket() {
+		if($this->socket !== null) {
+        	socket_close($this->socket);
+		}
+	}
 
     private function sendCommand($command, $failed = false) {
 		$msg = "$command\n\0";
@@ -89,14 +84,19 @@ class LiquidsoapCommunicator {
     }
 
     public function command($cmd) {
-		if($this->socket == null) {
-			return false;
-		}
-
 		try {
-    		return $this->sendCommand($cmd);
+			$this->socket = $this->createSocket();
+
+			if($this->socket == null) {
+				return false;
+			}
+			
+    		$result = $this->sendCommand($cmd);
     	} catch(Exception $e) {
-    		return false;
+			$result = false;
     	}
+
+		$this->closeSocket();
+		return $result;
     }
 }

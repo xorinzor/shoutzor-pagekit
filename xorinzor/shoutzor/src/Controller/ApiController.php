@@ -4,7 +4,9 @@ namespace Xorinzor\Shoutzor\Controller;
 use Pagekit\Application as App;
 
 use Xorinzor\Shoutzor\Model\Music;
+use Xorinzor\Shoutzor\Model\Request;
 use Xorinzor\Shoutzor\App\Parser;
+use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 
 use ReflectionMethod;
 use Exception;
@@ -218,7 +220,7 @@ class ApiController
 
         //Make sure the requested media object exists
         if($music == null || !$music) {
-            return $this->formatOutput(__('Media object with this ID does not exist'), self::ITEM_NOT_FOUND);
+            return $this->formatOutput(__('No media object with the provided ID exists'), self::ITEM_NOT_FOUND);
         }
 
         if($music->status === Music::STATUS_FINISHED) {
@@ -338,5 +340,63 @@ class ApiController
 
         //No problems, return result
         return $this->formatOutput((array) $music);
+    }
+
+    public function request($params) {
+        //Make sure file uploads are enabled
+        if(!App::user()->hasAccess("shoutzor: add requests")) {
+            return $this->formatOutput(__('You have no permission to request'), self::METHOD_NOT_AVAILABLE);
+        }
+
+        //Make sure file uploads are enabled
+        if(App::module('shoutzor')->config('shoutzor.request') == 0) {
+            return $this->formatOutput(__('File requests have been disabled'), self::METHOD_NOT_AVAILABLE);
+        }
+
+        //Validate the parameter value
+        if(!is_numeric($params['id'])) {
+            return $this->formatOutput(__('Not a valid numerical value provided for the media object ID'), self::INVALID_PARAMETER_VALUE);
+        }
+
+        //Check if the requested Music ID exists
+        $music = Music::find($params['id']);
+        if($music == null || !$music) {
+            return $this->formatOutput(__('No media object with the provided ID exists'), self::ITEM_NOT_FOUND);
+        }
+
+        //Get the path to the file
+        $filepath = App::module('shoutzor')->config('shoutzor')['musicDir'] . '/' . $music->filename;
+
+        //Make sure the file is readable
+        if (!is_readable($filepath)) {
+            return $this->formatOutput(__('Cannot read music file '.$filepath.', Permission denied.'), self::ERROR_IN_REQUEST);
+        }
+
+
+        //Check if the song hasnt been requested too soon ago
+        $isRequestable = (Request::where(['music_id = :id AND requesttime < NOW() - INTERVAL 30 MINUTE'], ['id' => $music->id])->count() > 0) ? false : true;
+        if (!$isRequestable) {
+            return $this->formatOutput(__('This song has been requested too recently'), self::ERROR_IN_REQUEST);
+        }
+
+        //Check if the user hasnt already recently requested a song
+        $canRequest = (Request::where(['requester_id = :id AND requesttime < NOW() - INTERVAL 10 MINUTE'], ['id' => App::user()->id])->count() > 0) ? false : true;
+        if (!$canRequest) {
+            return $this->formatOutput(__('You already recently requested a song, try again in 10 minutes'), self::ERROR_IN_REQUEST);
+        }
+
+        //Add request to the playlist
+        $liquidsoapManager = new liquidsoapManager();
+        $liquidsoapManager->queueTrack($filepath);
+
+        //Save request in the database
+        $request = Request::create();
+        $request->save(array(
+            'music_id' => $music->id,
+            'requester_id' => App::user()->id,
+            'requesttime' => (new \DateTime())->format('Y-m-d H:i:s')
+        ));
+
+        return $this->formatOutput(true);
     }
 }

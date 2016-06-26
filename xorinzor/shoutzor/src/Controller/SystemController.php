@@ -29,10 +29,14 @@ class SystemController
         $wrapperActive = $liquidsoapManager->isUp('wrapper');
         $shoutzorActive = $liquidsoapManager->isUp('shoutzor');
 
-        $liquidsoapManager->startScript('wrapper');
+        /*
+        @TODO move to own API method
         $liquidsoapManager->startScript('shoutzor');
+        sleep(3);
 
-
+        //IMPORTANT! If not called after start of the script it wont start playing requests
+        $liquidsoapManager->command('shoutzor', 'sound.select 0 true');
+        */
 
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
 

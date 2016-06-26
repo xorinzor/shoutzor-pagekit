@@ -93,15 +93,16 @@
                     clickedItem.prev(".uk-alert").remove();
                 }
 
-                $.post("<?= $view->url('@shoutzor/api/vlcmanager/addrequest'); ?>", {
-                    music: $(this).data("music")
+                $.post("<?= $view->url('@shoutzor/api/index'); ?>", {
+                    method: "request",
+                    id: $(this).data("music")
                 }).always(function (data, type) {
                     if (type == "success") {
-                        if(data.result == true) {
+                        if(data.info.code == 200) {
                             clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-check');
                             clickedItem.attr('class', 'uk-button uk-button-success');
                         } else {
-                            $('<div class="uk-alert uk-alert-danger">'+data.message+'</div>').insertBefore(clickedItem);
+                            $('<div class="uk-alert uk-alert-danger">'+data.data+'</div>').insertBefore(clickedItem);
                             clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-plus');
                             clickedItem.attr('class', 'uk-button uk-button-primary');
                         }

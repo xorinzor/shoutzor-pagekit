@@ -74,7 +74,7 @@ class LiquidsoapManager {
 
     public function queueTrack($filename) {
         if($conn = $this->getConnection('shoutzor')) {
-            return $conn->command('shoutzorqueue.push '.$filename);
+            return $conn->command('shoutzorqueue.push replay_gain:'.$filename);
         } else {
             return false;
         }
@@ -83,6 +83,14 @@ class LiquidsoapManager {
     public function isUp($type) {
         if($conn = $this->getConnection($type)) {
             return $conn->command('uptime');
+        } else {
+            return false;
+        }
+    }
+
+    public function command($type, $command) {
+        if($conn = $this->getConnection($type)) {
+            return $conn->command($command);
         } else {
             return false;
         }
