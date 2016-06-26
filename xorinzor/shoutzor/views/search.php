@@ -8,11 +8,7 @@
             <li>
                 <div class="search-result">
                     <figure class="uk-overlay">
-                        <?php if($item->is_video): ?>
-                            <img src="<?= $item->thumbnail; ?>">
-                        <?php else: ?>
-                            <img src="<?= $view->url()->getStatic('shoutzor:assets/images/music-placeholder.png'); ?>">
-                        <?php endif; ?>
+                        <img src="<?= $view->url()->getStatic('shoutzor:assets/images/music-placeholder.png'); ?>">
                     </figure>
                     <p><strong><?= $item->title; ?></strong> - <?php if($item->artist) { echo $item->artist->name; } ?></p>
                     <a data-music="<?= $item->id; ?>" class="uk-button uk-button-primary"><i class="uk-icon uk-icon-plus"></i> Request</a>
