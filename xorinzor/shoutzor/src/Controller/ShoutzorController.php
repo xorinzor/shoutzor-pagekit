@@ -54,6 +54,36 @@ class ShoutzorController
         $form->addField(new DividerField());
 
         $form->addField(new InputField(
+            "musicDir",
+            "musicDir",
+            "Media Storage Directory",
+            "text",
+            $config['musicDir'],
+            "The directory where uploads should be stored")
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new InputField(
+            "parserLastRun",
+            "parserLastRun",
+            "Parser Last Run Timestamp",
+            "text",
+            $config['parserLastRun'],
+            "The timestamp of when the parser last ran - in general you will not have to make any changes to this value")
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new InputField(
+            "parserMaxItems",
+            "parserMaxItems",
+            "Parser Max Items",
+            "text",
+            $config['parserMaxItems'],
+            "The maximum amount of items the parser should parse on each run")
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new InputField(
             "submit",
             "", //Don't set a name, we don't want this to show up in POST data
             "Save Changes",
