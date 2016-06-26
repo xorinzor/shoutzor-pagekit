@@ -379,7 +379,7 @@ class ApiController
 
 
         //Check if the song hasnt been requested too soon ago
-        $isRequestable = (Request::where(['music_id = :id AND requesttime < NOW() - INTERVAL 30 MINUTE'], ['id' => $media->id])->count() > 0) ? false : true;
+        $isRequestable = (Request::where(['media_id = :id AND requesttime < NOW() - INTERVAL 30 MINUTE'], ['id' => $media->id])->count() > 0) ? false : true;
         if (!$isRequestable) {
             return $this->formatOutput(__('This song has been requested too recently'), self::ERROR_IN_REQUEST);
         }
@@ -397,7 +397,7 @@ class ApiController
         //Save request in the database
         $request = Request::create();
         $request->save(array(
-            'music_id' => $media->id,
+            'media_id' => $media->id,
             'requester_id' => App::user()->id,
             'requesttime' => (new \DateTime())->format('Y-m-d H:i:s')
         ));
