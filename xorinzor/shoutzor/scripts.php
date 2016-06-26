@@ -17,8 +17,8 @@ return [
             });
         }
 
-        if ($util->tableExists('@shoutzor_music') === false) {
-            $util->createTable('@shoutzor_music', function ($table) {
+        if ($util->tableExists('@shoutzor_media') === false) {
+            $util->createTable('@shoutzor_media', function ($table) {
                 $table->addColumn('id', 'integer', ['unsigned' => true, 'length' => 10, 'autoincrement' => true]);
                 $table->addColumn('title', 'string', ['length' => 255, 'default' => '']);
                 $table->addColumn('artist_id', 'integer', ['unsigned' => true, 'length' => 10]);
@@ -42,11 +42,11 @@ return [
         if ($util->tableExists('@shoutzor_requestlist') === false) {
             $util->createTable('@shoutzor_requestlist', function ($table) {
                 $table->addColumn('id', 'integer', ['unsigned' => true, 'length' => 10, 'autoincrement' => true]);
-                $table->addColumn('music_id', 'integer', ['unsigned' => true, 'length' => 10]);
+                $table->addColumn('media_id', 'integer', ['unsigned' => true, 'length' => 10]);
                 $table->addColumn('requester_id', 'integer', ['unsigned' => true, 'length' => 10]);
                 $table->addColumn('requesttime', 'datetime');
                 $table->setPrimaryKey(['id']);
-                $table->addIndex(array('music_id'), 'artist_index');
+                $table->addIndex(array('media_id'), 'artist_index');
                 $table->addIndex(array('requester_id'), 'uploader_index');
                 $table->addIndex(array('requesttime'), 'requesttime_index');
             });
