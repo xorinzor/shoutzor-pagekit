@@ -83,6 +83,28 @@ class ShoutzorController
         )->setValidationType(FormValidation::TYPE_NUMERIC)
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
+        $form->addField(new DividerField());
+
+        $form->addField(new InputField(
+            "userRequestDelay",
+            "userRequestDelay",
+            "User Request Delay",
+            "text",
+            $config['userRequestDelay'],
+            "The delay in minutes that a user has to wait to be able to request a media object again")
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new InputField(
+            "mediaRequestDelay",
+            "mediaRequestDelay",
+            "Media Request Delay",
+            "text",
+            $config['mediaRequestDelay'],
+            "The delay in minutes before a media object can be played again")
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
         $form->addField(new InputField(
             "submit",
             "", //Don't set a name, we don't want this to show up in POST data

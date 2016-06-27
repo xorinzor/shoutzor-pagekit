@@ -162,7 +162,7 @@ return [
             'parserLastRun' => 0,
             'parserMaxItems' => 10,
             'userRequestDelay' => 10,
-            'songRequestDelay' => 40
+            'mediaRequestDelay' => 40
         ],
 
         'liquidsoap' => [

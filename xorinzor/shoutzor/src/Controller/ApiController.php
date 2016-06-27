@@ -386,7 +386,7 @@ class ApiController
             return $this->formatOutput(__('Cannot read music file '.$filepath.', Permission denied.'), self::ERROR_IN_REQUEST);
         }
 
-        $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['songRequestDelay'].'M'))->format('Y-m-d H:i:s');
+        $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['mediaRequestDelay'].'M'))->format('Y-m-d H:i:s');
 
         //Check if the song hasnt been requested too soon ago
         $isRequestable = (Request::where('media_id = :id AND requesttime > :requesttime', ['id' => $media->id, 'requesttime' => $canRequestDateTime])->count() == 0) ? true : false;
@@ -394,7 +394,7 @@ class ApiController
             return $this->formatOutput(__('This song has been requested too recently'), self::ERROR_IN_REQUEST);
         }
 
-        $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['songRequestDelay'].'M'))->format('Y-m-d H:i:s');
+        $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['userRequestDelay'].'M'))->format('Y-m-d H:i:s');
 
         //Check if the user hasnt already recently requested a song
         $canRequest = (Request::where('requester_id = :user AND requesttime > :requesttime', ['user' => App::user()->id, 'requesttime' => $canRequestDateTime])->count() == 0) ? true : false;
