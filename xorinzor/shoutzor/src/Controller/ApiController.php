@@ -5,7 +5,9 @@ use Pagekit\Application as App;
 
 use Xorinzor\Shoutzor\Model\Media;
 use Xorinzor\Shoutzor\Model\Request;
+use Xorinzor\Shoutzor\App\AutoDJ;
 use Xorinzor\Shoutzor\App\Parser;
+use Xorinzor\Shoutzor\App\QueueManager;
 use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 
 use ReflectionMethod;
@@ -15,6 +17,9 @@ use DateInterval;
 
 class ApiController
 {
+
+    private $shoutzorRunning = true;
+
     /* API Result codes */
     const CODE_SUCCESS      = 200;
     const CODE_BAD_REQUEST  = 400;
@@ -354,6 +359,10 @@ class ApiController
      * @param id the ID from the media file thats requested
      */
     public function request($params) {
+        if($this->shoutzorRunning === false) {
+            return $this->formatOutput(__('Shoutzor is currently not running or restarting, try again in a few seconds'), self::METHOD_NOT_AVAILABLE);
+        }
+
         //Make sure file uploads are enabled
         if(!App::user()->hasAccess("shoutzor: add requests")) {
             return $this->formatOutput(__('You have no permission to request'), self::METHOD_NOT_AVAILABLE);
@@ -378,14 +387,6 @@ class ApiController
         //Get the config options
         $config = App::module('shoutzor')->config('shoutzor');
 
-        //Get the path to the file
-        $filepath = $config['mediaDir'] . '/' . $media->filename;
-
-        //Make sure the file is readable
-        if (!is_readable($filepath)) {
-            return $this->formatOutput(__('Cannot read music file '.$filepath.', Permission denied.'), self::ERROR_IN_REQUEST);
-        }
-
         $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['mediaRequestDelay'].'M'))->format('Y-m-d H:i:s');
 
         //Check if the song hasnt been requested too soon ago
@@ -402,17 +403,12 @@ class ApiController
             return $this->formatOutput(__('You already recently requested a song, try again in 10 minutes'), self::ERROR_IN_REQUEST);
         }
 
-        //Add request to the playlist
-        $liquidsoapManager = new liquidsoapManager();
-        $liquidsoapManager->queueTrack($filepath);
-
-        //Save request in the database
-        $request = Request::create();
-        $request->save(array(
-            'media_id' => $media->id,
-            'requester_id' => App::user()->id,
-            'requesttime' => (new \DateTime())->format('Y-m-d H:i:s')
-        ));
+        try {
+            $queueManager = new QueueManager();
+            $queueManager->addToQueue($media);
+        } catch(Exception $e) {
+            return $this->formatOutput($e->getMessage(), self::ERROR_IN_REQUEST);
+        }
 
         return $this->formatOutput(true);
     }
@@ -454,5 +450,47 @@ class ApiController
         }
 
         return $this->formatOutput(false, self::ERROR_IN_REQUEST);
+    }
+
+    /**
+     * Automatically fixes the shoutzor script
+     * This method gets called by shoutzor when blank audio is detected for a prolonged time
+     * As the result of some kind of crash (possibly?)
+     * @method autofix
+     */
+    public function autofix($params) {
+        if($this->ensureLocalhost() === false) {
+            return $this->formatOutput(__('You have no access to this method'), self::METHOD_NOT_AVAILABLE);
+        }
+
+        //Prevent the request method from adding the request while we are restarting shoutzor
+        $this->shoutzorRunning = false;
+
+        $liquidsoapManager = new LiquidsoapManager();
+        $liquidsoapManager->stopScript('shoutzor');
+        sleep(2);
+        $liquidsoapManager->startScript('shoutzor');
+
+        //Get the remaining queue and add them all to shoutzor
+        $autoDJ = new AutoDJ();
+        $autoDJ->autofix();
+
+        //Shoutzor is back up and running, requests are now allowed again
+        $this->shoutzorRunning = true;
+
+        return $this->formatOutput(true);
+    }
+
+    /**
+     * Notifies the webapp that the next track is playing
+     * This method gets called by shoutzor when the next song is played
+     * Use this method to pop the first element from the queue
+     * @method nexttrack
+     */
+    public function nexttrack($params) {
+        $autodj = new AutoDJ();
+        $autodj->playNext();
+
+        return $this->formatOutput(true);
     }
 }
