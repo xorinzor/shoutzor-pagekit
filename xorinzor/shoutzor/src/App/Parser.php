@@ -13,20 +13,20 @@ class Parser {
 
     private $id3;
     private $mediaDir;
-    private $tempMusicDir;
+    private $tempMediaDir;
 
     public function __construct() {
         $this->id3 = new getID3();
-        $this->musicDir = App::module('shoutzor')->config('shoutzor')['musicDir'];
-        $this->tempMusicDir = $this->musicDir . '/temp';
+        $this->mediaDir = App::module('shoutzor')->config('shoutzor')['mediaDir'];
+        $this->tempMediaDir = $this->mediaDir . '/temp';
     }
 
-    public function getMusicDir() {
-        return $this->musicDir;
+    public function getMediaDir() {
+        return $this->mediaDir;
     }
 
-    public function getTempMusicDir() {
-        return $this->tempMusicDir;
+    public function getTempMediaDir() {
+        return $this->tempMediaDir;
     }
 
     public function parse(Media &$media) {
@@ -35,12 +35,12 @@ class Parser {
             return Media::STATUS_FINISHED;
         }
 
-        $media->hash = $this->calculateHash($this->tempMusicDir . '/' . $media->filename);
+        $media->hash = $this->calculateHash($this->tempMediaDir . '/' . $media->filename);
 
         //It's a duplicate, remove it and return the result code
         if($existing = $this->exists($media)) {
             //Remove the temporary file
-            unlink($this->tempMusicDir . '/' . $media->filename);
+            unlink($this->tempMediaDir . '/' . $media->filename);
 
             //Return the duplicate statuscode
             return Media::STATUS_DUPLICATE;
@@ -51,7 +51,7 @@ class Parser {
 
         //Not a duplicate, move the file from the temp to the permanent directory.
         //Until a file finishes parsing completely, the file will never be moved to the permanent directory
-        rename($this->tempMusicDir . '/' . $media->filename, $this->musicDir . '/' . $media->filename);
+        rename($this->tempMediaDir . '/' . $media->filename, $this->mediaDir . '/' . $media->filename);
 
         //Return the finished statuscode
         return Media::STATUS_FINISHED;
@@ -82,7 +82,7 @@ class Parser {
      * Calculates the duration (in seconds) of a file
      */
     public function getDuration(Media $media) {
-        $info = $this->id3->analyze($this->tempMusicDir . '/' . $media->filename);
+        $info = $this->id3->analyze($this->tempMediaDir . '/' . $media->filename);
         $time = $info['playtime_string'];
         $duration = explode(":", $time);
 

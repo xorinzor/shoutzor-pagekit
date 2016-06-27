@@ -11,6 +11,7 @@ use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 use ReflectionMethod;
 use Exception;
 use DateTime;
+use DateInterval;
 
 class ApiController
 {
@@ -374,24 +375,30 @@ class ApiController
             return $this->formatOutput(__('No media object with the provided ID exists'), self::ITEM_NOT_FOUND);
         }
 
+        //Get the config options
+        $config = App::module('shoutzor')->config('shoutzor');
+
         //Get the path to the file
-        $filepath = App::module('shoutzor')->config('shoutzor')['mediaDir'] . '/' . $media->filename;
+        $filepath = $config['mediaDir'] . '/' . $media->filename;
 
         //Make sure the file is readable
         if (!is_readable($filepath)) {
             return $this->formatOutput(__('Cannot read music file '.$filepath.', Permission denied.'), self::ERROR_IN_REQUEST);
         }
 
+        $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['songRequestDelay'].'M'))->format('Y-m-d H:i:s');
 
         //Check if the song hasnt been requested too soon ago
-        $isRequestable = (Request::where(['media_id = :id AND requesttime < NOW() - INTERVAL 30 MINUTE'], ['id' => $media->id])->count() > 0) ? false : true;
-        if (!$isRequestable) {
+        $isRequestable = (Request::where('media_id = :id AND requesttime > :requesttime', ['id' => $media->id, 'requesttime' => $canRequestDateTime])->count() == 0) ? true : false;
+        if ($isRequestable === false) {
             return $this->formatOutput(__('This song has been requested too recently'), self::ERROR_IN_REQUEST);
         }
 
+        $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['songRequestDelay'].'M'))->format('Y-m-d H:i:s');
+
         //Check if the user hasnt already recently requested a song
-        $canRequest = (Request::where(['requester_id = :id AND requesttime < NOW() - INTERVAL 10 MINUTE'], ['id' => App::user()->id])->count() > 0) ? false : true;
-        if (!$canRequest) {
+        $canRequest = (Request::where('requester_id = :user AND requesttime > :requesttime', ['user' => App::user()->id, 'requesttime' => $canRequestDateTime])->count() == 0) ? true : false;
+        if ($canRequest === false) {
             return $this->formatOutput(__('You already recently requested a song, try again in 10 minutes'), self::ERROR_IN_REQUEST);
         }
 
@@ -438,7 +445,7 @@ class ApiController
                 break;
 
             default:
-                return $this->formatOutput(__('Invalid command provided'), self::CODE_BAD_REQUEST);
+                return $this->formatOutput(__('Invalid command provided'), self::INVALID_PARAMETER_VALUE);
                 break;
         }
 

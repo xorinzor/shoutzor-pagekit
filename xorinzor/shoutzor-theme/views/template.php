@@ -25,14 +25,17 @@
         <meta name="msapplication-TileImage" content="<?= $view->url()->getStatic('theme:images/ms-icon-144x144.png'); ?>">
         <meta name="theme-color" content="#ffffff">
 
-        <?php $view->style('uikit-style', 'theme:css/uikit.almost-flat.min.css') ?>
-        <?php $view->style('uikit-search', 'theme:css/components/search.min.css') ?>
+        <?php $view->style('uikit', 'theme:css/uikit.almost-flat.min.css') ?>
+        <?php $view->style('uikit-search', 'theme:css/components/search.min.css', 'uikit') ?>
 
-        <?php $view->style('shoutzor-theme-style', 'theme:css/theme.css') ?>
+        <?php $view->style('pnotify', 'shoutzor:assets/css/pnotify.custom.min.css', 'uikit') ?>
+        <?php $view->style('shoutzor-theme', 'theme:css/theme.css', 'pnotify') ?>
 
         <?php $view->script('jquery', 'theme:js/jquery-1.9.1.js') ?>
         <?php $view->script('uikit-script', 'theme:js/uikit.min.js', 'jquery') ?>
-        <?php $view->script('shoutzor-theme-script', 'theme:js/theme.js') ?>
+        <?php $view->script('pnotify', 'shoutzor:assets/js/pnotify.custom.min.js', 'jquery') ?>
+        <?php $view->script('shoutzor-api', 'shoutzor:assets/js/api.js', 'jquery') ?>
+        <?php $view->script('shoutzor-theme', 'theme:js/theme.js', 'shoutzor-api') ?>
     </head>
     <body>
         <div class="uk-container uk-container-center">
@@ -81,38 +84,5 @@
 
         <!-- Insert code before the closing body tag  -->
         <?= $view->render('footer') ?>
-
-        <script type="text/javascript">
-            $("a[data-music]").click(function() {
-                var clickedItem = $(this);
-
-                clickedItem.attr('class', 'uk-button');
-                clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-spinner uk-icon-spin');
-
-                if(clickedItem.prev(".uk-alert")) {
-                    clickedItem.prev(".uk-alert").remove();
-                }
-
-                $.post("<?= $view->url('@shoutzor/api/index'); ?>", {
-                    method: "request",
-                    id: $(this).data("music")
-                }).always(function (data, type) {
-                    if (type == "success") {
-                        if(data.info.code == 200) {
-                            clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-check');
-                            clickedItem.attr('class', 'uk-button uk-button-success');
-                        } else {
-                            $('<div class="uk-alert uk-alert-danger">'+data.data+'</div>').insertBefore(clickedItem);
-                            clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-plus');
-                            clickedItem.attr('class', 'uk-button uk-button-primary');
-                        }
-                    } else {
-                        $('<div class="uk-alert uk-alert-danger">Oops! Something went wrong!</div>').insertBefore(clickedItem);
-                        clickedItem.find(".uk-icon").attr('class', 'uk-icon uk-icon-plus');
-                        clickedItem.attr('class', 'uk-button uk-button-primary');
-                    }
-                });
-            });
-        </script>
     </body>
 </html>

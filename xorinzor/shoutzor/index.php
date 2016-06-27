@@ -160,7 +160,9 @@ return [
             'request' => 1,
             'mediaDir' => '/tmp/shoutzor/media',
             'parserLastRun' => 0,
-            'parserMaxItems' => 10
+            'parserMaxItems' => 10,
+            'userRequestDelay' => 10,
+            'songRequestDelay' => 40
         ],
 
         'liquidsoap' => [
