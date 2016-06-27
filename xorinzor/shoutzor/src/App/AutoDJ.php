@@ -13,11 +13,11 @@ class AutoDJ {
         $this->queueManager = new QueueManager();
     }
 
-    public function autofix() {
+    public function importQueue() {
         if($this->queueManager->getQueueCount() > 0) {
             $queue = $this->queueManager->getQueueList();
-            foreach($queue as $media) {
-                $this->queueManager->addToQueue($media, false);
+            foreach($queue as $request) {
+                $this->queueManager->addToQueue($request->media, false);
             }
         }
 

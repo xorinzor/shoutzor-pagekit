@@ -10,19 +10,25 @@ use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 class QueueManager {
 
     public function getQueueList() {
-        return App::db()->createQueryBuilder()->select('*')->from('@shoutzor_requestlist')->related('media')->execute()->fetchAll();
+        return Request::query()->related('media')->get();
     }
 
     public function getNextFromQueue() {
-        return App::db()->createQueryBuilder()->select('*')->from('@shoutzor_requestlist')->orderBy('requesttime', 'ASC')->related('media')->first();
+        return Request::query()->orderBy('id', 'ASC')->related('media')->first();
     }
 
     public function removeNextFromQueue() {
-        return App::db()->createQueryBuilder()->select('*')->from('@shoutzor_requestlist')->orderBy('requesttime', 'ASC')->delete();
+        $obj = $this->getNextFromQueue();
+
+        if($obj !== null) {
+            $obj->delete();
+        }
+
+        return true;
     }
 
     public function getQueueCount() {
-        return App::db()->createQueryBuilder()->select('*')->from('@shoutzor_requestlist')->count();
+        return Request::query()->count();
     }
 
     public function addToQueue(Media $media, $createRequest = true) {
@@ -50,7 +56,7 @@ class QueueManager {
                 'requesttime' => (new \DateTime())->format('Y-m-d H:i:s')
             ));
         }
-        
+
         return true;
     }
 

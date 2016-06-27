@@ -182,6 +182,7 @@ return [
             'wrapperOutputMount' => '/shoutzor',
             'wrapperOutputPort' => '8000',
             'wrapperOutputPassword' => 'hackme',
+            'shoutzorUrl' => ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://") . $_SERVER['SERVER_NAME'],
             'encodingBitrate' => 192,
             'encodingQuality' => 2
         ]

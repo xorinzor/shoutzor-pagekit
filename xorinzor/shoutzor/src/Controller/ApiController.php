@@ -87,9 +87,11 @@ class ApiController
             '::1'
         );
 
-        if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
-            throw new Exception("This API can only be accessed by the server!");
+        if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist)) {
+            return false;
         }
+
+        return true;
     }
 
     protected function getPath($path = '')
@@ -426,6 +428,8 @@ class ApiController
         switch($params['command']) {
             case "start":
                 $result = $liquidsoapManager->startScript($params['type']);
+                $autoDJ = new AutoDJ();
+                $autoDJ->importQueue();
                 break;
 
             case "stop":
@@ -468,12 +472,16 @@ class ApiController
 
         $liquidsoapManager = new LiquidsoapManager();
         $liquidsoapManager->stopScript('shoutzor');
-        sleep(2);
+
+        sleep(5);
+
         $liquidsoapManager->startScript('shoutzor');
+
+        sleep(1);
 
         //Get the remaining queue and add them all to shoutzor
         $autoDJ = new AutoDJ();
-        $autoDJ->autofix();
+        $autoDJ->importQueue();
 
         //Shoutzor is back up and running, requests are now allowed again
         $this->shoutzorRunning = true;

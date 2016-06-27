@@ -203,6 +203,18 @@ class LiquidsoapController
         $form->addField(new DividerField());
 
         $form->addField(new InputField(
+            "shoutzorUrl",
+            "shoutzorUrl",
+            "Shoutzor Website URL",
+            "text",
+            $config['shoutzorUrl'],
+            "The hostname of the url this website is running on, example: 'https://shoutzor.com' NO ENDING SLASH")
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new DividerField());
+
+        $form->addField(new InputField(
             "encodingBitrate",
             "encodingBitrate",
             "Encoding bitrate",

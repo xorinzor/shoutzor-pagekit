@@ -108,7 +108,11 @@ class LiquidsoapManager {
             return true;
         }
 
-        $process = new Process("cd $this->liquidsoapDirectory && HOME=". $this->socketPath ."/ liquidsoap -d $type.liq");
+        if(file_exists($this->socketPath . '/' . $type)) {
+            return true;
+        }
+
+        $process = new Process("cd $this->liquidsoapDirectory && HOME=". $this->socketPath ."/ liquidsoap -d $type.liq &");
         $process->run();
 
         //Sleep a few seconds to give the script time to boot up
@@ -138,8 +142,15 @@ class LiquidsoapManager {
         }
 
         //Close the screen session
-        $process = new Process("kill -TERM `cat " . $this->pidFileDirectory . $type . ".pid`");
+        $process = new Process("kill -9 `cat " . $this->pidFileDirectory . $type . ".pid` &");
         $process->run();
+
+        sleep(2);
+
+        //Remove any potential remaining socket files
+        if(file_exists($this->socketPath . '/shoutzor')) {
+            unlink($this->socketPath . '/shoutzor');
+        }
 
         return true;
     }

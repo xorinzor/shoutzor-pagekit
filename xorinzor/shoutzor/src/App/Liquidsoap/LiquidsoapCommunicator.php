@@ -8,17 +8,16 @@ class LiquidsoapCommunicator {
 
 	private $socketLocation; //must have www-data:www-data permission
     private $socket;
+	private $errorCount;
 
     public function __construct($socketLocation) {
         $this->socketLocation = $socketLocation;
 		$this->socket = $this->createSocket();
+		$this->errorCount = 0;
     }
 
 	public function __destruct() {
-		if($this->socket !== null) {
-			$this->socketWrite("exit");
-			socket_close($this->socket);
-		}
+		$this->closeSocket();
 	}
 
     private function createSocket() {
@@ -34,6 +33,13 @@ class LiquidsoapCommunicator {
 
 		return $sock;
     }
+
+	private function closeSocket() {
+		if($this->socket !== null) {
+			$this->socketWrite("exit");
+			socket_close($this->socket);
+		}
+	}
 
 	/**
 	 * Function that writes a message fully to the socket, even if its too long
@@ -53,7 +59,16 @@ class LiquidsoapCommunicator {
 			$sent = socket_write($this->socket, $message, $length);
 
 			if ($sent === false) {
-				break;
+				$this->errorCount++;
+
+				//Dont retry more then 5 times
+				if($this->errorCount > 5) {
+					return false;
+				}
+
+				$this->closeSocket();
+				$this->createSocket();
+				return $this->socketWrite($message);
 			}
 
 			// Check if the entire message has been sent
@@ -73,7 +88,8 @@ class LiquidsoapCommunicator {
 		return true;
 	}
 
-    private function sendCommand($command, $failed = false) {
+    private function sendCommand($command) {
+		$this->errorCount = 0;
 		$sent = $this->socketWrite($command);
 
 		if($sent === false) {

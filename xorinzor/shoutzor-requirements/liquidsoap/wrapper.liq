@@ -7,6 +7,10 @@ set("server.socket",                wrapperServerSocket)
 set("server.socket.path",           wrapperServerSocketPath)
 set("server.socket.permissions",    wrapperServerSocketPermissions)
 
+def blank_handler()
+  system("curl #{shoutzorUrl}/shoutzorapi?method=autofix &")
+end
+
 #In case nothing works anymore, say this
 unfallibleSource = single("say: Shoutzor is experiencing technical difficulties, please stand by")
 
@@ -22,6 +26,9 @@ live = input.harbor(
     password = wrapperInputListeningPassword)
 
 input = fallback(track_sensitive=false, [live, input])
+
+#make sure the shoutzor script is running
+input = on_blank(max_blank=15., blank_handler, input)
 
 #stream output
 output.icecast(

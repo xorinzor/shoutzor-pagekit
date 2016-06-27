@@ -104,12 +104,8 @@ def append_type(m) =
 	[("type", "jingles")]
 end
 
-def blank_handler()
-  system("curl http://localhost/shoutzorapi?method=autofix > /dev/null &")
-end
-
 def metadatahandler(m)
-	system("curl http://localhost/shoutzorapi?method=nexttrack > /dev/null &")
+	system("curl #{shoutzorUrl}/shoutzorapi?method=nexttrack &")
 end
 
 #In case nothing works anymore, say this
@@ -128,10 +124,6 @@ input = smart_crossthing(start_next=5., fade_out=7., fade_in=5., conservative=tr
 
 #give control over the channels
 input = mix(id = "sound", [input, unfallibleSource])
-
-#if this script crashes, it still for some reason listens to the on_blank method
-#we can use this to restart the script automatically when detected
-input = on_blank(max_blank=10., blank_handler, input)
 
 #stream output
 output.icecast(

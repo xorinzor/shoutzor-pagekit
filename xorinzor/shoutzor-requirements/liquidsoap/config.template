@@ -22,6 +22,7 @@ wrapperOutputHost = "%wrapperOutputHost%"
 wrapperOutputMount = "%wrapperOutputMount%"
 wrapperOutputPort = %wrapperOutputPort%
 wrapperOutputPassword = "%wrapperOutputPassword%"
+shoutzorUrl = "%shoutzorUrl%"
 
 #encoding format
 #bitrate: encoded data fixed bitrate
@@ -50,4 +51,5 @@ ignore(wrapperOutputHost)
 ignore(wrapperOutputMount)
 ignore(wrapperOutputPort)
 ignore(wrapperOutputPassword)
+ignore(shoutzorUrl)
 ignore(encodingFormat)
