@@ -425,6 +425,10 @@ class ApiController
     public function liquidsoapcommand($params) {
         $liquidsoapManager = new LiquidsoapManager();
 
+        if(!App::user()->hasAccess('shoutzor: manage shoutzor controls')) {
+            return $this->formatOutput(__('You have no permission to manage shoutzor controls'), self::METHOD_NOT_AVAILABLE);
+        }
+
         switch($params['command']) {
             case "start":
                 $result = $liquidsoapManager->startScript($params['type']);
@@ -442,6 +446,18 @@ class ApiController
 
             case "next":
                 $result = $liquidsoapManager->nextTrack();
+                break;
+
+            case "remaining":
+                $result = $liquidsoapManager->remaining();
+                break;
+
+            case "uptime":
+                $result = $liquidsoapManager->isUp($params['type']);
+                break;
+
+            case "help":
+                $result = $liquidsoapManager->help($params['type']);
                 break;
 
             default:
@@ -496,6 +512,10 @@ class ApiController
      * @method nexttrack
      */
     public function nexttrack($params) {
+        if($this->ensureLocalhost() === false) {
+            return $this->formatOutput(__('You have no access to this method'), self::METHOD_NOT_AVAILABLE);
+        }
+        
         $autodj = new AutoDJ();
         $autodj->playNext();
 

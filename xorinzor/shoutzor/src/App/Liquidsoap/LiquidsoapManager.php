@@ -59,6 +59,14 @@ class LiquidsoapManager {
         }
     }
 
+    public function help($type) {
+        if($conn = $this->getConnection($type)) {
+            return $conn->command('help');
+        } else {
+            return false;
+        }
+    }
+
     public function setVolume($type, $volume) {
         if($conn = $this->getConnection($type)) {
             return $conn->command('sound.volume 0 '.$volume);
@@ -78,6 +86,19 @@ class LiquidsoapManager {
     public function queueTrack($filename) {
         if($conn = $this->getConnection('shoutzor')) {
             return $conn->command('shoutzorqueue.push replay_gain:'.$filename);
+        } else {
+            return false;
+        }
+    }
+
+    public function remaining() {
+        if($conn = $this->getConnection('shoutzor')) {
+            $res = $conn->command('shoutzor.remaining');
+            if(is_array($res)) {
+                return array_filter($res);
+            }
+
+            return $res;
         } else {
             return false;
         }
@@ -142,7 +163,7 @@ class LiquidsoapManager {
         }
 
         //Close the screen session
-        $process = new Process("kill -9 `cat " . $this->pidFileDirectory . $type . ".pid` &");
+        $process = new Process("kill -TERM `cat " . $this->pidFileDirectory . $type . ".pid` &");
         $process->run();
 
         sleep(2);

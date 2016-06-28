@@ -5,6 +5,7 @@ namespace Xorinzor\Shoutzor\App;
 use Pagekit\Application as App;
 use Xorinzor\Shoutzor\Model\Media;
 use Xorinzor\Shoutzor\Model\Request;
+use Xorinzor\Shoutzor\Model\History;
 use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 
 class QueueManager {
@@ -58,6 +59,15 @@ class QueueManager {
         }
 
         return true;
+    }
+
+    public function addToHistory(Media $media, $requester_id = null) {
+        $request = History::create();
+        $request->save(array(
+            'media_id' => $media->id,
+            'requester_id' => $requester_id,
+            'played_at' => (new \DateTime())->format('Y-m-d H:i:s')
+        ));
     }
 
 }

@@ -43,12 +43,25 @@ return [
             $util->createTable('@shoutzor_requestlist', function ($table) {
                 $table->addColumn('id', 'integer', ['unsigned' => true, 'length' => 10, 'autoincrement' => true]);
                 $table->addColumn('media_id', 'integer', ['unsigned' => true, 'length' => 10]);
-                $table->addColumn('requester_id', 'integer', ['unsigned' => true, 'length' => 10]);
+                $table->addColumn('requester_id', 'integer', ['unsigned' => true, 'length' => 10, 'notnull' => false]);
                 $table->addColumn('requesttime', 'datetime');
                 $table->setPrimaryKey(['id']);
                 $table->addIndex(array('media_id'), 'artist_index');
                 $table->addIndex(array('requester_id'), 'uploader_index');
                 $table->addIndex(array('requesttime'), 'requesttime_index');
+            });
+        }
+
+        if ($util->tableExists('@shoutzor_history') === false) {
+            $util->createTable('@shoutzor_history', function ($table) {
+                $table->addColumn('id', 'integer', ['unsigned' => true, 'length' => 10, 'autoincrement' => true]);
+                $table->addColumn('media_id', 'integer', ['unsigned' => true, 'length' => 10]);
+                $table->addColumn('requester_id', 'integer', ['unsigned' => true, 'length' => 10, 'notnull' => false]);
+                $table->addColumn('played_at', 'datetime');
+                $table->setPrimaryKey(['id']);
+                $table->addIndex(array('media_id'), 'artist_index');
+                $table->addIndex(array('requester_id'), 'uploader_index');
+                $table->addIndex(array('played_at'), 'played_at_index');
             });
         }
     },
@@ -75,19 +88,25 @@ return [
          * @TODO remove the music directory when uninstalled
          */
 
-        // remove the config
+        //delete our config values
         $app['config']->remove('shoutzor');
 
         $util = $app['db']->getUtility();
 
-        //Drop the shoutzor_music table
-        if ($util->tableExists('@shoutzor_music')) {
-            $util->dropTable('@shoutzor_music');
-        }
-
-        //Drop the shoutzor_artist table
         if ($util->tableExists('@shoutzor_artist')) {
             $util->dropTable('@shoutzor_artist');
+        }
+
+        if ($util->tableExists('@shoutzor_media')) {
+            $util->dropTable('@shoutzor_media');
+        }
+
+        if ($util->tableExists('@shoutzor_requestlist')) {
+            $util->dropTable('@shoutzor_requestlist');
+        }
+
+        if ($util->tableExists('@shoutzor_history')) {
+            $util->dropTable('@shoutzor_history');
         }
     },
 

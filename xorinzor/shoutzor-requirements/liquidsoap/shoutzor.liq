@@ -13,16 +13,16 @@ set("audio.converter.samplerate.libsamplerate.quality", "best")
 # when it does not have one
 # by default
 def add_skip_command(s) =
- # A command to skip
- def skip(_) =
-   source.skip(s)
-   "Done!"
- end
- # Register the command:
- server.register(namespace="#{source.id(s)}",
-                 usage="skip",
-                 description="Skip the current song.",
-                 "skip",skip)
+    # A command to skip
+    def skip(_) =
+        source.skip(s)
+        "Done!"
+    end
+    # Register the command:
+    server.register(namespace="#{source.id(s)}",
+                     usage="skip",
+                     description="Skip the current song.",
+                     "skip",skip)
 end
 
 # Mixes two streams, with faded transitions between the state when only the
@@ -117,13 +117,13 @@ input = request.queue(id="shoutzorqueue")
 # Attach a skip command to the source input:
 add_skip_command(input)
 
-input = on_metadata(metadatahandler, input)
+input = on_track(metadatahandler, input)
 
 #apply crossfade
 input = smart_crossthing(start_next=5., fade_out=7., fade_in=5., conservative=true, input)
 
 #give control over the channels
-input = mix(id = "sound", [input, unfallibleSource])
+input = fallback(track_sensitive=false, [input, unfallibleSource])
 
 #stream output
 output.icecast(

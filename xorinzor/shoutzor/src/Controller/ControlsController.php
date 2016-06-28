@@ -32,28 +32,6 @@ class ControlsController
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
 
         $form->addField(new InputField(
-            "playMusic",
-            "playMusic",
-            "Play Music",
-            "button",
-            "Play Music",
-            "Sends the &quot;play&quot; command",
-            "uk-button uk-button-primary",
-            'onclick="playMusic();"')
-        );
-
-        $form->addField(new InputField(
-            "pauseMusic",
-            "pauseMusic",
-            "Pause Music",
-            "button",
-            "Pause Music",
-            "Sends the &quot;pause&quot; command",
-            "uk-button uk-button-primary",
-            'onclick="pauseMusic();"')
-        );
-
-        $form->addField(new InputField(
             "skipTrack",
             "skipTrack",
             "Skip Track",

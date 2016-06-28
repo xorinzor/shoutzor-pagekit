@@ -35,7 +35,7 @@ class Parser {
             return Media::STATUS_FINISHED;
         }
 
-        $media->hash = $this->calculateHash($this->tempMediaDir . '/' . $media->filename);
+        $media->crc = $this->calculateHash($this->tempMediaDir . '/' . $media->filename);
 
         //It's a duplicate, remove it and return the result code
         if($existing = $this->exists($media)) {

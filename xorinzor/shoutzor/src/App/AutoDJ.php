@@ -25,6 +25,12 @@ class AutoDJ {
     }
 
     public function playNext() {
+        //Add the current item to the history
+        $item = $this->queueManager->getNextFromQueue();
+        if($item !== null) {
+            $this->queueManager->addToHistory($item->media, $item->requester_id);
+        }
+
         //Remove the next first item from the queue
         $this->queueManager->removeNextFromQueue();
 
@@ -52,6 +58,8 @@ class AutoDJ {
     }
 
     private function getRandomTrack($forced = false) {
+        //Get recently played track
+
         return Media::where('1=1', [])->orderBy('rand()')->first();
     }
 
