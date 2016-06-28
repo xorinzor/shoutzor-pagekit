@@ -108,9 +108,6 @@ def metadatahandler(m)
 	system("curl #{shoutzorUrl}/shoutzorapi?method=nexttrack &")
 end
 
-#In case nothing works anymore, say this
-unfallibleSource = single("say: Shoutzor is experiencing technical difficulties, please stand by")
-
 #Requester input
 input = request.queue(id="shoutzorqueue")
 
@@ -123,7 +120,7 @@ input = on_track(metadatahandler, input)
 input = smart_crossthing(start_next=5., fade_out=7., fade_in=5., conservative=true, input)
 
 #give control over the channels
-input = fallback(track_sensitive=false, [input, unfallibleSource])
+input = mksafe(input)
 
 #stream output
 output.icecast(

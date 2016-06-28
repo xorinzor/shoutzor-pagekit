@@ -41,6 +41,11 @@ class Parser {
             return Media::STATUS_FINISHED;
         }
 
+        //@TODO before we can start fixing media files with the ERROR status, we need to know what could go wrong
+        if($media->status === Media::STATUS_ERROR) {
+            return Media::STATUS_ERROR;
+        }
+
         $media->crc = $this->calculateHash($this->tempMediaDir . '/' . $media->filename);
 
         //It's a duplicate, remove it and return the result code
@@ -59,13 +64,22 @@ class Parser {
         //Until a file finishes parsing completely, the file will never be moved to the permanent directory
         rename($this->tempMediaDir . '/' . $media->filename, $this->mediaDir . '/' . $media->filename);
 
-        $media->status = Media::STATUS_PROCESSING;
-        $media->save();
+        //Set the status of the media file to processing
+        $media->save(['status' => Media::STATUS_PROCESSING]);
 
+        //get the metatags from the media file
         $tags = $this->getID3Tags($media);
+
+        //Set the title of the media file
+        $media->title = $tags['title'];
+
+        //Add artists for each track
         foreach($tags['artist'] as $artist) {
             $this->addArtist($media, $artist);
         }
+
+        //We're finished, set the status of the media file to finished
+        $media->save(['status' => Media::STATUS_FINISHED]);
 
         //Return the finished statuscode
         return Media::STATUS_FINISHED;
