@@ -332,7 +332,6 @@ class ApiController
 
         $media = Media::create([
             'title' => $file->getClientOriginalName(),
-            'artist_id' => 0,
             'filename' => $filename,
             'uploader_id' => App::user()->id,
             'created' => new DateTime(),

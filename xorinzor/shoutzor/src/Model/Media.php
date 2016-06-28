@@ -33,9 +33,6 @@ class Media implements \JsonSerializable{
     /** @Column(type="string") */
     public $title;
 
-    /** @Column(type="integer") */
-    public $artist_id;
-
     /** @Column(type="string") */
     public $filename;
 
@@ -55,9 +52,16 @@ class Media implements \JsonSerializable{
     public $duration;
 
     /**
-     * @BelongsTo(targetEntity="Xorinzor\Shoutzor\Model\Artist", keyFrom="artist_id")
+     * @ManyToMany(targetEntity="Xorinzor\Shoutzor\Model\Artist", tableThrough="@shoutzor_media_artist", keyThroughFrom="media_id", keyThroughTo="artist_id")
+     * @OrderBy({"name" = "ASC"})
      */
     public $artist;
+
+    /**
+     * @ManyToMany(targetEntity="Xorinzor\Shoutzor\Model\Album", tableThrough="@shoutzor_media_album", keyThroughFrom="media_id", keyThroughTo="album_id")
+     * @OrderBy({"name" = "ASC"})
+     */
+    public $album;
 
     /**
      * @BelongsTo(targetEntity="Pagekit\User\Model\User", keyFrom="uploader_id")

@@ -13,8 +13,6 @@ make sure to install the `x264*`, `swh-plugins` and `gstreamer1.0*` packages;<br
 when finished, install `liquidsoap` and `liquidsoap-plugin-all`
 
 @TODO
-- Implement history list
-- Fix getrandomtrack method from the AutoDJ
 - CRC hashes are not beeing added
 - Add configurable option for the time limit of uploads
 - Redirect users that are not authenticated to the login screen

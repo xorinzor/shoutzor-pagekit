@@ -6,6 +6,7 @@ use Pagekit\Application as App;
 use Xorinzor\Shoutzor\Model\Media;
 
 use getID3;
+use getid3_lib;
 
 require_once(__DIR__ . '/../Vendor/getid3/getid3.php');
 
@@ -30,6 +31,11 @@ class Parser {
     }
 
     public function parse(Media &$media) {
+        //If the file is already processing, we dont have to do this again.
+        if($media->status === Media::STATUS_PROCESSING) {
+            return Media::STATUS_PROCESSING;
+        }
+
         //If a media file is already finished there is no point in parsing it
         if($media->status === Media::STATUS_FINISHED) {
             return Media::STATUS_FINISHED;
@@ -53,8 +59,94 @@ class Parser {
         //Until a file finishes parsing completely, the file will never be moved to the permanent directory
         rename($this->tempMediaDir . '/' . $media->filename, $this->mediaDir . '/' . $media->filename);
 
+        $media->status = Media::STATUS_PROCESSING;
+        $media->save();
+
+        $tags = $this->getID3Tags($media);
+        foreach($tags['artist'] as $artist) {
+            $this->addArtist($media, $artist);
+        }
+
         //Return the finished statuscode
         return Media::STATUS_FINISHED;
+    }
+
+    public function addArtist(Media $media, $name, $image = '') {
+        $artist = Artist::query()->where('name = :name', ['name' => $name]);
+
+        if($artist->count() > 0) {
+            $artist = $artist->first();
+        } else {
+            $artist = Artist::create();
+            $artist->save([
+                'name' => $name,
+                'image' => $image
+            ]);
+        }
+
+        //@TODO add ManyToMany relation to the table @shoutzor_media_artist
+    }
+
+    public function getID3Tags(Media $media) {
+
+        $this->id3->option_md5_data        = true;
+		$this->id3->option_md5_data_source = true;
+
+		// Analyze file
+        $info = $this->id3->analyze($this->tempMediaDir . '/' . $media->filename);
+		getid3_lib::CopyTagsToComments($info);
+
+        //Default values
+		$result = array(
+				'title' 	=> 'Untitled',
+				'artist' 	=> array('Unknown'),
+				'album' 	=> array()
+			);
+
+        if(isset($info['comments_html'])):
+            //Get the media title
+    		if(isset($info['comments_html']['title']) && !empty($info['comments_html']['title'][0])):
+    			$result['title'] = ucwords(preg_replace("/[a-zA-Z]*[:\/\/]*[A-Za-z0-9\-_]+\.+[A-Za-z0-9\.\/%&=\?\-_]+/i", '', html_entity_decode(strtolower($info['comments_html']['title'][0]))));
+    		endif;
+
+            //Get the artists
+    		if(isset($info['comments_html']['artist']) && is_array($info['comments_html']['artist'])):
+    			foreach($info['comments_html']['artist'] as $artist):
+    				$artist = preg_replace("/[a-zA-Z]*[:\/\/]*[A-Za-z0-9\-_]+\.+[A-Za-z0-9\.\/%&=\?\-_]+/i", '', $artist);
+    				$artist = preg_replace('/(\(\)|\[\])/', '', $artist);
+    				if(!empty($artist)):
+    					$artist = ucwords(html_entity_decode(strtolower($artist)));
+    					$artist = preg_split('/\s*(Feat\.|Vs\.|Ft\.)\s*/', $artist);
+    					$artist = implode(" /// ", $artist);
+    					$artist = preg_split('/\s*(&|Feat|Vs|Ft|\/\/\/)\s*/', $artist);
+    					foreach($artist as $a):
+    						$result['artist'][] = array(
+    								'name' => html_entity_decode($a)
+    							);
+    					endforeach;
+    				endif;
+    			endforeach;
+    		endif;
+
+            //Get the album titles
+    		if(isset($info['comments_html']['album']) && is_array($info['comments_html']['album'])):
+    			$a = 0;
+    			foreach($info['comments_html']['album'] as $album):
+    				$album = preg_replace("/[a-zA-Z]*[:\/\/]*[A-Za-z0-9\-_]+\.+[A-Za-z0-9\.\/%&=\?\-_]+/i", '', $album);
+    				$album = preg_replace('/(\(\)|\[\])/', '', $album);
+    				if(!empty($album)):
+    					$result['album'][] = array(
+    							'title' => html_entity_decode($album),
+    							'cover' => (isset($info['comments']['picture'][$a]['data'])) ? $info['comments']['picture'][$a]['data'] : null
+    						);
+    				endif;
+    				$a++;
+    			endforeach;
+    		endif;
+        endif;
+
+        var_dump($result);
+        die();
     }
 
     /**
@@ -62,7 +154,7 @@ class Parser {
      * @return false|Music
      */
     public function exists(Media $media) {
-        $obj = Media::where('crc = :hash AND status = :status', ['hash' => $media->hash, 'status' => Media::STATUS_FINISHED]);
+        $obj = Media::where('crc = :crc AND status = :status', ['crc' => $media->crc, 'status' => Media::STATUS_FINISHED]);
 
         if($obj->count() == 0) {
             return false;
