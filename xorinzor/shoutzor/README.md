@@ -13,7 +13,7 @@ make sure to install the `x264*`, `swh-plugins` and `gstreamer1.0*` packages;<br
 when finished, install `liquidsoap` and `liquidsoap-plugin-all`
 
 @TODO
-- CRC hashes are not beeing added
+- Implement Albums and Artists
 - Add configurable option for the time limit of uploads
 - Redirect users that are not authenticated to the login screen
 - Implement JS API methods
