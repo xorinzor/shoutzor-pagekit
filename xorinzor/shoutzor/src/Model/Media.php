@@ -48,9 +48,6 @@ class Media implements \JsonSerializable{
     /** @Column(type="datetime") */
     public $created;
 
-    /** @Column(type="integer") */
-    public $amount_requested;
-
     /** @Column(type="string") */
     public $crc;
 

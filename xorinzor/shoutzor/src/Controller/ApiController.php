@@ -5,6 +5,7 @@ use Pagekit\Application as App;
 
 use Xorinzor\Shoutzor\Model\Media;
 use Xorinzor\Shoutzor\Model\Request;
+use Xorinzor\Shoutzor\Model\History;
 use Xorinzor\Shoutzor\App\AutoDJ;
 use Xorinzor\Shoutzor\App\Parser;
 use Xorinzor\Shoutzor\App\QueueManager;
@@ -336,7 +337,6 @@ class ApiController
             'uploader_id' => App::user()->id,
             'created' => new DateTime(),
             'status' => Media::STATUS_UPLOADED,
-            'amount_requested' => 0,
             'crc' => '',
             'duration' => 0
         ]);
@@ -386,23 +386,29 @@ class ApiController
             return $this->formatOutput(__('No media object with the provided ID exists'), self::ITEM_NOT_FOUND);
         }
 
+        //Check if the media file is in queue already
+        $inQueue = (Request::where('media_id = :id', ['id' => $media->id])->count() == 0) ? true : false;
+        if ($inQueue === false) {
+            return $this->formatOutput(__('This media file is already in the queue!'), self::ERROR_IN_REQUEST);
+        }
+
         //Get the config options
         $config = App::module('shoutzor')->config('shoutzor');
 
         $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['mediaRequestDelay'].'M'))->format('Y-m-d H:i:s');
 
-        //Check if the song hasnt been requested too soon ago
-        $isRequestable = (Request::where('media_id = :id AND requesttime > :requesttime', ['id' => $media->id, 'requesttime' => $canRequestDateTime])->count() == 0) ? true : false;
+        //Check if the media file hasnt been requested too soon ago
+        $isRequestable = (History::where('media_id = :id AND played_at > :maxTime', ['id' => $media->id, 'maxTime' => $canRequestDateTime])->count() == 0) ? true : false;
         if ($isRequestable === false) {
-            return $this->formatOutput(__('This song has been requested too recently'), self::ERROR_IN_REQUEST);
+            return $this->formatOutput(__('This media file has been requested too recently'), self::ERROR_IN_REQUEST);
         }
 
         $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['userRequestDelay'].'M'))->format('Y-m-d H:i:s');
 
-        //Check if the user hasnt already recently requested a song
+        //Check if the user hasnt already recently requested a media file
         $canRequest = (Request::where('requester_id = :user AND requesttime > :requesttime', ['user' => App::user()->id, 'requesttime' => $canRequestDateTime])->count() == 0) ? true : false;
         if ($canRequest === false) {
-            return $this->formatOutput(__('You already recently requested a song, try again in 10 minutes'), self::ERROR_IN_REQUEST);
+            return $this->formatOutput(__('You already recently requested a media file, try again in 10 minutes'), self::ERROR_IN_REQUEST);
         }
 
         try {
@@ -515,7 +521,7 @@ class ApiController
         if($this->ensureLocalhost() === false) {
             return $this->formatOutput(__('You have no access to this method'), self::METHOD_NOT_AVAILABLE);
         }
-        
+
         $autodj = new AutoDJ();
         $autodj->playNext();
 

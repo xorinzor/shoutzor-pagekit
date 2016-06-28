@@ -2,8 +2,14 @@
 
 namespace Xorinzor\Shoutzor\App;
 
+use Pagekit\Application as App;
 use Xorinzor\Shoutzor\Model\Media;
+use Xorinzor\Shoutzor\Model\Request;
+use Xorinzor\Shoutzor\Model\History;
 use Xorinzor\Shoutzor\App\QueueManager;
+
+use DateTime;
+use DateInterval;
 
 class AutoDJ {
 
@@ -57,10 +63,40 @@ class AutoDJ {
         }
     }
 
-    private function getRandomTrack($forced = false) {
-        //Get recently played track
+    private function getRandomTrack($autoForce = true, $forced = false) {
+        if($forced === false) {
+            $config = App::module('shoutzor')->config('shoutzor');
 
-        return Media::where('1=1', [])->orderBy('rand()')->first();
+            $requestHistoryTime = (new DateTime())->sub(new DateInterval('PT'.$config['mediaRequestDelay'].'M'))->format('Y-m-d H:i:s');
+
+            //Get a list of all recently played media files
+            $listRecent = History::query()->select('id')->where('played_at > :maxTime', ['maxTime' => $requestHistoryTime])->get();
+
+            //Get the ID's from each recently played media file
+            $listRecent = array_map(function($e) {
+                return is_object($e) ? $e->id : $e['id'];
+            }, $listRecent);
+
+            //Get a list of all queued media files
+            $listQueued = Request::query()->select('id')->get();
+
+            //Get the ID's from each queued media file
+            $listQueued = array_map(function($e) {
+                return is_object($e) ? $e->id : $e['id'];
+            }, $listQueued);
+
+            $list = array_merge($listRecent, $listQueued);
+        } else {
+            $list = array();
+        }
+
+        $song = Media::query()->whereInSet('id', $list, true)->orderBy('rand()');
+
+        if($song->count() === 0) {
+            return ($autoForce === true) ? $this->getRandomTrack(true, true) : false;
+        }
+
+        return $song->first();
     }
 
 }

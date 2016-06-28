@@ -4,6 +4,7 @@ namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
 use Xorinzor\Shoutzor\Model\Media;
+use Xorinzor\Shoutzor\Model\History;
 
 class SiteController
 {
@@ -16,7 +17,7 @@ class SiteController
         $config = App::module('shoutzor')->config('liquidsoap');
 
         $uploaded = Media::where(['status = :finished'], ['finished' => Media::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->limit(8)->get();
-        $requested = Media::where(['amount_requested > 0 AND status = :finished'], ['finished' => Media::STATUS_FINISHED])->orderBy('amount_requested', 'DESC')->related(['artist', 'user'])->limit(8)->get();
+        $history = History::query()->orderBy('id', 'DESC')->limit(5)->related('media')->get();
 
         return [
             '$view' => [
@@ -24,7 +25,7 @@ class SiteController
                 'name' => 'shoutzor:views/index.php'
             ],
             'uploaded' => $uploaded,
-            'requested' => $requested,
+            'history' => $history,
             'm3uFile' => 'http://'.$_SERVER['SERVER_NAME'] . ':8000' . $config['wrapperOutputMount'] . '.m3u'
         ];
     }

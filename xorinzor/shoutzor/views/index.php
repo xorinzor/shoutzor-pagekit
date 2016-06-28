@@ -28,18 +28,35 @@
 
 <div class="uk-panel uk-panel-box">
     <div class="uk-panel-title">
-        <p>Popular requests</p>
+        <p>Recently played</p>
     </div>
 
-    <?php if(count($requested) == 0): ?>
-        <p>No content has been requested yet, be the first!</p>
+    <?php if(count($history) == 0): ?>
+        <p>No content has been played yet!</p>
     <?php else: ?>
-        <ul class="uk-thumbnav uploaded-content-list uk-grid-width-small-1-2 uk-grid-width-medium-1-4">
-            <?php foreach($requested as $item): ?>
-                <li>
-                    <?= $view->render('shoutzor:views/elements/list-item.php', ['item' => $item]); ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+        <table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Artist</th>
+                    <th>Played at</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($history as $item): ?>
+                    <tr>
+                        <td>
+                            <?= $item->media->title; ?>
+                        </td>
+                        <td>
+                            <?= $item->media->artist; ?>
+                        </td>
+                        <td>
+                            <?= $item->played_at->format('d-m-Y h:i'); ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     <?php endif; ?>
 </div>
