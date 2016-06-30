@@ -35,6 +35,11 @@ return [
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\SiteController::searchAction'
         ],
 
+        '/artist' => [
+            'name' => '@shoutzor/artist',
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\ArtistController'
+        ],
+
         '/shoutzor' => [
             'name' => '@shoutzor/admin/shoutzor',
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\ShoutzorController'

@@ -18,9 +18,6 @@ class Album implements \JsonSerializable{
     /** @Column(type="string") */
     public $title;
 
-    /** @Column(type="string") */
-    public $image;
-
     /**
      * @ManyToMany(targetEntity="Xorinzor\Shoutzor\Model\Artist", tableThrough="@shoutzor_artist_album", keyThroughFrom="album_id", keyThroughTo="artist_id")
      * @OrderBy({"name" = "ASC"})

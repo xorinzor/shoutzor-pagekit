@@ -139,7 +139,7 @@ class Parser {
         return Media::STATUS_FINISHED;
     }
 
-    public function addArtist(Media $media, $name, $image = '') {
+    public function addArtist(Media $media, $name) {
         $artist = Artist::query()->where('name = :name', ['name' => $name]);
 
         if($artist->count() > 0) {
@@ -147,8 +147,7 @@ class Parser {
         } else {
             $artist = Artist::create();
             $artist->save([
-                'name' => $name,
-                'image' => $image
+                'name' => $name
             ]);
         }
 
@@ -157,7 +156,7 @@ class Parser {
         //@TODO add ManyToMany relation to the table @shoutzor_media_artist
     }
 
-    public function addAlbum(Media $media, $title, $image = '') {
+    public function addAlbum(Media $media, $title) {
         $album = Album::query()->where('title = :title', ['title' => $title]);
 
         if($album->count() > 0) {
@@ -165,8 +164,7 @@ class Parser {
         } else {
             $album = Album::create();
             $album->save([
-                'title' => $title,
-                'image' => $image
+                'title' => $title
             ]);
         }
 
