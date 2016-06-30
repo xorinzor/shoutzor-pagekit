@@ -108,10 +108,10 @@ class ShoutzorController
         $form->addField(new InputField(
         "uploadDurationLimit",
         "uploadDurationLimit",
-        "Media Duration Limit",
+        "Media Duration Limit (Minutes)",
         "text",
         $config['uploadDurationLimit'],
-        "The limit of the duration from uploaded media files - changing this will have no effect on already uploaded files")
+        "The limit of the duration from uploaded media files in minutes - changing this will have no effect on already uploaded files")
         )->setValidationType(FormValidation::TYPE_NUMERIC)
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 

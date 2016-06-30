@@ -185,7 +185,7 @@ class Parser {
         //Default values
 		$result = array(
 				'title' 	=> App::module('shoutzor')->config('shoutzor')['useFilenameIfUntitled'] == 1 ? preg_replace('/(^[^.]*.)|(\\.[^.\\s]{2,4}$)/', '', $media->filename) : 'Untitled',
-				'artist' 	=> array('Unknown'),
+				'artist' 	=> array(),
 				'album' 	=> array()
 			);
 
