@@ -27,6 +27,9 @@ class Media implements \JsonSerializable{
     /* This song has already been uploaded */
     const STATUS_DUPLICATE = 4;
 
+    /* The duration of this song exceeds the limit configured */
+    const STATUS_DURATION_TOO_LONG = 5;
+
     /** @Column(type="integer") @Id */
     public $id;
 

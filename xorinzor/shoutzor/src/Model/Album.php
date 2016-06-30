@@ -6,7 +6,7 @@ use Pagekit\Application as App;
 use Pagekit\Database\ORM\ModelTrait;
 
 /**
- * @Entity(tableClass="@shoutzor_artist")
+ * @Entity(tableClass="@shoutzor_album")
  */
 class Album implements \JsonSerializable{
 

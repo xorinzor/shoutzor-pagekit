@@ -26,10 +26,13 @@ class AcoustID {
         $output = array();
         $returnCode = 0;
 
-        $process = new Process($this->requirementDir . '/fpcalc ' . $file);
-        $process->run();
+        //Make sure the file exists and is readable
+        if(!file_exists($file) || !is_readable($file)) {
+            return false;
+        }
 
-        //exec($this->requirementDir . '/fpcalc ' . $file, $output, $returnCode);
+        $process = new Process($this->requirementDir . '/fpcalc ' . escapeshellarg($file));
+        $process->run();
 
         //The return code is not 0 (success), return false
         if($returnCode !== 0) {
@@ -52,7 +55,7 @@ class AcoustID {
 
     public function lookup($duration, $fingerprint) {
         //Make sure AcoustID is enabled
-        if($this->enabled === false) {
+        if($this->isEnabled() === false) {
             return false;
         }
 
@@ -76,30 +79,19 @@ class AcoustID {
             return false;
         }
 
-        return $data->results[0]->recordings;
-    }
-
-    public function getMediaInfo($filename) {
-        //Check if AcoustID is enabled
-        if($this->enabled === false) {
+        //Make sure the results list is not empty (this happens when it cant identify the music)
+        if(count($data->results) == 0) {
             return false;
         }
 
-        //Get the fingerprint from the media file
-        $data = $this->getFileFingerprint($filename);
-
-        //Errorchecking
-        if($data === false) {
+        //Just a double check to make sure this key exists.
+        if(!isset($data->results[0]->recordings)) {
             return false;
         }
 
-        //Get matching information for the provided fingerprint
-        $data = $this->lookup($data['duration'], $data['fingerprint']);
+        $data = $data->results[0]->recordings;
 
-        //Errorchecking
-        if($data === false) {
-            return false;
-        }
+        $info = array();
 
         //Get the media file title
         $info['title'] = isset($data[0]->title) ? $data[0]->title : false; //False means no-data for this tag.
@@ -133,8 +125,28 @@ class AcoustID {
             $info['album'] = false;
         }
 
-        //Return the results
         return $info;
+    }
+
+    public function getMediaInfo($filename) {
+        //Check if AcoustID is enabled
+        if($this->isEnabled() === false) {
+            return false;
+        }
+
+        //Get the fingerprint from the media file
+        $data = $this->getFileFingerprint($filename);
+
+        //Errorchecking
+        if($data === false || count($data) == 0) {
+            return false;
+        }
+
+        //Get matching information for the provided fingerprint
+        $data = $this->lookup($data['duration'], $data['fingerprint']);
+
+        //Return the results
+        return $data;
     }
 
 }

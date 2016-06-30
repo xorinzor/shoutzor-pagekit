@@ -106,6 +106,28 @@ class ShoutzorController
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new InputField(
+        "uploadDurationLimit",
+        "uploadDurationLimit",
+        "Media Duration Limit",
+        "text",
+        $config['uploadDurationLimit'],
+        "The limit of the duration from uploaded media files - changing this will have no effect on already uploaded files")
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new SelectField(
+            "useFilenameIfUntitled",
+            "useFilenameIfUntitled",
+            "Use Filename If Untitled",
+            "text",
+            $config['useFilenameIfUntitled'],
+            array(['value' => 0, 'title' => 'Disabled'], ['value' => 1, 'title' => 'Enabled']),
+            false,
+            "Use the filename as title when no title could be detected and/or found")
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new InputField(
             "submit",
             "", //Don't set a name, we don't want this to show up in POST data
             "Save Changes",

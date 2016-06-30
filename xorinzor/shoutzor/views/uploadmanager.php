@@ -8,6 +8,7 @@
 <div id="upload-rules" class="uk-alert uk-alert-danger"><strong>Warning!</strong> Do NOT upload 18+ content or other harmful content, this will NOT be tolerated.</div>
 
 <div id="upload-rules" class="uk-alert uk-alert-info"><strong>Notice</strong> The maximum file size is <?= $maxFileSize; ?></div>
+<div id="upload-rules" class="uk-alert uk-alert-info"><strong>Notice</strong> The media duration limit is <?= $maxDuration; ?> minutes</div>
 
 <div id="upload-drop" class="uk-placeholder uk-placeholder-large uk-text-center">
     <i class="uk-icon-cloud-upload uk-icon-medium uk-text-muted uk-margin-small-right"></i> Drop your file(s) here or <a class="uk-form-file">Select a file<input id="upload-select" type="file"></a>

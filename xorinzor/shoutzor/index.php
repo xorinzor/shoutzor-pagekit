@@ -181,7 +181,9 @@ return [
             'parserLastRun' => 0,
             'parserMaxItems' => 10,
             'userRequestDelay' => 10,
-            'mediaRequestDelay' => 40
+            'mediaRequestDelay' => 40,
+            'uploadDurationLimit' => 5,
+            'useFilenameIfUntitled' => 1
         ],
 
         'liquidsoap' => [

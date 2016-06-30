@@ -44,7 +44,8 @@ class SiteController
                 'name' => 'shoutzor:views/uploadmanager.php'
             ],
             'uploads' => $uploads,
-            'maxFileSize' => $this->formatBytes($this->file_upload_max_size())
+            'maxFileSize' => $this->formatBytes($this->file_upload_max_size()),
+            'maxDuration' => App::module('shoutzor')->config('shoutzor')['uploadDurationLimit']
         ];
     }
 

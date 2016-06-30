@@ -90,7 +90,7 @@ class AutoDJ {
             $list = array();
         }
 
-        $song = Media::query()->whereInSet('id', $list, true)->orderBy('rand()');
+        $song = Media::query()->whereInSet('id', $list, true)->where('status = :status', ['status' => Media::STATUS_FINISHED])->orderBy('rand()');
 
         if($song->count() === 0) {
             return ($autoForce === true) ? $this->getRandomTrack(true, true) : false;
