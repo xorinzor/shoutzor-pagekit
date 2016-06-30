@@ -4,6 +4,8 @@
 
 The Shoutzor module and required theme for Pagekit.
 
+Shoutzor is a central music playing system that allows your LAN-party (or other kind of event) to have centralized music!
+
 **Not finished! Still under development**
 
 **Keep in mind this module and theme are not designed to work nice with other modules, they're intended as a standalone app.**
