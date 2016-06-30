@@ -181,7 +181,7 @@ return [
             'parserLastRun' => 0,
             'parserMaxItems' => 10,
             'userRequestDelay' => 10,
-            'mediaRequestDelay' => 40,
+            'mediaRequestDelay' => 60,
             'uploadDurationLimit' => 5,
             'useFilenameIfUntitled' => 1
         ],

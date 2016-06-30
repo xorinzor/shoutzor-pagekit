@@ -72,8 +72,6 @@ class AutoDJ {
             //Get a list of all recently played media files
             $listRecent = History::query()->select('media_id')->where('played_at > :maxTime', ['maxTime' => $requestHistoryTime])->execute()->fetchAll();
 
-            //$test = array_unique($listRecent);
-
             //Get the ID's from each recently played media file
             $listRecent = array_map(function($e) {
                 return is_object($e) ? $e->media_id : $e['media_id'];
