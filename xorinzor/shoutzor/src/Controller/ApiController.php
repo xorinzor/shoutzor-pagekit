@@ -10,6 +10,7 @@ use Xorinzor\Shoutzor\App\AutoDJ;
 use Xorinzor\Shoutzor\App\Parser;
 use Xorinzor\Shoutzor\App\QueueManager;
 use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
+use Xorinzor\Shoutzor\App\AcoustID;
 
 use ReflectionMethod;
 use Exception;
@@ -525,5 +526,11 @@ class ApiController
         $autodj->playNext();
 
         return $this->formatOutput(true);
+    }
+
+    public function test() {
+        $AcoustID = new AcoustID();
+        $data = $AcoustID->getMediaInfo('/tmp/shoutzor/media/test2.mp3');
+        return $data;
     }
 }

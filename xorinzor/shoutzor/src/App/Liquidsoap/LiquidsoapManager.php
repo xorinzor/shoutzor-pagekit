@@ -18,12 +18,12 @@ class LiquidsoapManager {
     private $validTypes = array('wrapper', 'shoutzor');
 
     public function __construct() {
-        $config = App::module('shoutzor')->config('liquidsoap');
+        $config = App::module('shoutzor')->config();
 
-        $this->socketPath = $config['socketPath'];
+        $this->socketPath = $config['liquidsoap']['socketPath'];
 
-        $this->liquidsoapDirectory = realpath(__DIR__ . '/../../../../shoutzor-requirements/liquidsoap/') . '/';
-        $this->pidFileDirectory = '/usr/local/var/run/liquidsoap/';
+        $this->liquidsoapDirectory = realpath($config['root_path'] . '/../shoutzor-requirements/liquidsoap/') . '/';
+        $this->pidFileDirectory = $config['liquidsoap']['pidFileDirectory'];
 
         //Default values
         $this->wrapperConnection = null;

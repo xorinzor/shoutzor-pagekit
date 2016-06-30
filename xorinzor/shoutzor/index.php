@@ -57,6 +57,13 @@ return [
             ]
         ],
 
+        '/acoustid' => [
+            'name' => '@shoutzor/admin/acoustid',
+            'controller' => [
+                'Xorinzor\\Shoutzor\\Controller\\AcoustidController'
+            ]
+        ],
+
         '/shoutzorapi' => [
             'name' => '@shoutzor/api',
             'controller' => [
@@ -104,6 +111,13 @@ return [
             'label' => 'Liquidsoap',
             'url' => '@shoutzor/admin/liquidsoap/index',
             'access' => 'shoutzor: manage liquidsoap settings'
+        ],
+
+        'shoutzor: acoustid' => [
+            'parent' => 'shoutzor',
+            'label' => 'AcoustID',
+            'url' => '@shoutzor/admin/acoustid/index',
+            'access' => 'shoutzor: manage shoutzor settings'
         ]
     ],
 
@@ -155,6 +169,11 @@ return [
             'max_results_per_page' => 20
         ],
 
+        'acoustid' => [
+            'enabled' => "false",
+            'appKey' => 'not-set'
+        ],
+
         'shoutzor' => [
             'upload' => 1,
             'request' => 1,
@@ -166,6 +185,7 @@ return [
         ],
 
         'liquidsoap' => [
+            'pidFileDirectory' =>'/usr/local/var/run/liquidsoap/',
             'logDirectoryPath' => '/tmp/shoutzor',
             'socketPath' => '/tmp/shoutzor',
             'socketPermissions' => 511,

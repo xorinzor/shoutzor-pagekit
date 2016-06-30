@@ -28,6 +28,16 @@ class LiquidsoapController
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
 
         $form->addField(new InputField(
+            "pidFileDirectory",
+            "pidFileDirectory",
+            "Pid File Directory",
+            "text",
+            $config['pidFileDirectory'],
+            "The directory where liquidsoap stores its script PID files")
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new InputField(
             "logDirectoryPath",
             "logDirectoryPath",
             "Log Directory Path",
