@@ -527,10 +527,4 @@ class ApiController
 
         return $this->formatOutput(true);
     }
-
-    public function test() {
-        $AcoustID = new AcoustID();
-        $data = $AcoustID->getMediaInfo('/tmp/shoutzor/media/test2.mp3');
-        return $data;
-    }
 }

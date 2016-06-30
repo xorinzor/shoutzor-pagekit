@@ -63,28 +63,37 @@ class AutoDJ {
         }
     }
 
-    private function getRandomTrack($autoForce = true, $forced = false) {
+    public function getRandomTrack($autoForce = true, $forced = false) {
         if($forced === false) {
             $config = App::module('shoutzor')->config('shoutzor');
 
             $requestHistoryTime = (new DateTime())->sub(new DateInterval('PT'.$config['mediaRequestDelay'].'M'))->format('Y-m-d H:i:s');
 
             //Get a list of all recently played media files
-            $listRecent = History::query()->select('id')->where('played_at > :maxTime', ['maxTime' => $requestHistoryTime])->get();
+            $listRecent = History::query()->select('media_id')->where('played_at > :maxTime', ['maxTime' => $requestHistoryTime])->execute()->fetchAll();
+
+            //$test = array_unique($listRecent);
 
             //Get the ID's from each recently played media file
             $listRecent = array_map(function($e) {
-                return is_object($e) ? $e->id : $e['id'];
+                return is_object($e) ? $e->media_id : $e['media_id'];
             }, $listRecent);
 
+            //Make sure only unique values are in the array
+            $listRecent = array_unique($listRecent);
+
             //Get a list of all queued media files
-            $listQueued = Request::query()->select('id')->get();
+            $listQueued = Request::query()->select('media_id')->execute()->fetchAll();
 
             //Get the ID's from each queued media file
             $listQueued = array_map(function($e) {
-                return is_object($e) ? $e->id : $e['id'];
+                return is_object($e) ? $e->media_id : $e['media_id'];
             }, $listQueued);
 
+            //Make sure only unique values are in the array
+            $listQueued = array_unique($listQueued);
+
+            //Merge the 2 lists of ID's which should not be picked anymore
             $list = array_merge($listRecent, $listQueued);
         } else {
             $list = array();
