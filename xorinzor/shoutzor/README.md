@@ -11,6 +11,12 @@ Shoutzor (optionally) uses [AcoustID](https://acoustid.org/) for music fingerpri
 make sure to install the `x264*`, `swh-plugins` and `gstreamer1.0*` packages;<br />
 when finished, install `liquidsoap` and `liquidsoap-plugin-all`
 
+@Features
+- Liquidsoap for audio stream generation
+- AutoDJ to continue playing tracks when no requests are in queue
+- AcoustID Implementation For Music Fingerprinting
+- LastFM Implementation for Artist / Album information
+
 @TODO
 - Implement Albums and Artists
 - Upload page: use Media::STATUS templates for upload response statuses
