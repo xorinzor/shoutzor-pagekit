@@ -13,6 +13,8 @@ return [
             $util->createTable('@shoutzor_artist', function ($table) {
                 $table->addColumn('id', 'integer', ['unsigned' => true, 'length' => 10, 'autoincrement' => true]);
                 $table->addColumn('name', 'string', ['length' => 255, 'default' => 'Unknown']);
+                $table->addColumn('summary', 'text', ['length' => 1000, 'default' => '', 'notnull' => false]);
+                $table->addColumn('image', 'string', ['length' => 255, 'default' => '', 'notnull' => false]);
                 $table->setPrimaryKey(['id']);
             });
         }
@@ -21,6 +23,8 @@ return [
             $util->createTable('@shoutzor_album', function ($table) {
                 $table->addColumn('id', 'integer', ['unsigned' => true, 'length' => 10, 'autoincrement' => true]);
                 $table->addColumn('title', 'string', ['length' => 255, 'default' => 'Unknown']);
+                $table->addColumn('summary', 'text', ['length' => 1000, 'default' => '', 'notnull' => false]);
+                $table->addColumn('image', 'string', ['length' => 255, 'default' => '', 'notnull' => false]);
                 $table->setPrimaryKey(['id']);
             });
         }
@@ -30,7 +34,6 @@ return [
                 $table->addColumn('id', 'integer', ['unsigned' => true, 'length' => 10, 'autoincrement' => true]);
                 $table->addColumn('title', 'string', ['length' => 255, 'default' => '']);
                 $table->addColumn('filename', 'text', ['length' => 1000, 'default' => '']);
-                $table->addColumn('parsed_filename', 'text', ['length' => 1000, 'default' => '']);
                 $table->addColumn('uploader_id', 'integer', ['unsigned' => true, 'length' => 10]);
                 $table->addColumn('status', 'boolean', ['length' => 1, 'default' => '0']);
                 $table->addColumn('created', 'datetime');

@@ -69,6 +69,13 @@ return [
             ]
         ],
 
+        '/lastfm' => [
+            'name' => '@shoutzor/admin/lastfm',
+            'controller' => [
+                'Xorinzor\\Shoutzor\\Controller\\LastfmController'
+            ]
+        ],
+
         '/shoutzorapi' => [
             'name' => '@shoutzor/api',
             'controller' => [
@@ -123,6 +130,13 @@ return [
             'label' => 'AcoustID',
             'url' => '@shoutzor/admin/acoustid/index',
             'access' => 'shoutzor: manage shoutzor settings'
+        ],
+
+        'shoutzor: lastfm' => [
+            'parent' => 'shoutzor',
+            'label' => 'LastFM',
+            'url' => '@shoutzor/admin/lastfm/index',
+            'access' => 'shoutzor: manage shoutzor settings'
         ]
     ],
 
@@ -175,14 +189,21 @@ return [
         ],
 
         'acoustid' => [
-            'enabled' => "false",
+            'enabled' => 0,
             'appKey' => 'not-set'
+        ],
+
+        'lastfm' => [
+            'enabled' => 0,
+            'apikey' => "not-set",
+            'secret' => "not-set"
         ],
 
         'shoutzor' => [
             'upload' => 1,
             'request' => 1,
             'mediaDir' => '/tmp/shoutzor/media',
+            'imageDir' => '/assets/downloaded/',
             'parserLastRun' => 0,
             'parserMaxItems' => 10,
             'userRequestDelay' => 10,

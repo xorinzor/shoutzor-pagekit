@@ -17,7 +17,13 @@ class Artist implements \JsonSerializable{
 
     /** @Column(type="string") */
     public $name;
-    
+
+    /** @Column(type="string") */
+    public $summary;
+
+    /** @Column(type="string") */
+    public $image;
+
     /**
      * @ManyToMany(targetEntity="Xorinzor\Shoutzor\Model\Media", tableThrough="@shoutzor_media_artist", keyThroughFrom="artist_id", keyThroughTo="media_id")
      * @OrderBy({"title" = "ASC"})

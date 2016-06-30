@@ -7,6 +7,7 @@ use Xorinzor\Shoutzor\App\FormBuilder\FormGenerator;
 use Xorinzor\Shoutzor\App\FormBuilder\FormValidation;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\InputField;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\SelectField;
+use Xorinzor\Shoutzor\App\FormBuilder\Fields\DivField;
 use Xorinzor\Shoutzor\App\FormBuilder\Fields\DividerField;
 
 /**
@@ -26,6 +27,22 @@ class ShoutzorController
         $config = array_merge($config, $_POST);
 
         $form = new FormGenerator('', 'POST', 'uk-form uk-form-horizontal');
+
+        $form->addField(new DivField(
+            "Permission Check",
+            $config['mediaDir'] . ((is_writable($config['mediaDir'])) ? " is writable" : " is not writable! chown manually to www-data:www-data"),
+            "",
+            (is_writable($config['mediaDir'])) ? "uk-alert uk-alert-success" : "uk-alert uk-alert-danger")
+        );
+
+        $form->addField(new DivField(
+            "Permission Check",
+            $config['imageDir'] . ((is_writable($config['imageDir'])) ? " is writable" : " is not writable! chown manually to www-data:www-data"),
+            "",
+            (is_writable($config['imageDir'])) ? "uk-alert uk-alert-success" : "uk-alert uk-alert-danger")
+        );
+
+        $form->addField(new DividerField());
 
         $form->addField(new SelectField(
             "upload",
@@ -59,7 +76,19 @@ class ShoutzorController
             "Media Storage Directory",
             "text",
             $config['mediaDir'],
-            "The directory where uploads should be stored")
+            "The directory where uploads should be stored",
+            "uk-form-width-large")
+        )->setValidationType(FormValidation::TYPE_STRING)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new InputField(
+            "imageDir",
+            "imageDir",
+            "Image Storage Directory",
+            "text",
+            $config['imageDir'],
+            "The directory where downloaded images should be stored",
+            "uk-form-width-large")
         )->setValidationType(FormValidation::TYPE_STRING)
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 

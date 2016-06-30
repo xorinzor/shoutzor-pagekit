@@ -49,12 +49,13 @@ class ArtistController
             return App::response()->redirect('@shoutzor/artist/index');
         }
 
-
         return [
             '$view' => [
                 'title' => 'Artist: ' . $artist->name,
                 'name'  => 'shoutzor:views/artist/view.php',
             ],
+            'image' => (is_null($artist->image)) ? App::url()->getStatic('shoutzor:assets/images/profile-placeholder.png') : App::url()->getStatic('shoutzor:' . App::module('shoutzor')->config('shoutzor')['imageDir'] . '/' . $artist->image),
+            'summary' => empty($artist->summary) ? __('No summary for this artist is available') : $artist->summary,
             'artist' => $artist,
         ];
     }

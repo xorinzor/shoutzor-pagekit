@@ -7,6 +7,7 @@ use Xorinzor\Shoutzor\Model\Media;
 use Xorinzor\Shoutzor\Model\Artist;
 use Xorinzor\Shoutzor\Model\Album;
 use Xorinzor\Shoutzor\App\AcoustID;
+use Xorinzor\Shoutzor\App\LastFM;
 
 use getID3;
 use getid3_lib;
@@ -18,13 +19,17 @@ require_once(__DIR__ . '/../Vendor/getid3/write.php');
 class Parser {
 
     private $id3;
+    private $lastfm;
     private $mediaDir;
     private $tempMediaDir;
+    private $imageDir;
 
     public function __construct() {
         $this->id3 = new getID3();
+        $this->lastfm = new LastFM();
         $this->mediaDir = App::module('shoutzor')->config('shoutzor')['mediaDir'];
         $this->tempMediaDir = $this->mediaDir . '/temp';
+        $this->imageDir = App::module('shoutzor')->config('shoutzor')['imageDir'];
     }
 
     public function getMediaDir() {
@@ -115,17 +120,22 @@ class Parser {
         //Set the title of the media file
         $media->title = $tags['title'];
 
+        $firstArtist = null;
+
         //Add artists for each track
         if(is_array($tags['artist'])) {
             foreach($tags['artist'] as $artist) {
-                $this->addArtist($media, $artist);
+                $artist = $this->addArtist($media, $artist);
+                if(is_null($firstArtist) && $artist instanceof Artist) {
+                    $firstArtist = $artist;
+                }
             }
         }
 
         //Add artists for each track
         if(is_array($tags['album'])) {
             foreach($tags['album'] as $album) {
-                $this->addAlbum($media, $album);
+                $this->addAlbum($media, $album, $firstArtist);
             }
         }
 
@@ -145,30 +155,88 @@ class Parser {
         if($artist->count() > 0) {
             $artist = $artist->first();
         } else {
+            //Check if the LastFM integration is enabled
+            if($this->lastfm->isEnabled()) {
+                $data = $this->lastfm->getArtistInfo($name);
+                $summary = $data->bio->summary;
+                $image = $this->downloadImage($data->image);
+                if($image === false) {
+                    $image = '';
+                }
+            } else {
+                $summary = '';
+                $image = '';
+            }
+
             $artist = Artist::create();
             $artist->save([
-                'name' => $name
+                'name' => $name,
+                'summary' => $summary,
+                'image' => $image
             ]);
         }
 
         //App::db()->createQueryBuilder();
 
         //@TODO add ManyToMany relation to the table @shoutzor_media_artist
+
+        return $artist;
     }
 
-    public function addAlbum(Media $media, $title) {
+    public function addAlbum(Media $media, $title, Artist $artist = null) {
         $album = Album::query()->where('title = :title', ['title' => $title]);
 
         if($album->count() > 0) {
             $album = $album->first();
         } else {
+
+            if($this->lastfm->isEnabled() && !is_null($artist)) {
+                $data = $this->lastfm->getAlbumInfo($title, $artist);
+                $summary = $data['wiki']['summary'];
+                $image = $this->downloadImage($data['image']);
+                if($image === false) {
+                    $image = '';
+                }
+            } else {
+                $summary = '';
+                $image = '';
+            }
+
             $album = Album::create();
             $album->save([
-                'title' => $title
+                'title' => $title,
+                'summary' => $summary,
+                'image' => $image
             ]);
         }
 
         //@TODO add ManyToMany relation to the table @shoutzor_media_album
+    }
+
+    public function downloadImage($url) {
+        $destName = basename($url);
+        $result = false;
+
+        if(ini_get('allow_url_fopen')) {
+            $result = file_put_contents($this->imageDir . '/' . $destName, file_get_contents($url));
+            if($result !== false) {
+                return $destName;
+            }
+        }
+
+        //Either allow_url_fopen is disabled, or file_put_contents failed
+        //Attempting cURL
+        if($result === false) {
+            $ch = curl_init($url);
+            $fp = fopen($this->imageDir . '/'. $destName, 'wb');
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            $result = curl_exec($ch);
+            curl_close($ch);
+            fclose($fp);
+        }
+
+        return $result;
     }
 
     public function getID3Tags(Media $media) {

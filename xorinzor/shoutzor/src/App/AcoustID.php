@@ -13,7 +13,7 @@ class AcoustID {
     public function __construct() {
         $config = App::module('shoutzor')->config();
 
-        $this->enabled = $config['acoustid']['enabled'];
+        $this->enabled = $config['acoustid']['enabled'] == 1;
         $this->appKey = $config['acoustid']['appKey'];
         $this->requirementDir = realpath($config['root_path'] . '/../shoutzor-requirements/acoustid');
     }
@@ -69,6 +69,10 @@ class AcoustID {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
         $response = curl_exec($ch);
+
+        if($response === false) {
+            return false;
+        }
 
         // If using JSON...
         $data = json_decode($response);
