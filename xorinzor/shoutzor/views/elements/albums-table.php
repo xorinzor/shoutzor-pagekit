@@ -5,8 +5,8 @@
 <table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">
     <thead>
         <tr>
-            <th>Title</th>
-            <th>Artist(s)</th>
+            <th class="uk-width-1-2">Title</th>
+            <th class="uk-width-1-2">Artist(s)</th>
         </tr>
     </thead>
     <tbody>

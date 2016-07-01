@@ -1,4 +1,4 @@
-/*! UIkit 2.24.2 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
+/*! UIkit 2.26.3 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
 (function(addon) {
 
     var component;
@@ -54,7 +54,7 @@
 
                 for (var i = 0; i < sticked.length; i++) {
                     sticked[i].reset(true);
-                    //sticked[i].self.computeWrapper();
+                    sticked[i].self.computeWrapper();
                 }
 
                 checkscrollposition();
@@ -69,7 +69,7 @@
 
                         var $ele = UI.$(this);
 
-                        if(!$ele.data("sticky")) {
+                        if (!$ele.data("sticky")) {
                             UI.sticky($ele, UI.Utils.options($ele.attr('data-uk-sticky')));
                         }
                     });
@@ -81,11 +81,17 @@
 
         init: function() {
 
-            var wrapper  = UI.$('<div class="uk-sticky-placeholder"></div>'), boundary = this.options.boundary, boundtoparent;
+            var boundary = this.options.boundary, boundtoparent;
 
-            this.wrapper = this.element.css('margin', 0).wrap(wrapper).parent();
-
+            this.wrapper = this.element.wrap('<div class="uk-sticky-placeholder"></div>').parent();
             this.computeWrapper();
+            this.wrapper.css({
+                'margin-top'    : this.element.css('margin-top'),
+                'margin-bottom' : this.element.css('margin-bottom'),
+                'margin-left'   : this.element.css('margin-left'),
+                'margin-right'  : this.element.css('margin-right')
+            })
+            this.element.css('margin', 0);
 
             if (boundary) {
 
@@ -147,6 +153,7 @@
 
                         this.currentTop = null;
                         this.animate    = false;
+
                     }.bind(this);
 
 
@@ -233,9 +240,8 @@
         computeWrapper: function() {
 
             this.wrapper.css({
-                'height' : ['absolute','fixed'].indexOf(this.element.css('position')) == -1 ? this.element.outerHeight() : '',
-                'float'  : this.element.css('float') != 'none' ? this.element.css('float') : '',
-                'margin' : this.element.css('margin')
+                'height'        : ['absolute','fixed'].indexOf(this.element.css('position')) == -1 ? this.element.outerHeight() : '',
+                'float'         : this.element.css('float') != 'none' ? this.element.css('float') : ''
             });
 
             if (this.element.css('position') == 'fixed') {
@@ -290,7 +296,7 @@
                     if (sticky.boundtoparent) {
                         containerBottom = documentHeight - (bTop + sticky.boundary.outerHeight()) + parseInt(sticky.boundary.css('padding-bottom'));
                     } else {
-                        containerBottom = documentHeight - bTop - parseInt(sticky.boundary.css('margin-top'));
+                        containerBottom = documentHeight - bTop;
                     }
 
                     newTop = (scrollTop + stickyHeight) > (documentHeight - containerBottom - (sticky.top < 0 ? 0 : sticky.top)) ? (documentHeight - containerBottom) - (scrollTop + stickyHeight) : newTop;
@@ -302,8 +308,7 @@
                     sticky.element.css({
                         position : "fixed",
                         top      : newTop,
-                        width    : sticky.getWidthFrom.length ? sticky.getWidthFrom.width() : sticky.element.width(),
-                        left     : sticky.wrapper.offset().left
+                        width    : sticky.getWidthFrom.length ? sticky.getWidthFrom.width() : sticky.element.width()
                     });
 
                     if (!sticky.init) {

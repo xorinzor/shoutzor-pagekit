@@ -40,6 +40,11 @@ return [
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\ArtistController'
         ],
 
+        '/album' => [
+            'name' => '@shoutzor/album',
+            'controller' => 'Xorinzor\\Shoutzor\\Controller\\AlbumController'
+        ],
+
         '/shoutzor' => [
             'name' => '@shoutzor/admin/shoutzor',
             'controller' => 'Xorinzor\\Shoutzor\\Controller\\ShoutzorController'

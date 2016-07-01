@@ -47,18 +47,18 @@ class ArtistController
 
         if(is_null($artist))
         {
-            $request->getSession()->getFlashBag()->add('error', __('Tried to view an non-existing Artist page'));
+            $request->getSession()->getFlashBag()->add('error', __('Tried to view an non-existing Artist'));
             return App::response()->redirect('@shoutzor/artist/index');
         }
 
-        $topTracks = $artist->getTopTracks();
+        $topTracks = $artist->getTopMedia();
 
         return [
             '$view' => [
                 'title' => 'Artist: ' . $artist->name,
                 'name'  => 'shoutzor:views/artist/view.php',
             ],
-            'image' => (is_null($artist->image)) ? App::url()->getStatic('shoutzor:assets/images/profile-placeholder.png') : App::url()->getStatic('shoutzor:' . App::module('shoutzor')->config('shoutzor')['imageDir'] . '/' . $artist->image),
+            'image' => (is_null($artist->image) || empty($artist->image)) ? App::url()->getStatic('shoutzor:assets/images/profile-placeholder.png') : App::url()->getStatic('shoutzor:' . App::module('shoutzor')->config('shoutzor')['imageDir'] . '/' . $artist->image),
             'summary' => empty($artist->summary) ? __('No summary for this artist is available') : $artist->summary,
             'artist' => $artist,
             'topTracks' => $topTracks,

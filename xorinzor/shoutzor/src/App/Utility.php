@@ -25,6 +25,9 @@ class Utility {
 
         foreach ($values as $value) {
             if ($value > 0) {
+                if($value < 10) {
+                    $value = '0'.$value;
+                }
                 $parts[] = $value;
             }
         }

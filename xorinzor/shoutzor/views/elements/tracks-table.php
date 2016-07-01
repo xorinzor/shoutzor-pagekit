@@ -5,10 +5,10 @@
 <table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">
     <thead>
         <tr>
-            <th>Title</th>
-            <th>Artist(s)</th>
-            <th>Album(s)</th>
-            <th>Duration</th>
+            <th class="uk-width-4-10">Title</th>
+            <th class="uk-width-2-10">Artist(s)</th>
+            <th class="uk-width-3-10">Album(s)</th>
+            <th class="uk-width-1-10">Duration</th>
         </tr>
     </thead>
     <tbody>

@@ -44,11 +44,11 @@ class AcoustidController
             "enabled",
             "Enable AcoustID",
             array($config['enabled']),
-            array(['value' => "true", 'title' => 'enabled'],['value' => "false", 'title' => 'disabled']),
+            array(['value' => "1", 'title' => 'enabled'],['value' => "0", 'title' => 'disabled']),
             false,
             "Enable the AcoustID Media Fingerprinting Integration")
         )->setValidationType(FormValidation::TYPE_STRING)
-        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('true','false')));
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY, FormValidation::REQ_VALUE => array('1','0')));
 
         $form->addField(new InputField(
             "appKey",

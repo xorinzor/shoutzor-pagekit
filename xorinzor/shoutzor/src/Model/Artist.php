@@ -39,7 +39,7 @@ class Artist implements \JsonSerializable{
      */
     public $album;
 
-    public function getTopTracks() {
+    public function getTopMedia() {
         $topTracks = Media::query()
                         ->select('m.*, COUNT(h.id) as popularity, h.played_at as played_at')
                         ->from('@shoutzor_media m')

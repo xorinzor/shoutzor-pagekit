@@ -25,11 +25,13 @@ class Parser {
     private $imageDir;
 
     public function __construct() {
+        $conf = App::module('shoutzor')->config('shoutzor');
+
         $this->id3 = new getID3();
         $this->lastfm = new LastFM();
-        $this->mediaDir = App::module('shoutzor')->config('shoutzor')['mediaDir'];
+        $this->mediaDir = $conf['mediaDir'];
         $this->tempMediaDir = $this->mediaDir . '/temp';
-        $this->imageDir = App::module('shoutzor')->config('shoutzor')['imageDir'];
+        $this->imageDir = App::module('shoutzor')->config('root_path') . $conf['imageDir'];
     }
 
     public function getMediaDir() {
@@ -51,7 +53,7 @@ class Parser {
             return Media::STATUS_FINISHED;
         }
 
-        //@TODO before we can start fixing media files with the ERROR status, we need to know what could go wrong
+        //@TODO before we can start fixing media files with the ERROR status, we need to know what could go wrong that could be recoverable
         if($media->status === Media::STATUS_ERROR) {
             return Media::STATUS_ERROR;
         }
@@ -121,13 +123,14 @@ class Parser {
         $media->title = $tags['title'];
 
         $firstArtist = null;
+        $artists = array();
 
         //Add artists for each track
         if(is_array($tags['artist'])) {
             foreach($tags['artist'] as $artist) {
                 $artist = $this->addArtist($media, $artist);
-                if(is_null($firstArtist) && $artist instanceof Artist) {
-                    $firstArtist = $artist;
+                if(!is_null($artist) && $artist instanceof Artist) {
+                    $artists[] = $artist;
                 }
             }
         }
@@ -135,7 +138,7 @@ class Parser {
         //Add artists for each track
         if(is_array($tags['album'])) {
             foreach($tags['album'] as $album) {
-                $this->addAlbum($media, $album, $firstArtist);
+                $this->addAlbum($media, $album, $artists);
             }
         }
 
@@ -150,20 +153,31 @@ class Parser {
     }
 
     public function addArtist(Media $media, $name) {
+        $name = ucfirst(strtolower($name));
         $artist = Artist::query()->where('name = :name', ['name' => $name]);
 
         if($artist->count() > 0) {
             $artist = $artist->first();
         } else {
+            $info = true;
+
             //Check if the LastFM integration is enabled
             if($this->lastfm->isEnabled()) {
                 $data = $this->lastfm->getArtistInfo($name);
-                $summary = $data->bio->summary;
-                $image = $this->downloadImage($data->image);
-                if($image === false) {
-                    $image = '';
+                if($data === false) {
+                    $info = false;
+                } else {
+                    $summary = $data['bio']['summary'];
+                    $image = $this->downloadImage($data['image']);
+                    if($image === false) {
+                        $image = '';
+                    }
                 }
             } else {
+                $info = false;
+            }
+
+            if($info === false) {
                 $summary = '';
                 $image = '';
             }
@@ -176,22 +190,23 @@ class Parser {
             ]);
         }
 
-        //App::db()->createQueryBuilder();
-
-        //@TODO add ManyToMany relation to the table @shoutzor_media_artist
+        //Dirty hack to create an insert query
+        App::db()->createQueryBuilder()
+            ->select('1; INSERT INTO @shoutzor_media_artist (media_id, artist_id) VALUES ('.$media->id.', '.$artist->id.') ON DUPLICATE KEY UPDATE media_id=media_id;--')
+            ->execute();
 
         return $artist;
     }
 
-    public function addAlbum(Media $media, $title, Artist $artist = null) {
+    public function addAlbum(Media $media, $title, $artists = array()) {
+        $title = ucfirst(strtolower($title));
         $album = Album::query()->where('title = :title', ['title' => $title]);
 
         if($album->count() > 0) {
             $album = $album->first();
         } else {
-
-            if($this->lastfm->isEnabled() && !is_null($artist)) {
-                $data = $this->lastfm->getAlbumInfo($title, $artist);
+            if($this->lastfm->isEnabled() && !is_null($artists) && count($artists) > 0) {
+                $data = $this->lastfm->getAlbumInfo($title, $artists[0]->name);
                 $summary = $data['wiki']['summary'];
                 $image = $this->downloadImage($data['image']);
                 if($image === false) {
@@ -210,10 +225,23 @@ class Parser {
             ]);
         }
 
-        //@TODO add ManyToMany relation to the table @shoutzor_media_album
+        //Dirty hack to create an insert query
+        App::db()->createQueryBuilder()
+            ->select('1; INSERT INTO @shoutzor_media_album (media_id, album_id) VALUES ('.$media->id.', '.$album->id.') ON DUPLICATE KEY UPDATE media_id=media_id;--')
+            ->execute();
+
+        foreach($artists as $artist) {
+            App::db()->createQueryBuilder()
+                ->select('1; INSERT INTO @shoutzor_artist_album (artist_id, album_id) VALUES ('.$artist->id.', '.$album->id.') ON DUPLICATE KEY UPDATE artist_id=artist_id;--')
+                ->execute();
+        }
     }
 
     public function downloadImage($url) {
+        if(empty($url)) {
+            return false;
+        }
+
         $destName = basename($url);
         $result = false;
 

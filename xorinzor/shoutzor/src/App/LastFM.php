@@ -38,46 +38,46 @@ class LastFM {
         }
 
         //If an error occured, return false
-        if(isset($result->error) || !isset($result->artist)) {
+        if(isset($result['error']) || !isset($result['artist'])) {
             return false;
         }
 
-        $result = $result->artist;
+        $result = $result['artist'];
 
         //Remove unneeded values
-        if(isset($result->stats)) unset($result->stats);
-        if(isset($result->similar)) unset($result->similar);
-        if(isset($result->tags)) unset($result->tags);
+        if(isset($result['stats'])) unset($result['stats']);
+        if(isset($result['similar'])) unset($result['similar']);
+        if(isset($result['tags'])) unset($result['tags']);
 
         //Make sure required values are always set though
-        if(!isset($result->bio)) $result->bio = array();
-        if(!isset($result->bio->summary)) $result->bio->summary = '';
-        if(!isset($result->image)) $result->image = array();
+        if(!isset($result['bio'])) $result['bio'] = array();
+        if(!isset($result['bio']['summary'])) $result['bio']['summary'] = '';
+        if(!isset($result['image'])) $result['image'] = array();
 
         $images = array();
 
-        foreach($result->image as $image) {
-            $image = (array) $image;
+        //Build our own associative array of images and their sizes
+        foreach($result['image'] as $image) {
             if(!isset($image['size'])) continue;
             $images[$image['size']] = $image['#text'];
         }
 
         //Try to get the most suitable size picture
         if(isset($images['large'])) {
-            $result->image = $images['large'];
+            $result['image'] = $images['large'];
         }
         elseif(isset($images['medium'])) {
-            $result->image = $images['medium'];
+            $result['image'] = $images['medium'];
         }
         elseif(isset($images['extralarge'])) {
-            $result->image = $images['extralarge'];
+            $result['image'] = $images['extralarge'];
         }
         elseif(isset($images['mega'])) {
-            $result->image = $images['mega'];
+            $result['image'] = $images['mega'];
         }
         else {
             //Size small is too small to be usable
-            $result->image = '';
+            $result['image'] = '';
         }
 
         return $result;
@@ -97,47 +97,47 @@ class LastFM {
         }
 
         //If an error occured, return false
-        if(isset($result->error) || !isset($result->album)) {
+        if(isset($result['error']) || !isset($result['album'])) {
             return false;
         }
 
-        $result = $result->album;
+        $result = $result['album'];
 
         //Remove unneeded values
-        if(isset($result->listeners)) unset($result->listeners);
-        if(isset($result->playcount)) unset($result->playcount);
-        if(isset($result->tracks)) unset($result->tracks);
-        if(isset($result->tags)) unset($result->tags);
+        if(isset($result['listeners'])) unset($result['listeners']);
+        if(isset($result['playcount'])) unset($result['playcount']);
+        if(isset($result['tracks'])) unset($result['tracks']);
+        if(isset($result['tags'])) unset($result['tags']);
 
         //Make sure required values are always set though
-        if(!isset($result->wiki)) $result->wiki = array();
-        if(!isset($result->wiki->summary)) $result->wiki->summary = '';
-        if(!isset($result->image)) $result->image = array();
+        if(!isset($result['wiki'])) $result['wiki'] = array('summary' => '');
+        if(!isset($result['wiki']['summary'])) $result['wiki']['summary'] = '';
+        if(!isset($result['image'])) $result['image'] = array();
 
         $images = array();
 
-        foreach($result->image as $image) {
-            $image = (array) $image;
+        //Build our own associative array of images and their sizes
+        foreach($result['image'] as $image) {
             if(!isset($image['size'])) continue;
             $images[$image['size']] = $image['#text'];
         }
 
         //Try to get the most suitable size picture
         if(isset($images['large'])) {
-            $result->image = $images['large'];
+            $result['image'] = $images['large'];
         }
         elseif(isset($images['medium'])) {
-            $result->image = $images['medium'];
+            $result['image'] = $images['medium'];
         }
         elseif(isset($images['extralarge'])) {
-            $result->image = $images['extralarge'];
+            $result['image'] = $images['extralarge'];
         }
         elseif(isset($images['mega'])) {
-            $result->image = $images['mega'];
+            $result['image'] = $images['mega'];
         }
         else {
             //Size small is too small to be usable
-            $result->image = '';
+            $result['image'] = '';
         }
 
         return $result;
@@ -164,7 +164,7 @@ class LastFM {
         }
 
         // If using JSON...
-        $data = json_decode($response);
+        $data = json_decode($response, true);
 
         return $data;
     }

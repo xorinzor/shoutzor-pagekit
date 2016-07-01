@@ -37,9 +37,9 @@ class ShoutzorController
 
         $form->addField(new DivField(
             "Permission Check",
-            $config['imageDir'] . ((is_writable($config['imageDir'])) ? " is writable" : " is not writable! chown manually to www-data:www-data"),
+            App::module('shoutzor')->config('root_path') . $config['imageDir'] . ((is_writable(App::module('shoutzor')->config('root_path') . $config['imageDir'])) ? " is writable" : " is not writable! chown manually to www-data:www-data"),
             "",
-            (is_writable($config['imageDir'])) ? "uk-alert uk-alert-success" : "uk-alert uk-alert-danger")
+            (is_writable(App::module('shoutzor')->config('root_path') . $config['imageDir'])) ? "uk-alert uk-alert-success" : "uk-alert uk-alert-danger")
         );
 
         $form->addField(new DividerField());
