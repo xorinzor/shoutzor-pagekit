@@ -24,7 +24,7 @@ class Utility {
         $parts = array();
 
         foreach ($values as $value) {
-            if ($value > 0) {
+            if ($value > 0 || count($parts)>0) {
                 if($value < 10) {
                     $value = '0'.$value;
                 }
