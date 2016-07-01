@@ -56,6 +56,10 @@
     padding-bottom: 30px;
 }
 
+.uk-table tr:last-child td {
+    border-bottom: 0;
+}
+
 #upload-rules {
     margin-top: 0px;
 }

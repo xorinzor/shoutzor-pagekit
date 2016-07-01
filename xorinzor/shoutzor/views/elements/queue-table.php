@@ -5,9 +5,9 @@
 <table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">
     <thead>
         <tr>
-            <th class="uk-width-3-10">Title</th>
+            <th class="uk-width-4-10">Title</th>
             <th class="uk-width-2-10">Artist(s)</th>
-            <th class="uk-width-3-10">Album(s)</th>
+            <th class="uk-width-2-10">Album(s)</th>
             <th class="uk-width-2-10">Approx. Playtime</th>
         </tr>
     </thead>

@@ -86,10 +86,14 @@ class SiteController
 
     /**
      * @Route("/search", name="search", methods="GET")
-     * @Request({"q":"string"})
+     * @Request({"q":"string", "page":"int"})
      */
-    public function searchAction($q = "")
+    public function searchAction($q = "", $page = 1)
     {
+        $query = Artist::query()->select('*');
+
+        $request = App::request();
+
         if(empty($q)) {
             return [
                 '$view' => [
@@ -98,23 +102,35 @@ class SiteController
                 ]
             ];
         }
-        $query = Media::where(['status = :finished AND (title LIKE :search OR filename LIKE :search)'], ['finished' => Media::STATUS_FINISHED, 'search' => "%{$q}%"])
-                ->orderBy('created', 'DESC');
 
-        $total = $query->count();
+        $query = Media::query()
+                    ->select('m.*')
+                    ->from('@shoutzor_media m')
+                    ->leftJoin('@shoutzor_media_artist ma', 'ma.media_id = m.id')
+                    ->leftJoin('@shoutzor_artist a', 'a.id = ma.artist_id')
+                    ->where('m.status = :status AND (m.title LIKE :search OR a.name LIKE :search OR m.filename LIKE :search)', ['status' => Media::STATUS_FINISHED, 'search' => "%{$q}%"])
+                    ->orderBy('m.title', 'DESC');
 
-        $results = $query->related(['artist'])
-                ->limit(10)
-                ->get();
+        $limit = 20;
+        $count = $query->count();
+        $total = ceil($count / $limit);
+        $page  = max(1, min($total, $page));
+
+        $results = $query->offset(($page-1) * $limit)
+                        ->limit($limit)
+                        ->orderBy('name', 'ASC')
+                        ->related(['artist', 'album'])
+                        ->get();
 
         return [
             '$view' => [
                 'title' => 'Search',
                 'name' => 'shoutzor:views/search.php'
             ],
-
             'searchterm' => htmlspecialchars($q),
-            'total' => $total,
+            'page' => $page,
+            'totalPage' => $total,
+            'resultCount' => $count,
             'results' => $results
         ];
     }

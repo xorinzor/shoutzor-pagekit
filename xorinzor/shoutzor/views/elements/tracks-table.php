@@ -14,7 +14,7 @@
     <tbody>
         <?php foreach($tracks as $track): ?>
             <tr>
-                <td><?= $track->title; ?></td>
+                <td><a data-music="<?= $track->id; ?>"><?= $track->title; ?></a></td>
                 <td>
                     <?php
                         if(isset($track->artist) && !is_null($track->artist) && count($track->artist) > 0) {

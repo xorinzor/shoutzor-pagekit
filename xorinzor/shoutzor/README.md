@@ -18,7 +18,6 @@ when finished, install `liquidsoap` and `liquidsoap-plugin-all`
 - LastFM Implementation for Artist / Album information
 
 @TODO
-- Implement Albums and Artists
 - Upload page: use Media::STATUS templates for upload response statuses
 - Redirect users that are not authenticated to the login screen
 - Implement JS API methods
