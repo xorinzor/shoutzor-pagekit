@@ -3,8 +3,13 @@
 namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
+use Xorinzor\Shoutzor\Model\Artist;
+use Xorinzor\Shoutzor\Model\Album;
 use Xorinzor\Shoutzor\Model\Media;
 use Xorinzor\Shoutzor\Model\History;
+
+use DateTime;
+use DateInterval;
 
 class SiteController
 {
@@ -16,15 +21,45 @@ class SiteController
     {
         $config = App::module('shoutzor')->config('liquidsoap');
 
-        $uploaded = Media::where(['status = :finished'], ['finished' => Media::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->limit(8)->get();
-        $history = History::query()->orderBy('id', 'DESC')->limit(5)->related('media')->get();
+        //Get the history
+        $history = Media::query()
+                        ->select('m.*, h.played_at as played_at')
+                        ->from('@shoutzor_media m')
+                        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
+                        ->where('h.media_id = m.id')
+                        ->orderBy('h.played_at', 'DESC')
+                        ->limit(5)
+                        ->related(['artist', 'album'])
+                        ->get();
+
+        //Get the starttime of the song thats currently playing
+        //We will use this to predict when the queued items will start
+        if(count($history) > 0) {
+            reset($history);
+            $first_key = key($history);
+            $starttime = new DateTime($history[$first_key]->played_at);
+            $starttime->add(new DateInterval('PT'.$history[$first_key]->duration.'S'));
+        } else {
+            $starttime = new DateTime();
+        }
+
+        //Get the queued items
+        $queued = Media::query()
+                        ->select('m.*')
+                        ->from('@shoutzor_media m')
+                        ->leftJoin('@shoutzor_requestlist r', 'r.media_id = m.id')
+                        ->where('r.media_id = m.id')
+                        ->orderBy('r.id', 'DESC')
+                        ->related(['artist', 'album'])
+                        ->get();
 
         return [
             '$view' => [
                 'title' => __('Dashboard'),
                 'name' => 'shoutzor:views/index.php'
             ],
-            'uploaded' => $uploaded,
+            'queued' => $queued,
+            'starttime' => $starttime,
             'history' => $history,
             'm3uFile' => 'http://'.$_SERVER['SERVER_NAME'] . ':8000' . $config['wrapperOutputMount'] . '.m3u'
         ];
@@ -84,27 +119,11 @@ class SiteController
         ];
     }
 
-    public function redirectAction()
-    {
-        return App::response()->redirect('@shoutzor/greet', ['name' => 'Someone']);
+    private function getQueuePrediction() {
+
     }
 
-    public function jsonAction()
-    {
-        return ['message' => 'There is nothing here. Move along.'];
-    }
-
-    public function downloadAction()
-    {
-        return App::response()->download('extensions/shoutzor/extension.svg');
-    }
-
-    function forbiddenAction()
-    {
-        App::abort(401, __('Permission denied.'));
-    }
-
-    function formatBytes($bytes, $precision = 2) {
+    private function formatBytes($bytes, $precision = 2) {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
 
         $bytes = max($bytes, 0);

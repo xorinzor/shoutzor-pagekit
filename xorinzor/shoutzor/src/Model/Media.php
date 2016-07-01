@@ -54,6 +54,9 @@ class Media implements \JsonSerializable{
     /** @Column(type="integer") */
     public $duration;
 
+    //Dirty fix - Field for SiteController - History::played_at
+    public $played_at;
+
     /**
      * @ManyToMany(targetEntity="Xorinzor\Shoutzor\Model\Artist", tableThrough="@shoutzor_media_artist", keyThroughFrom="media_id", keyThroughTo="artist_id")
      * @OrderBy({"name" = "ASC"})

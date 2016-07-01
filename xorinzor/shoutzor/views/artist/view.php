@@ -15,10 +15,16 @@
 
 <div class="uk-panel uk-panel-box">
     <div class="uk-panel-title">
-        <p>Top Tracks</p>
+        <p>Top Requested Tracks</p>
     </div>
 
-    <pre>
-        <?php var_dump($artist); ?>
-    </pre>
+    <?= $view->render('shoutzor:views/elements/tracks-table.php', ['tracks' => $topTracks]); ?>
+</div>
+
+<div class="uk-panel uk-panel-box">
+    <div class="uk-panel-title">
+        <p>Albums</p>
+    </div>
+
+    <?= $view->render('shoutzor:views/elements/albums-table.php', ['albums' => $albums]); ?>
 </div>

@@ -10,19 +10,13 @@
 
 <div class="uk-panel uk-panel-box">
     <div class="uk-panel-title">
-        <p>Recently added</p>
+        <p>Request Queue</p>
     </div>
 
-    <?php if(count($uploaded) == 0): ?>
-        <p>No content has been uploaded yet, be the first!</p>
+    <?php if(count($queued) == 0): ?>
+        <p>No content has been requested yet!</p>
     <?php else: ?>
-        <ul class="uk-thumbnav uploaded-content-list uk-grid-width-small-1-2 uk-grid-width-medium-1-4">
-            <?php foreach($uploaded as $item): ?>
-                <li>
-                    <?= $view->render('shoutzor:views/elements/list-item.php', ['item' => $item]); ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+        <?= $view->render('shoutzor:views/elements/queue-table.php', ['tracks' => $queued, 'starttime' => $starttime]); ?>
     <?php endif; ?>
 </div>
 
@@ -34,29 +28,6 @@
     <?php if(count($history) == 0): ?>
         <p>No content has been played yet!</p>
     <?php else: ?>
-        <table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Artist</th>
-                    <th>Played at</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach($history as $item): ?>
-                    <tr>
-                        <td>
-                            <?= $item->media->title; ?>
-                        </td>
-                        <td>
-                            <?= $item->media->artist; ?>
-                        </td>
-                        <td>
-                            <?= $item->played_at->format('d-m-Y h:i'); ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <?= $view->render('shoutzor:views/elements/history-table.php', ['tracks' => $history]); ?>
     <?php endif; ?>
 </div>

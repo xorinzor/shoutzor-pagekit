@@ -5,6 +5,9 @@ namespace Xorinzor\Shoutzor\Model;
 use Pagekit\Application as App;
 use Pagekit\Database\ORM\ModelTrait;
 
+use Xorinzor\Shoutzor\Model\Album;
+use Xorinzor\Shoutzor\Model\Media;
+
 /**
  * @Entity(tableClass="@shoutzor_artist")
  */
@@ -35,6 +38,31 @@ class Artist implements \JsonSerializable{
      * @OrderBy({"title" = "ASC"})
      */
     public $album;
+
+    public function getTopTracks() {
+        $topTracks = Media::query()
+                        ->select('m.*, COUNT(h.id) as popularity, h.played_at as played_at')
+                        ->from('@shoutzor_media m')
+                        ->leftJoin('@shoutzor_media_artist ma', 'ma.artist_id = '.$this->id)
+                        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
+                        ->where('m.id = ma.media_id')
+                        ->orderBy('popularity, m.title', 'DESC')
+                        ->limit(5)
+                        ->related(['artist', 'album'])
+                        ->get();
+
+        return $topTracks;
+    }
+
+    public function getAlbums() {
+        $albums = Album::query()
+                        ->leftJoin('@shoutzor_artist_album aa', 'aa.artist_id = '.$this->id)
+                        ->where('id = aa.album_id')
+                        ->related('artist')
+                        ->get();
+
+        return $albums;
+    }
 
     /**
      * {@inheritdoc}

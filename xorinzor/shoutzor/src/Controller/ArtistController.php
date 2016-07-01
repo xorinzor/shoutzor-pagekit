@@ -4,6 +4,8 @@ namespace Xorinzor\Shoutzor\Controller;
 use Pagekit\Application as App;
 
 use Xorinzor\Shoutzor\Model\Artist;
+use Xorinzor\Shoutzor\Model\Album;
+use Xorinzor\Shoutzor\Model\Media;
 
 class ArtistController
 {
@@ -40,7 +42,7 @@ class ArtistController
      */
     public function viewAction($id)
     {
-        $artist = Artist::find($id);
+        $artist = Artist::query()->where('id = ?', [$id])->related('album')->first();
         $request = App::request();
 
         if(is_null($artist))
@@ -48,6 +50,8 @@ class ArtistController
             $request->getSession()->getFlashBag()->add('error', __('Tried to view an non-existing Artist page'));
             return App::response()->redirect('@shoutzor/artist/index');
         }
+
+        $topTracks = $artist->getTopTracks();
 
         return [
             '$view' => [
@@ -57,6 +61,8 @@ class ArtistController
             'image' => (is_null($artist->image)) ? App::url()->getStatic('shoutzor:assets/images/profile-placeholder.png') : App::url()->getStatic('shoutzor:' . App::module('shoutzor')->config('shoutzor')['imageDir'] . '/' . $artist->image),
             'summary' => empty($artist->summary) ? __('No summary for this artist is available') : $artist->summary,
             'artist' => $artist,
+            'topTracks' => $topTracks,
+            'albums' => $artist->getAlbums()
         ];
     }
 }
