@@ -545,7 +545,7 @@ class ApiController
                         ->related(['artist', 'album'])
                         ->get();
 
-        return $this->formatOutput(json_encode($queued));
+        return $this->formatOutput($queued);
     }
 
     /**
@@ -564,6 +564,24 @@ class ApiController
                         ->related(['artist', 'album'])
                         ->get();
 
-        return $this->formatOutput(json_encode($history));
+        return $this->formatOutput($history);
+    }
+
+    /**
+     * Gets the track that is currently playing
+     * @method nowplaying
+     */
+    public function nowplaying($params) {
+        $history = Media::query()
+                        ->select('m.*, h.played_at as played_at')
+                        ->from('@shoutzor_media m')
+                        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
+                        ->where('h.media_id = m.id')
+                        ->orderBy('h.played_at', 'DESC')
+                        ->limit(5)
+                        ->related(['artist', 'album'])
+                        ->first();
+
+        return $this->formatOutput($history);
     }
 }
