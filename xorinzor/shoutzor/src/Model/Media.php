@@ -96,6 +96,22 @@ class Media implements \JsonSerializable{
      */
     public function jsonSerialize()
     {
-        return $this->toArray([], []);
+        $data = $this->toArray([], []);
+
+        $data['artist'] = array();
+        if(!is_null($this->artist)) {
+            foreach($this->artist as $artist) {
+                $data['artist'][] = $artist->jsonSerialize();
+            }
+        }
+
+        $data['album'] = array();
+        if(!is_null($this->album)) {
+            foreach($this->album as $album) {
+                $data['album'][] = $album->jsonSerialize();
+            }
+        }
+
+        return $data;
     }
 }

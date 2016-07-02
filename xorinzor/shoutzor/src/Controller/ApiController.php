@@ -3,6 +3,8 @@ namespace Xorinzor\Shoutzor\Controller;
 
 use Pagekit\Application as App;
 
+use Xorinzor\Shoutzor\Model\Artist;
+use Xorinzor\Shoutzor\Model\Album;
 use Xorinzor\Shoutzor\Model\Media;
 use Xorinzor\Shoutzor\Model\Request;
 use Xorinzor\Shoutzor\Model\History;
@@ -526,5 +528,42 @@ class ApiController
         $autodj->playNext();
 
         return $this->formatOutput(true);
+    }
+
+    /**
+     * Gets the current Queue list in JSON format
+     * @method queuelist
+     */
+    public function queuelist($params) {
+        //Get the queued items
+        $queued = Media::query()
+                        ->select('m.*')
+                        ->from('@shoutzor_media m')
+                        ->leftJoin('@shoutzor_requestlist r', 'r.media_id = m.id')
+                        ->where('r.media_id = m.id')
+                        ->orderBy('r.id', 'ASC')
+                        ->related(['artist', 'album'])
+                        ->get();
+
+        return $this->formatOutput(json_encode($queued));
+    }
+
+    /**
+     * Gets the current History list in JSON format
+     * @method historylist
+     */
+    public function historylist($params) {
+        //Get the history
+        $history = Media::query()
+                        ->select('m.*, h.played_at as played_at')
+                        ->from('@shoutzor_media m')
+                        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
+                        ->where('h.media_id = m.id')
+                        ->orderBy('h.played_at', 'DESC')
+                        ->limit(5)
+                        ->related(['artist', 'album'])
+                        ->get();
+
+        return $this->formatOutput(json_encode($history));
     }
 }

@@ -49,7 +49,7 @@ class SiteController
                         ->from('@shoutzor_media m')
                         ->leftJoin('@shoutzor_requestlist r', 'r.media_id = m.id')
                         ->where('r.media_id = m.id')
-                        ->orderBy('r.id', 'DESC')
+                        ->orderBy('r.id', 'ASC')
                         ->related(['artist', 'album'])
                         ->get();
 
