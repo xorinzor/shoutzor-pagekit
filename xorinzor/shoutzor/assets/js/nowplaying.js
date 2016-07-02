@@ -3,22 +3,32 @@ $(function(){
     var offline = "Shoutzor is currently offline";
     var song = "title - artist";
 
-    function nowplaying(data) {
-        if(data === false) {
+    function buildArtistList(artists) {
+        var list = '';
+
+        if(artists.length === 0) {
+            return 'Unknown';
+        }
+
+        $.each(artists, function(key, artist) {
+            if(list !== '') {
+                list += ', ';
+            }
+
+            list += artist.name;
+        });
+
+        return list;
+    }
+
+    function nowplaying(track) {
+        if(track === false) {
             $("#nowplaying").html(offline);
             return;
         }
 
         try {
-            var songData = {
-               title:data.mounts["/shoutzor"].title,
-               artist:data.mounts["/shoutzor"].artist
-            };
-
-            result = song.replace(/title|artist/gi, function(matched){
-              return songData[matched];
-            });
-
+            result = track.title + ' - ' + buildArtistList(track.artist);
         } catch(e) {
             result = offline;
         }
@@ -27,17 +37,12 @@ $(function(){
     }
 
     function fetchInfo() {
-        $.ajax({
-            url: url,
-            dataType: "jsonp",
-            jsonpCallback: "nowplaying",
-            method: "GET",
-            error: function(e) {
-               nowplaying(false);
-           },
-           success: function(data) {
-               nowplaying(data);
-           }
+        api.nowplaying(function(result){
+            if(result.result === true) {
+                nowplaying(result.track);
+            } else {
+                nowplaying(false);
+            }
         });
 
         setTimeout(fetchInfo, 3000);

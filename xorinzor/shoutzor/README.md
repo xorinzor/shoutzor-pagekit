@@ -18,9 +18,7 @@ when finished, install `liquidsoap` and `liquidsoap-plugin-all`
 - LastFM Implementation for Artist / Album information
 
 @TODO
-- Upload page: use Media::STATUS templates for upload response statuses
 - Redirect users that are not authenticated to the login screen
-- Implement JS API methods
 - Have the admin panel use the JS API
 - Implement Youtube video search & request functionality
 - Check if Media is still on STATUS_PROCESSING after > 15 minutes after uploading (this would safely indicate something has gone wrong)

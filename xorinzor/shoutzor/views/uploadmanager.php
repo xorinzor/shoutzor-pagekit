@@ -3,7 +3,9 @@
 <?php $view->style('uikit-upload-formfile', 'theme:css/components/form-file.almost-flat.min.css'); ?>
 <?php $view->style('uikit-placeholder', 'theme:css/components/placeholder.almost-flat.min.css'); ?>
 
+<?php $view->script('jsrender', 'shoutzor:assets/js/jsrender.js', 'jquery') ?>
 <?php $view->script('uikit-upload-script', 'theme:js/components/upload.min.js', ['jquery', 'uikit-script']) ?>
+<?php $view->script('uploadmanager', 'shoutzor:assets/js/uploadmanager.js', ['uikit-upload-script', 'jsrender']) ?>
 
 <div id="upload-rules" class="uk-alert uk-alert-danger"><strong>Warning!</strong> Do NOT upload 18+ content or other harmful content, this will NOT be tolerated.</div>
 
@@ -66,15 +68,7 @@
                         uploadListEmpty.addClass("uk-hidden");
                     }
 
-                    uploadList.prepend(
-                        '<li data-uploadid="'+response.data.id+'">'+
-                            '<div class="uploaded-item">'+
-                                '<p><div class="uk-badge uk-badge-warning">Waiting</div> <strong>'+response.data.title+'</strong></p>'+
-                                '<div class="uk-progress uk-progress-warning uk-progress-striped uk-active">'+
-                                    '<div class="uk-progress-bar" style="width: 100%;">Waiting to be processed..</div>'+
-                                '</div>'+
-                            '</div>'+
-                        '</li>');
+                    uploadmanager.addItem(response.data);
                 },
 
                 allcomplete: function(response) {
@@ -109,3 +103,14 @@
         <?php endforeach; ?>
     </ul>
 </div>
+
+<script id="uploaded-item-template" type="text/x-jsrender">
+    <li data-uploadid="{{:id}}">
+        <div class="uploaded-item">
+            <p><div class="uk-badge {{:labelclass}}">{{:label}}</div> <strong>{{:title}}</strong></p>
+            <div class="uk-progress {{:progressbarclass}}">
+                <div class="uk-progress-bar" style="width: 100%;">{{:progressbartext}}</div>
+            </div>
+        </div>
+    </li>
+</script>

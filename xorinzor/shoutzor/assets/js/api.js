@@ -55,7 +55,7 @@ var api = {
             }
         }).always(function(data, type) {
             var result = false;
-            var message = '';
+            var tracks = {};
             starttime = 0;
 
             //make sure the request did not fail
@@ -66,11 +66,10 @@ var api = {
                     tracks = data.data.tracks;
                     starttime = data.data.starttime;
                 } else {
-                    tracks = {};
+                    //Something went wrong
                 }
             } else {
                 //Some error happened when trying to make the API call (500 perhaps?)
-                tracks = {};
             }
 
             callback({
@@ -89,7 +88,7 @@ var api = {
             }
         }).always(function(data, type) {
             var result = false;
-            var message = '';
+            var tracks = {};
 
             //make sure the request did not fail
             if (type == "success") {
@@ -98,16 +97,45 @@ var api = {
                     result = true;
                     tracks = data.data.tracks;
                 } else {
-                    tracks = {};
+                    //Something went wrong
                 }
             } else {
                 //Some error happened when trying to make the API call (500 perhaps?)
-                tracks = {};
             }
 
             callback({
                 result: result,
                 tracks: tracks
+            });
+        });
+    },
+
+    //Get the track that is playing right now
+    nowplaying: function(callback) {
+        api.executeRequest({
+            data: {
+                method: "nowplaying"
+            }
+        }).always(function(data, type) {
+            var result = false;
+            var track = {};
+
+            //make sure the request did not fail
+            if (type == "success") {
+                //API call went through, make sure the call succeeded
+                if(data.info.code == 200) {
+                    result = true;
+                    track = data.data;
+                } else {
+                    //Something went wrong
+                }
+            } else {
+                //Some error happened when trying to make the API call (500 perhaps?)
+            }
+
+            callback({
+                result: result,
+                track: track
             });
         });
     }
