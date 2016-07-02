@@ -44,22 +44,15 @@ class AutoDJ {
         $this->checkQueue();
     }
 
+    /**
+     * This function makes sure there is always at least 1 song in queue
+     */
     private function checkQueue() {
-
         $queueCount = $this->queueManager->getQueueCount();
 
-        //Shoutzor needs at least 2 songs for crossfading, currently 0 thus add 2
+        //Shoutzor needs at least 2 songs for crossfading, so we need to make sure there is always at least 1 song queued
         if($queueCount == 0) {
             $this->queueManager->addToQueue($this->getRandomTrack());
-            $this->queueManager->addToQueue($this->getRandomTrack());
-        }
-        //Shoutzor needs at least 2 songs for crossfading, currently 1 thus add 1
-        elseif($queueCount == 1) {
-            $this->queueManager->addToQueue($this->getRandomTrack());
-        }
-        //Shoutzor needs at least 2 songs for crossfading, currently 2 so we're good.
-        else {
-            //We dont have to do anything
         }
     }
 
