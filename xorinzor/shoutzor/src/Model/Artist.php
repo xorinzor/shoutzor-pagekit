@@ -41,15 +41,19 @@ class Artist implements \JsonSerializable{
 
     public function getTopMedia() {
         $topTracks = Media::query()
-                        ->select('m.*, COUNT(h.id) as popularity, h.played_at as played_at')
+                        ->select('DISTINCT m.*, COUNT(h.id) as popularity, h.played_at as played_at')
                         ->from('@shoutzor_media m')
                         ->leftJoin('@shoutzor_media_artist ma', 'ma.artist_id = '.$this->id)
                         ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
                         ->where('m.id = ma.media_id')
+                        ->groupBy('m.id')
                         ->orderBy('popularity, m.title', 'DESC')
                         ->limit(5)
                         ->related(['artist', 'album'])
                         ->get();
+
+        //SELECT m.*, COUNT(h.id) as popularity, h.played_at as played_at FROM pk_shoutzor_media m LEFT JOIN pk_shoutzor_media_artist ma ON ma.artist_id = 1 LEFT JOIN pk_shoutzor_history h ON h.media_id = m.id WHERE m.id = ma.media_id ORDER BY popularity, m.title DESC LIMIT 5
+
 
         return $topTracks;
     }

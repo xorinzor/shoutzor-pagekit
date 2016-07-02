@@ -150,3 +150,36 @@ body {
 figcaption[data-music] {
     cursor: pointer;
 }
+
+.tracks-table {
+    table-layout: fixed;
+}
+
+.tracks-table .artist, .tracks-table .album {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.tracks-table .title {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.tracks-table .artist ul, .tracks-table .album ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tracks-table .artist li, .tracks-table .album li {
+    display: inline;
+}
+
+.tracks-table .artist li:after, .tracks-table .album li:after {
+    content: ", ";
+}
+
+.tracks-table .artist li:last-child:after, .tracks-table .album li:last-child:after {
+    content: "";
+}
