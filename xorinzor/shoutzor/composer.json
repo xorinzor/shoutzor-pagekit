@@ -1,7 +1,7 @@
 {
     "name": "xorinzor/shoutzor",
     "type": "pagekit-extension",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "title": "Shoutzor",
     "description": "A system written to play music at (private) events like a LAN-Party with optional user interaction",
     "license": "GNU GPL v3.0",
