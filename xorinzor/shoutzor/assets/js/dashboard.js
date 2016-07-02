@@ -4,6 +4,24 @@ $(function() {
 
         rowTemplate: $.templates("#dashboard-table-row-template"),
 
+        getLocalTime: function(date) {
+            var now = date,
+                tzo = -now.getTimezoneOffset(),
+                dif = tzo >= 0 ? '+' : '-',
+                pad = function(num) {
+                    var norm = Math.abs(Math.floor(num));
+                    return (norm < 10 ? '0' : '') + norm;
+                };
+            return now.getFullYear()
+                + '-' + pad(now.getMonth()+1)
+                + '-' + pad(now.getDate())
+                + 'T' + pad(now.getHours())
+                + ':' + pad(now.getMinutes())
+                + ':' + pad(now.getSeconds())
+                + dif + pad(tzo / 60)
+                + ':' + pad(tzo % 60);
+        },
+
         buildArtistList: function(artists) {
             var list = '';
 
@@ -50,10 +68,10 @@ $(function() {
                     title: track.title,
                     artist: dashboard.buildArtistList(track.artist),
                     album: dashboard.buildAlbumList(track.album),
-                    duration: $.format.date((new Date(track.duration * 1000 + starttime)).toISOString(), 'yyyy-MM-dd HH:mm:ss')
+                    duration: $.format.date(dashboard.getLocalTime(new Date(starttime)), 'yyyy-MM-dd HH:mm:ss')
                 });
 
-                starttime = track.duration * 1000 + starttime;
+                starttime += track.duration * 1000; //Add the time in milliseconds from this track to the starttime
             });
 
             return result;
@@ -67,7 +85,7 @@ $(function() {
                     title: track.title,
                     artist: dashboard.buildArtistList(track.artist),
                     album: dashboard.buildAlbumList(track.album),
-                    duration: track.played_at
+                    duration: $.format.date(dashboard.getLocalTime(new Date(track.played_at + ' UTC')), 'yyyy-MM-dd HH:mm:ss')
                 });
             });
 
