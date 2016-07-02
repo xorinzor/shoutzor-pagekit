@@ -18,6 +18,7 @@ use ReflectionMethod;
 use Exception;
 use DateTime;
 use DateInterval;
+use DateTimeZone;
 
 class ApiController
 {
@@ -536,16 +537,18 @@ class ApiController
      */
     public function queuelist($params) {
         //Get the queued items
-        $queued = Media::query()
-                        ->select('m.*')
-                        ->from('@shoutzor_media m')
-                        ->leftJoin('@shoutzor_requestlist r', 'r.media_id = m.id')
-                        ->where('r.media_id = m.id')
-                        ->orderBy('r.id', 'ASC')
-                        ->related(['artist', 'album'])
-                        ->get();
+        $queued = Media::getQueued();
 
-        return $this->formatOutput($queued);
+        $nowplaying = Media::getNowplaying();
+
+        if(is_null($nowplaying)) {
+            $starttime = new DateTime('now', new DateTimeZone("UTC"));
+        } else {
+            $starttime = new DateTime($nowplaying->played_at, new DateTimeZone("UTC"));
+            $starttime->add(new DateInterval('PT'.$nowplaying->duration.'S'));
+        }
+
+        return $this->formatOutput(['tracks' => array_values($queued), 'starttime' => $starttime->getTimestamp()]);
     }
 
     /**
@@ -554,17 +557,9 @@ class ApiController
      */
     public function historylist($params) {
         //Get the history
-        $history = Media::query()
-                        ->select('m.*, h.played_at as played_at')
-                        ->from('@shoutzor_media m')
-                        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
-                        ->where('h.media_id = m.id')
-                        ->orderBy('h.played_at', 'DESC')
-                        ->limit(5)
-                        ->related(['artist', 'album'])
-                        ->get();
+        $history = Media::getHistory();
 
-        return $this->formatOutput($history);
+        return $this->formatOutput(['tracks' => array_values($history)]);
     }
 
     /**
@@ -572,15 +567,7 @@ class ApiController
      * @method nowplaying
      */
     public function nowplaying($params) {
-        $history = Media::query()
-                        ->select('m.*, h.played_at as played_at')
-                        ->from('@shoutzor_media m')
-                        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
-                        ->where('h.media_id = m.id')
-                        ->orderBy('h.played_at', 'DESC')
-                        ->limit(5)
-                        ->related(['artist', 'album'])
-                        ->first();
+        $history = Media::getNowplaying();
 
         return $this->formatOutput($history);
     }

@@ -21,46 +21,11 @@ class SiteController
     {
         $config = App::module('shoutzor')->config('liquidsoap');
 
-        //Get the history
-        $history = Media::query()
-                        ->select('m.*, h.played_at as played_at')
-                        ->from('@shoutzor_media m')
-                        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
-                        ->where('h.media_id = m.id')
-                        ->orderBy('h.played_at', 'DESC')
-                        ->limit(5)
-                        ->related(['artist', 'album'])
-                        ->get();
-
-        //Get the starttime of the song thats currently playing
-        //We will use this to predict when the queued items will start
-        if(count($history) > 0) {
-            reset($history);
-            $first_key = key($history);
-            $starttime = new DateTime($history[$first_key]->played_at);
-            $starttime->add(new DateInterval('PT'.$history[$first_key]->duration.'S'));
-        } else {
-            $starttime = new DateTime();
-        }
-
-        //Get the queued items
-        $queued = Media::query()
-                        ->select('m.*')
-                        ->from('@shoutzor_media m')
-                        ->leftJoin('@shoutzor_requestlist r', 'r.media_id = m.id')
-                        ->where('r.media_id = m.id')
-                        ->orderBy('r.id', 'ASC')
-                        ->related(['artist', 'album'])
-                        ->get();
-
         return [
             '$view' => [
                 'title' => __('Dashboard'),
                 'name' => 'shoutzor:views/index.php'
             ],
-            'queued' => $queued,
-            'starttime' => $starttime,
-            'history' => $history,
             'm3uFile' => 'http://'.$_SERVER['SERVER_NAME'] . ':8000' . $config['wrapperOutputMount'] . '.m3u'
         ];
     }

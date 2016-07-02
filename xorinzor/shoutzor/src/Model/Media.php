@@ -5,6 +5,9 @@ namespace Xorinzor\Shoutzor\Model;
 use Pagekit\Application as App;
 use Pagekit\Database\ORM\ModelTrait;
 
+use Xorinzor\Shoutzor\Model\Artist;
+use Xorinzor\Shoutzor\Model\Album;
+
 /**
  * @Entity(tableClass="@shoutzor_media")
  */
@@ -89,6 +92,47 @@ class Media implements \JsonSerializable{
         $statuses = self::getStatuses();
 
         return isset($statuses[$this->status]) ? $statuses[$this->status] : __('Unknown');
+    }
+
+    public static function getHistory() {
+        $history = Media::query()
+                        ->select('m.*, h.played_at as played_at')
+                        ->from('@shoutzor_media m')
+                        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
+                        ->where('h.media_id = m.id')
+                        ->orderBy('h.played_at', 'DESC')
+                        ->limit(5)
+                        ->related(['artist', 'album'])
+                        ->get();
+
+        return $history;
+    }
+
+    public static function getQueued() {
+        $queued = Media::query()
+                        ->select('m.*')
+                        ->from('@shoutzor_media m')
+                        ->leftJoin('@shoutzor_requestlist r', 'r.media_id = m.id')
+                        ->where('r.media_id = m.id')
+                        ->orderBy('r.id', 'ASC')
+                        ->related(['artist', 'album'])
+                        ->get();
+
+        return $queued;
+    }
+
+    public static function getNowplaying() {
+        $history = Media::query()
+                        ->select('m.*, h.played_at as played_at')
+                        ->from('@shoutzor_media m')
+                        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
+                        ->where('h.media_id = m.id')
+                        ->orderBy('h.played_at', 'DESC')
+                        ->limit(1)
+                        ->related(['artist', 'album'])
+                        ->first();
+
+        return $history;
     }
 
     /**

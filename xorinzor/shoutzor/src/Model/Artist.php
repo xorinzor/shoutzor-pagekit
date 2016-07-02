@@ -71,8 +71,10 @@ class Artist implements \JsonSerializable{
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
-    {
-        return $this->toArray([], []);
-    }
+     public function jsonSerialize() {
+         $data = $this->toArray([], []);
+         $data['url'] = App::url('@shoutzor/artist/view', ['id' => $this->id]);
+
+         return $data;
+     }
 }

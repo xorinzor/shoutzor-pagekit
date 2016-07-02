@@ -45,5 +45,70 @@ var api = {
                 message: message
             });
         });
+    },
+
+    //Get the queued request list
+    queuelist: function(callback) {
+        api.executeRequest({
+            data: {
+                method: "queuelist"
+            }
+        }).always(function(data, type) {
+            var result = false;
+            var message = '';
+            starttime = 0;
+
+            //make sure the request did not fail
+            if (type == "success") {
+                //API call went through, make sure the call succeeded
+                if(data.info.code == 200) {
+                    result = true;
+                    tracks = data.data.tracks;
+                    starttime = data.data.starttime;
+                } else {
+                    tracks = {};
+                }
+            } else {
+                //Some error happened when trying to make the API call (500 perhaps?)
+                tracks = {};
+            }
+
+            callback({
+                result: result,
+                tracks: tracks,
+                starttime: starttime
+            });
+        });
+    },
+
+    //Get the request history list
+    historylist: function(callback) {
+        api.executeRequest({
+            data: {
+                method: "historylist"
+            }
+        }).always(function(data, type) {
+            var result = false;
+            var message = '';
+
+            //make sure the request did not fail
+            if (type == "success") {
+                //API call went through, make sure the call succeeded
+                if(data.info.code == 200) {
+                    result = true;
+                    tracks = data.data.tracks;
+                } else {
+                    tracks = {};
+                }
+            } else {
+                //Some error happened when trying to make the API call (500 perhaps?)
+                tracks = {};
+            }
+
+            callback({
+                result: result,
+                tracks: tracks
+            });
+        });
     }
 }
