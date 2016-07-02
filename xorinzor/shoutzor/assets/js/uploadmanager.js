@@ -35,6 +35,12 @@ $(function() {
                 labelclass: 'uk-badge-danger',
                 progressbarclass: 'uk-progress-danger',
                 progressbartext: 'This song has already been uploaded'
+            },
+            5: {
+                label: 'Duration limit exceeded',
+                labelclass: 'uk-badge-danger',
+                progressbarclass: 'uk-progress-danger',
+                progressbartext: 'This tracks length exceeds the configured duration limit allowed'
             }
         },
 

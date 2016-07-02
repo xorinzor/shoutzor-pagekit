@@ -119,6 +119,7 @@ class AcoustID {
                 //Check for every item if the releasegroups element exists to prevent errors
                 if(isset($item->releasegroups)) {
                     foreach($item->releasegroups as $release) {
+                        if(!isset($release->type)) continue;
                         if(strtolower($release->type) !== "album") continue;
                         $info['album'][] = $release->title;
                     }
