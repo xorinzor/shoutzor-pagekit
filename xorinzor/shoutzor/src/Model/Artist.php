@@ -47,7 +47,7 @@ class Artist implements \JsonSerializable{
                         ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
                         ->where('m.id = ma.media_id')
                         ->groupBy('m.id')
-                        ->orderBy('popularity, m.title', 'DESC')
+                        ->orderBy('popularity', 'DESC')
                         ->limit(5)
                         ->related(['artist', 'album'])
                         ->get();
