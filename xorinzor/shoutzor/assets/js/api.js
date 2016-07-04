@@ -15,6 +15,103 @@ var api = {
         });
     },
 
+    //Starts the liquidsoap script of the provided type
+    startscript: function(type) {
+        api.executeRequest({
+            data: {
+                method: "liquidsoapcommand",
+                command: "start",
+                type: type
+            }
+        }).always(function(data, type) {
+            var result = false;
+            var message = '';
+
+            //make sure the request did not fail
+            if (type == "success") {
+                //API call went through, make sure the call succeeded
+                if(data.info.code == 200) {
+                    result = true;
+                    message = 'The script is starting';
+                } else {
+                    message = data.data;
+                }
+            } else {
+                //Some error happened when trying to make the API call (500 perhaps?)
+                message = 'Sorry! Something went wrong!';
+            }
+
+            callback({
+                result: result,
+                message: message
+            });
+        });
+    },
+
+    //Starts the liquidsoap script of the provided type
+    stopscript: function(type) {
+        api.executeRequest({
+            data: {
+                method: "liquidsoapcommand",
+                command: "stop",
+                type: type
+            }
+        }).always(function(data, type) {
+            var result = false;
+            var message = '';
+
+            //make sure the request did not fail
+            if (type == "success") {
+                //API call went through, make sure the call succeeded
+                if(data.info.code == 200) {
+                    result = true;
+                    message = 'The script is stopping';
+                } else {
+                    message = data.data;
+                }
+            } else {
+                //Some error happened when trying to make the API call (500 perhaps?)
+                message = 'Sorry! Something went wrong!';
+            }
+
+            callback({
+                result: result,
+                message: message
+            });
+        });
+    },
+
+    nexttrack: function() {
+        api.executeRequest({
+            data: {
+                method: "liquidsoapcommand",
+                command: "next"
+            }
+        }).always(function(data, type) {
+            var result = false;
+            var message = '';
+
+            //make sure the request did not fail
+            if (type == "success") {
+                //API call went through, make sure the call succeeded
+                if(data.info.code == 200) {
+                    result = true;
+                    message = 'Skipped to the next track';
+                } else {
+                    message = data.data;
+                }
+            } else {
+                //Some error happened when trying to make the API call (500 perhaps?)
+                message = 'Sorry! Something went wrong!';
+            }
+
+            callback({
+                result: result,
+                message: message
+            });
+        });
+    },
+
     //Request a media file to be played
     request: function(trackid, callback) {
         api.executeRequest({
@@ -33,7 +130,7 @@ var api = {
                     result = true;
                     message = 'Your request has been added';
                 } else {
-                    message = data.data
+                    message = data.data;
                 }
             } else {
                 //Some error happened when trying to make the API call (500 perhaps?)
@@ -139,4 +236,4 @@ var api = {
             });
         });
     }
-}
+};

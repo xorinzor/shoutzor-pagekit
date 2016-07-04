@@ -26,6 +26,7 @@
             bar             = progressbar.find('.uk-progress-bar'),
             uploadList      = $("#uploadList"),
             uploadListEmpty = $("#uploadListEmpty"),
+            isUploading     = false,
             settings        = {
                 action: '<?= $view->url('@shoutzor/api/index'); ?>', // upload url
                 single: true,
@@ -40,13 +41,18 @@
                 },
 
                 loadstart: function() {
+                    isUploading = true;
                     bar.css("width", "0%").text("0%");
                     progressbar.removeClass("uk-hidden");
                 },
 
                 progress: function(percent) {
                     percent = Math.ceil(percent);
-                    bar.css("width", percent+"%").text(percent+"%");
+                    if(percent == 100) {
+                        bar.css("width", "100%").text("100% Uploading complete - Please wait while the upload is processed..");
+                    } else {
+                        bar.css("width", percent+"%").text(percent+"%");
+                    }
                 },
 
                 complete: function(response, xhr) {
@@ -72,6 +78,8 @@
                 },
 
                 allcomplete: function(response) {
+                    isUploading = false;
+
                     bar.css("width", "100%").text("100%");
 
                     setTimeout(function(){
@@ -82,6 +90,13 @@
 
         var select = UIkit.uploadSelect($("#upload-select"), settings),
             drop   = UIkit.uploadDrop($("#upload-drop"), settings);
+
+        //Make sure users dont accidentally leave the page while uploads are still running
+        window.onbeforeunload = function(e) {
+            if(isUploading) {
+                return 'You have still uploads running, if you leave this page these will be canceled. Are you sure you want to leave?';
+            }
+        };
     });
 </script>
 

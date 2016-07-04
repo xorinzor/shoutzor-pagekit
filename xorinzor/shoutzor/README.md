@@ -26,3 +26,8 @@ when finished, install `liquidsoap` and `liquidsoap-plugin-all`
 #####Since 1.0:
 - Improved the AutoDJ, it now selects a random track by the same rules as normal users do when requesting (delays per-media object & per-artist).
 - Implemented artist-based request delay (any media files from the same artist now have a configurable delay)
+- Renamed the title on the admin Shoutzor Controls page (to what it should've been all along)
+- Implemented JS API methods required for the Admin Page
+- All controls on the admin page now work
+- Added Processing message to the progressbar when 100% is reached so people wont think it just froze
+- Added warning message to the upload page when users try to navigate away while uploads are still active
