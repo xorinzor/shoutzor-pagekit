@@ -1,16 +1,14 @@
-# pagekit-shoutzor-module
-
 ![shoutzor-logo](./xorinzor/shoutzor/shoutzor-logo.png)
 
-The Shoutzor module and required theme for Pagekit.
+This version of shoutzor is built as an module and theme for Pagekit.
 
 Shoutzor is a central music playing system that allows your LAN-party (or other kind of event) to have centralized music!
 
-**Not finished! Still under development**
+**Not finished! Still under development. (about 90% finished)**
 
-**Keep in mind this module and theme are not designed to work nice with other modules, they're intended as a standalone app.**
+*Keep in mind this module and theme are not designed to work nice with other modules and/or themes, they're intended as a standalone app.*
 
-How to install:
+##How to install:
 
 1. Copy the "xorinzor" directory into your pagekit's "packages" directory
 2. Enable the "Shoutzor" module and set your theme to the "shoutzor-theme" theme.
