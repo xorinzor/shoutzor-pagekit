@@ -213,6 +213,7 @@ return [
             'parserMaxItems' => 10,
             'userRequestDelay' => 10,
             'mediaRequestDelay' => 60,
+            'artistRequestDelay' => 30,
             'uploadDurationLimit' => 5,
             'useFilenameIfUntitled' => 1
         ],

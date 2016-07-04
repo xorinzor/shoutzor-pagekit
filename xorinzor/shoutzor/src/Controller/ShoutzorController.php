@@ -135,6 +135,16 @@ class ShoutzorController
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         $form->addField(new InputField(
+            "artistRequestDelay",
+            "artistRequestDelay",
+            "Artist Request Delay",
+            "text",
+            $config['artistRequestDelay'],
+            "The delay in minutes before a media object from the same artist can be played again")
+        )->setValidationType(FormValidation::TYPE_NUMERIC)
+        ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
+
+        $form->addField(new InputField(
         "uploadDurationLimit",
         "uploadDurationLimit",
         "Media Duration Limit (Minutes)",

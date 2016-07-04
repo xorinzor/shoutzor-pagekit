@@ -135,6 +135,11 @@ class Media implements \JsonSerializable{
         return $history;
     }
 
+    public static function isRecentlyPlayed($id, $canRequestDateTime) {
+        //Check if the media file has been recently played
+        return (History::where('media_id = :id AND played_at > :maxTime', ['id' => $id, 'maxTime' => $canRequestDateTime])->count() == 0) ? false : true;
+    }
+
     /**
      * {@inheritdoc}
      */

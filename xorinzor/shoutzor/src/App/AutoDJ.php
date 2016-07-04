@@ -57,46 +57,47 @@ class AutoDJ {
     }
 
     public function getRandomTrack($autoForce = true, $forced = false) {
-        if($forced === false) {
-            $config = App::module('shoutzor')->config('shoutzor');
-
-            $requestHistoryTime = (new DateTime())->sub(new DateInterval('PT'.$config['mediaRequestDelay'].'M'))->format('Y-m-d H:i:s');
-
-            //Get a list of all recently played media files
-            $listRecent = History::query()->select('media_id')->where('played_at > :maxTime', ['maxTime' => $requestHistoryTime])->execute()->fetchAll();
-
-            //Get the ID's from each recently played media file
-            $listRecent = array_map(function($e) {
-                return is_object($e) ? $e->media_id : $e['media_id'];
-            }, $listRecent);
-
-            //Make sure only unique values are in the array
-            $listRecent = array_unique($listRecent);
-
-            //Get a list of all queued media files
-            $listQueued = Request::query()->select('media_id')->execute()->fetchAll();
-
-            //Get the ID's from each queued media file
-            $listQueued = array_map(function($e) {
-                return is_object($e) ? $e->media_id : $e['media_id'];
-            }, $listQueued);
-
-            //Make sure only unique values are in the array
-            $listQueued = array_unique($listQueued);
-
-            //Merge the 2 lists of ID's which should not be picked anymore
-            $list = array_merge($listRecent, $listQueued);
+        if($forced === true) {
+            return Media::query()->orderBy('rand()')->first();
         } else {
             $list = array();
         }
 
-        $song = Media::query()->whereInSet('id', $list, true)->where('status = :status', ['status' => Media::STATUS_FINISHED])->orderBy('rand()');
+        $config = App::module('shoutzor')->config('shoutzor');
+        $requestHistoryTime = (new DateTime())->sub(new DateInterval('PT'.$config['mediaRequestDelay'].'M'))->format('Y-m-d H:i:s');
+        $artistHistoryTime = (new DateTime())->sub(new DateInterval('PT'.$config['artistRequestDelay'].'M'))->format('Y-m-d H:i:s');
 
-        if($song->count() === 0) {
+        //Build a list of media id's that are available to play, next, randomly pick one
+        $q = Media::query()
+        ->select('DISTINCT m.*')
+        ->from('@shoutzor_media m')
+        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
+        ->leftJoin('@shoutzor_requestlist q', 'q.media_id = m.id')
+        ->where('h.played_at < :maxTime', ['maxTime' => $requestHistoryTime]) //Only select the media_id's from the history that have NOT been played recently
+        ->where('q.media_id IS NULL') //Exclude all media_id's that are in already in queue
+        //Next, get all Media_id's related to the artists that have recently been played (or are queued right now) and exclude those too
+        ->where('m.id NOT IN (
+                  SELECT tma.media_id
+                  FROM @shoutzor_media_artist tma
+                  WHERE tma.artist_id IN (
+                      SELECT ma.artist_id
+                      FROM @shoutzor_media_artist ma
+                      WHERE ma.media_id IN (
+                          SELECT th.media_id
+                          FROM @shoutzor_history th
+                          LEFT JOIN @shoutzor_requestlist tq ON tq.media_id = th.media_id
+                          WHERE th.played_at > :maxTime
+                        )
+                      )
+                  )', ['maxTime' => $artistHistoryTime])
+        ->orderBy('rand()')
+        ->limit(1);
+
+        if($q->count() === 0) {
             return ($autoForce === true) ? $this->getRandomTrack(true, true) : false;
         }
 
-        return $song->first();
+        return $q->first();
     }
 
 }

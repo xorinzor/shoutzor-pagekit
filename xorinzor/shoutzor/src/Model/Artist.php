@@ -68,6 +68,15 @@ class Artist implements \JsonSerializable{
         return $albums;
     }
 
+    public static function isRecentlyPlayed($id, $canRequestDateTime) {
+        $q = Media::query()
+                    ->select('m.id')
+                    ->from('@shoutzor_media m')
+                    ->where('(m.id IN (SELECT h.media_id FROM @shoutzor_history h WHERE h.media_id IN (SELECT tma.media_id FROM @shoutzor_media_artist tma WHERE tma.artist_id IN (SELECT ttma.artist_id FROM @shoutzor_media_artist ttma WHERE ttma.media_id = :id)) AND h.played_at > :maxTime)) OR (m.id IN (SELECT q.media_id FROM @shoutzor_requestlist q WHERE q.media_id IN (SELECT tma.media_id FROM @shoutzor_media_artist tma WHERE tma.artist_id IN (SELECT ttma.artist_id FROM @shoutzor_media_artist ttma WHERE ttma.media_id = :id))))', ['id' => $id, 'maxTime' => $canRequestDateTime]);
+
+        return $q->count() == 0 ? false : true;
+    }
+
     /**
      * {@inheritdoc}
      */

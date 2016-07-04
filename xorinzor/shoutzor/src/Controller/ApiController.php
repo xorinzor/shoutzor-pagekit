@@ -400,10 +400,15 @@ class ApiController
 
         $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['mediaRequestDelay'].'M'))->format('Y-m-d H:i:s');
 
-        //Check if the media file hasnt been requested too soon ago
-        $isRequestable = (History::where('media_id = :id AND played_at > :maxTime', ['id' => $media->id, 'maxTime' => $canRequestDateTime])->count() == 0) ? true : false;
-        if ($isRequestable === false) {
+        //Check if the media file has been played too recently
+        if (Media::isRecentlyPlayed($media->id, $canRequestDateTime)) {
             return $this->formatOutput(__('This media file has been requested too recently'), self::ERROR_IN_REQUEST);
+        }
+
+        $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['artistRequestDelay'].'M'))->format('Y-m-d H:i:s');
+        //Fetch a list of all artist id's
+        if (Artist::isRecentlyPlayed($media->id, $canRequestDateTime)) {
+            return $this->formatOutput(__('This artist has been played too recently'), self::ERROR_IN_REQUEST);
         }
 
         $canRequestDateTime = (new DateTime())->sub(new DateInterval('PT'.$config['userRequestDelay'].'M'))->format('Y-m-d H:i:s');
@@ -570,5 +575,10 @@ class ApiController
         $history = Media::getNowplaying();
 
         return $this->formatOutput($history);
+    }
+
+    public function test() {
+        $autodj = new AutoDJ();
+        return $autodj->getRandomTrack();
     }
 }
