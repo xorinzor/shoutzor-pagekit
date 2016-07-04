@@ -1,3 +1,3 @@
-# Shoutzor Theme
+![Shoutzor-logo](./shoutzor-logo.png)
 
-The Required theme for the Shoutzor Module 
+Shoutzor Theme - This is the required theme for the Shoutzor Module in pagekit
