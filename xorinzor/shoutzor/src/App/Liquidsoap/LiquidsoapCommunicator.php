@@ -17,7 +17,11 @@ class LiquidsoapCommunicator {
     }
 
 	public function __destruct() {
-		$this->closeSocket();
+		try {
+			$this->closeSocket();
+		} catch(Exception $e) {
+			//Do nothing
+		}
 	}
 
     private function createSocket() {

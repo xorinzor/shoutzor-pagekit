@@ -16,7 +16,7 @@ var api = {
     },
 
     //Starts the liquidsoap script of the provided type
-    startscript: function(type) {
+    startscript: function(type, callback) {
         api.executeRequest({
             data: {
                 method: "liquidsoapcommand",
@@ -49,7 +49,7 @@ var api = {
     },
 
     //Starts the liquidsoap script of the provided type
-    stopscript: function(type) {
+    stopscript: function(type, callback) {
         api.executeRequest({
             data: {
                 method: "liquidsoapcommand",
@@ -81,7 +81,7 @@ var api = {
         });
     },
 
-    nexttrack: function() {
+    nexttrack: function(callback) {
         api.executeRequest({
             data: {
                 method: "liquidsoapcommand",

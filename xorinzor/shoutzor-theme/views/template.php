@@ -35,7 +35,7 @@
         <?php $view->script('uikit-script', 'theme:js/uikit.min.js', 'jquery') ?>
         <?php $view->script('pnotify', 'shoutzor:assets/js/pnotify.custom.min.js', 'jquery') ?>
         <?php $view->script('shoutzor-api', 'shoutzor:assets/js/api.js', 'jquery') ?>
-        <?php $view->script('shoutzor-theme', 'theme:js/theme.js', 'shoutzor-api') ?>
+        <?php $view->script('shoutzor-theme', 'shoutzor:assets/js/theme.js', ['jquery', 'shoutzor-api']) ?>
     </head>
     <body>
         <div class="uk-container uk-container-center">

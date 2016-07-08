@@ -27,6 +27,7 @@
             uploadList      = $("#uploadList"),
             uploadListEmpty = $("#uploadListEmpty"),
             isUploading     = false,
+            itemsLeft       = 0,
             settings        = {
                 action: '<?= $view->url('@shoutzor/api/index'); ?>', // upload url
                 single: true,
@@ -34,6 +35,17 @@
                 params: { method: "upload" },
                 type: 'json',
                 allow : '*.(wav|mp3|oga|flac|m4a|wma)', // allow only audio and video files
+
+                beforeAll: function(files) {
+                    itemsLeft = files.length;
+                },
+
+                before: function(settings, file) {
+                    itemsLeft -= 1;
+                    if(itemsLeft < 0) {
+                        itemsLeft = 0;
+                    }
+                },
 
                 notallowed: function(file, settings) {
                     //When an non-allowed file is beeing uploaded
@@ -48,10 +60,11 @@
 
                 progress: function(percent) {
                     percent = Math.ceil(percent);
+
                     if(percent == 100) {
-                        bar.css("width", "100%").text("100% Uploading complete - Please wait while the upload is processed..");
+                        bar.css("width", "100%").text("100% Uploading complete - Please wait while the upload is processed.. | " + itemsLeft + " uploads remaining");
                     } else {
-                        bar.css("width", percent+"%").text(percent+"%");
+                        bar.css("width", percent+"%").text(percent+"% | " + itemsLeft + " uploads remaining");
                     }
                 },
 

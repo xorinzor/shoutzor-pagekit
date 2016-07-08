@@ -445,9 +445,17 @@ class ApiController
 
         switch($params['command']) {
             case "start":
+                //Get the status of the script before we start it
+                $status = $liquidsoapManager->isUp($params['type']);
+
+                //Start our script
                 $result = $liquidsoapManager->startScript($params['type']);
-                $autoDJ = new AutoDJ();
-                $autoDJ->importQueue();
+
+                //Make sure we don't import the queue if the script was already running
+                if($params['type'] == 'shoutzor' && $status === false) {
+                    $autoDJ = new AutoDJ();
+                    $autoDJ->importQueue();
+                }
                 break;
 
             case "stop":
@@ -575,10 +583,5 @@ class ApiController
         $history = Media::getNowplaying();
 
         return $this->formatOutput($history);
-    }
-
-    public function test() {
-        $autodj = new AutoDJ();
-        return $autodj->getRandomTrack();
     }
 }

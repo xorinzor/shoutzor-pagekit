@@ -71,11 +71,16 @@ class AutoDJ {
         $q = Media::query()
         ->select('DISTINCT m.*')
         ->from('@shoutzor_media m')
-        ->leftJoin('@shoutzor_history h', 'h.media_id = m.id')
         ->leftJoin('@shoutzor_requestlist q', 'q.media_id = m.id')
-        ->where('h.played_at < :maxTime', ['maxTime' => $requestHistoryTime]) //Only select the media_id's from the history that have NOT been played recently
         ->where('q.media_id IS NULL') //Exclude all media_id's that are in already in queue
-        //Next, get all Media_id's related to the artists that have recently been played (or are queued right now) and exclude those too
+        //Get all Media_id's that have recently been played and exclude those too
+        ->where('m.id NOT IN (
+                      SELECT h.media_id
+                      FROM @shoutzor_history h
+                      LEFT JOIN @shoutzor_requestlist tq ON tq.media_id = h.media_id
+                      WHERE h.played_at > :maxTime
+                  )', ['maxTime' => $requestHistoryTime])
+       //Next, get all Media_id's related to the artists that have recently been played (or are queued right now) and exclude those too
         ->where('m.id NOT IN (
                   SELECT tma.media_id
                   FROM @shoutzor_media_artist tma
@@ -90,8 +95,8 @@ class AutoDJ {
                         )
                       )
                   )', ['maxTime' => $artistHistoryTime])
-        ->orderBy('rand()')
-        ->limit(1);
+        ->groupBy('m.id')
+        ->orderBy('rand('.microtime(true).')');
 
         if($q->count() === 0) {
             return ($autoForce === true) ? $this->getRandomTrack(true, true) : false;

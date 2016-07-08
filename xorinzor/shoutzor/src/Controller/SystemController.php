@@ -66,7 +66,7 @@ class SystemController
             ($wrapperActive) ? "Deactivate Wrapper" : "Activate Wrapper",
             "(De)activates the wrapper liquidsoap script",
             ($wrapperActive) ? "uk-button uk-button-danger" : "uk-button uk-button-primary",
-            'onclick="toggleWrapper();"')
+            'data-status="' . ($wrapperActive ? 'started' : 'stopped') . '"')
         )->setValidationType(FormValidation::TYPE_STRING)
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
@@ -84,7 +84,7 @@ class SystemController
             ($shoutzorActive) ? "Deactivate Shoutzor" : "Activate Shoutzor",
             "(De)activates the shoutzor liquidsoap script",
             ($shoutzorActive) ? "uk-button uk-button-danger" : "uk-button uk-button-primary",
-            'onclick="toggleShoutzor();"')
+            'data-status="' . ($wrapperActive ? 'started' : 'stopped') . '"')
         )->setValidationType(FormValidation::TYPE_STRING)
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
