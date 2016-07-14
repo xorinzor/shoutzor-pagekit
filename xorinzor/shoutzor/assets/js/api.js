@@ -235,5 +235,36 @@ var api = {
                 track: track
             });
         });
+    },
+
+    //Execute a liquidsoapcommand
+    liquidsoapcommand: function(params, callback) {
+        data = $.extend({
+            method: "liquidsoapcommand"
+        }, params);
+
+        api.executeRequest({
+            data: data
+        }).always(function(data, type) {
+            var result = false;
+            var response = data;
+
+            //make sure the request did not fail
+            if (type == "success") {
+                //API call went through, make sure the call succeeded
+                if(data.info.code == 200) {
+                    result = true;
+                } else {
+                    //Something went wrong
+                }
+            } else {
+                //Some error happened when trying to make the API call (500 perhaps?)
+            }
+
+            callback({
+                result: result,
+                response: response
+            });
+        });
     }
 };

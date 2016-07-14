@@ -86,11 +86,11 @@ class CheckboxField extends FormField {
         }
 
         if(!empty($this->getValidationError())) {
-            $content .= ' <p class="uk-text-danger">'. $this->getValidationError() .'</p>';
+            $content .= ' <p class="uk-text-danger validationMessage">'. $this->getValidationError() .'</p>';
         }
 
         if(!empty($this->getValidationSuccess())) {
-            $content .= ' <p class="uk-text-success">'. $this->getValidationSuccess() .'</p>';
+            $content .= ' <p class="uk-text-success validationMessage">'. $this->getValidationSuccess() .'</p>';
         }
 
         $data = array(

@@ -1,7 +1,7 @@
 {
     "name": "xorinzor/shoutzor-theme",
     "type": "pagekit-theme",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "title": "Shoutzor Theme",
     "description": "Required theme for the Shoutzor module",
     "license": "MIT",

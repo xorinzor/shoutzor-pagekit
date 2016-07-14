@@ -72,6 +72,12 @@ class Parser {
         //Get the media file duration in seconds
         $media->duration = $this->getDuration($media);
 
+        //If the duration is less than 30 seconds, its a bogus upload, deny it
+        if($media->duration < 30) {
+            $media->status = Media::STATUS_DURATION_TOO_SHORT;
+            return Media::STATUS_DURATION_TOO_SHORT;
+        }
+
         //If the duration exceeds our limit, return error
         if($media->duration > App::module('shoutzor')->config('shoutzor')['uploadDurationLimit'] * 60) {
             $media->status = Media::STATUS_DURATION_TOO_LONG;

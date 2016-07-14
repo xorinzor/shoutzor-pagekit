@@ -38,8 +38,7 @@ class ControlsController
             "button",
             "Skip Track",
             "Sends the &quot;skip track&quot; command",
-            "uk-button uk-button-primary",
-            'onclick="skipTrack();"')
+            "uk-button uk-button-primary")
         );
 
         $content = $form->render();

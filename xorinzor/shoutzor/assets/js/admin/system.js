@@ -9,17 +9,23 @@ $(function() {
         },
 
         isStarted: function(type) {
-            $("#" + type + "Toggle").data('status', 'started');
-            $("#" + type + "Toggle").removeClass('uk-button-success');
-            $("#" + type + "Toggle").addClass('uk-button-danger');
-            $("#" + type + "Toggle").html('Activate ' + type);
+            selector = $("#" + type + "Toggle");
+
+            selector.data('status', 'started');
+            selector.removeClass('uk-button-success');
+            selector.addClass('uk-button-danger');
+            selector.val('Deactivate ' + type);
+            selector.siblings(".validationMessage").removeClass("uk-text-danger").addClass("uk-text-success").html("The " + type + " script is up and running!");
         },
 
         isStopped: function(type) {
-            $("#" + type + "Toggle").data('status', 'stopped');
-            $("#" + type + "Toggle").removeClass('uk-button-danger');
-            $("#" + type + "Toggle").addClass('uk-button-success');
-            $("#" + type + "Toggle").html('Activate ' + type);
+            selector = $("#" + type + "Toggle");
+
+            selector.data('status', 'stopped');
+            selector.removeClass('uk-button-danger');
+            selector.addClass('uk-button-success');
+            selector.val('Activate ' + type);
+            selector.siblings(".validationMessage").removeClass("uk-text-success").addClass("uk-text-danger").html("The " + type + " script is not activated!");
         },
 
         executing: function() {
@@ -108,8 +114,32 @@ $(function() {
                     shoutzorstatus.status[type] = null;
                 }, shoutzorstatus.toggleTimeout);
             });
+        },
+
+        checkstatus: function(type) {
+            api.liquidsoapcommand({
+                command: "uptime",
+                type: type
+            }, function(data) {
+                if(data.result === false) {
+                    shoutzorstatus.isStopped(type);
+                } else {
+                    shoutzorstatus. isStarted(type);
+                }
+            });
+        },
+
+        autoUpdateStatus: function() {
+            shoutzorstatus.checkstatus('wrapper');
+            shoutzorstatus.checkstatus('shoutzor');
+
+            setTimeout(function() {
+                shoutzorstatus.autoUpdateStatus();
+            }, 3000);
         }
     };
+
+    shoutzorstatus.autoUpdateStatus();
 
     //Bind #wrapperToggle button on-click function
     $("#wrapperToggle").on("click", function() {

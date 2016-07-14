@@ -19,6 +19,10 @@ class SiteController
      */
     public function indexAction()
     {
+        if($this->requireLogin()) {
+            return App::response()->redirect('@user/login');
+        }
+
         $config = App::module('shoutzor')->config('liquidsoap');
 
         return [
@@ -35,6 +39,9 @@ class SiteController
      */
     public function uploadManagerAction()
     {
+        if($this->requireLogin()) {
+            return App::response()->redirect('@user/login');
+        }
 
         $uploads = Media::where(['uploader_id = :uploader AND status != :finished'], ['uploader' => App::user()->id, 'finished' => Media::STATUS_FINISHED])->orderBy('created', 'DESC')->related(['artist', 'user'])->get();
 
@@ -100,8 +107,8 @@ class SiteController
         ];
     }
 
-    private function getQueuePrediction() {
-
+    private function requireLogin() {
+      return is_null(App::user()->id);
     }
 
     private function formatBytes($bytes, $precision = 2) {

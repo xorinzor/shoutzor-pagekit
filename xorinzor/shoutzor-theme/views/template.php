@@ -1,3 +1,6 @@
+<?php
+    use Pagekit\Application as App;
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -40,31 +43,33 @@
     <body>
         <div class="uk-container uk-container-center">
 
-            <nav class="uk-navbar uk-margin-large-bottom">
-                <a class="uk-navbar-brand uk-width-medium-1-5 uk-hidden-small" href="<?= $view->url()->get() ?>">
-                    <img src="<?= $view->url()->getStatic('theme:images/shoutzor-logo-small.png'); ?>" alt="shoutz0r logo" />
-                </a>
+            <?php if(!is_null(App::user()->id)): ?>
+                <nav class="uk-navbar uk-margin-large-bottom">
+                    <a class="uk-navbar-brand uk-width-medium-1-5 uk-hidden-small" href="<?= $view->url()->get() ?>">
+                        <img src="<?= $view->url()->getStatic('theme:images/shoutzor-logo-small.png'); ?>" alt="shoutz0r logo" />
+                    </a>
 
-                <div class="uk-navbar-content" id="main-navbar-content">
-                    <form class="uk-search uk-margin-remove uk-display-inline-block" action="<?= $view->url('@shoutzor/search') ?>" method="GET" data-uk-search>
-                        <input class="uk-search-field" type="search" placeholder="search" name="q">
-                    </form>
-                </div>
-
-                <div class="uk-navbar-flip">
-                    <div class="uk-navbar-content">
-                        <a href="<?= $view->url('@shoutzor/uploadmanager'); ?>" class="uk-button uk-button-primary"><i class="uk-icon-upload"></i> Upload Music / Videos</a>
-                        <a href="<?= $view->url('@user/logout') ?>" class="uk-button uk-button-dark"><i class="uk-icon-power-off"></i> Logout</a>
+                    <div class="uk-navbar-content" id="main-navbar-content">
+                            <form class="uk-search uk-margin-remove uk-display-inline-block" action="<?= $view->url('@shoutzor/search') ?>" method="GET" data-uk-search>
+                                <input class="uk-search-field" type="search" placeholder="search" name="q">
+                            </form>
                     </div>
-                </div>
 
-                <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
-                <div class="uk-navbar-brand uk-navbar-center uk-visible-small">Shoutz0r</div>
-            </nav>
+                    <div class="uk-navbar-flip">
+                        <div class="uk-navbar-content">
+                            <a href="<?= $view->url('@shoutzor/uploadmanager'); ?>" class="uk-button uk-button-primary"><i class="uk-icon-upload"></i> Upload Music / Videos</a>
+                            <a href="<?= $view->url('@user/logout') ?>" class="uk-button uk-button-dark"><i class="uk-icon-power-off"></i> Logout</a>
+                        </div>
+                    </div>
+
+                    <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
+                    <div class="uk-navbar-brand uk-navbar-center uk-visible-small">Shoutz0r</div>
+                </nav>
+            <?php endif; ?>
 
             <div class="uk-grid">
                 <!-- Render menu position -->
-                <?php if ($view->menu()->exists('main')) : ?>
+                <?php if ($view->menu()->exists('main') && !is_null(App::user()->id)) : ?>
                     <div class="uk-width-medium-1-5">
                         <div class="uk-panel uk-panel-box">
                             <?= $view->menu('main', 'navbar.php') ?>
@@ -72,10 +77,16 @@
                     </div>
                 <?php endif; ?>
 
-                <div class="uk-width-medium-4-5">
-                    <!-- Render system messages -->
-                    <?= $view->render('messages') ?>
+                <?php if(!is_null(App::user()->id)): ?>
+                    <div class="uk-width-medium-4-5">
 
+                        <!-- Render system messages -->
+                        <?= $view->render('messages') ?>
+
+                <?php else: ?>
+                    <div class="uk-width-medium-1-1">
+                <?php endif; ?>
+                    
                     <!-- Render content -->
                     <?= $view->render('content') ?>
                 </div>

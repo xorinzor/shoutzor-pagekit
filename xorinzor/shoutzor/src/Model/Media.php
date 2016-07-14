@@ -33,6 +33,9 @@ class Media implements \JsonSerializable{
     /* The duration of this song exceeds the limit configured */
     const STATUS_DURATION_TOO_LONG = 5;
 
+    /* The duration of this song is less than 30 seconds, ie: bogus upload */
+    const STATUS_DURATION_TOO_SHORT = 6;
+
     /** @Column(type="integer") @Id */
     public $id;
 

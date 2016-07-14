@@ -71,9 +71,9 @@ class SystemController
         ->setValidationRequirements(array(FormValidation::REQ_NOTEMPTY));
 
         if($wrapperActive === false) {
-            $form->setError("The wrapper is inactive!");
+            $form->setError("The wrapper script is not activated!");
         } else {
-            $form->setSuccess("The wrapper is up and running!");
+            $form->setSuccess("The wrapper script is up and running!");
         }
 
         $form->addField(new InputField(
@@ -90,12 +90,12 @@ class SystemController
 
         if($shoutzorActive === false) {
             if($wrapperActive === false) {
-                $form->setError("The wrapper needs to be active first!");
+                $form->setError("The wrapper script needs to be activated first!");
             } else {
-                $form->setError("Shoutzor is inactive!");
+                $form->setError("The shoutzor script is not activated!");
             }
         } else {
-            $form->setSuccess("Shoutzor is up and running!");
+            $form->setSuccess("The shoutzor script is up and running!");
         }
 
         $content = $form->render();

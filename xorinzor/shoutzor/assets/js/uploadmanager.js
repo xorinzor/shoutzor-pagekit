@@ -41,6 +41,12 @@ $(function() {
                 labelclass: 'uk-badge-danger',
                 progressbarclass: 'uk-progress-danger',
                 progressbartext: 'This tracks length exceeds the configured duration limit allowed'
+            },
+            6: {
+                label: 'Duration too short',
+                labelclass: 'uk-badge-danger',
+                progressbarclass: 'uk-progress-danger',
+                progressbartext: 'This track is too short, a duration of at least 30 seconds is required'
             }
         },
 
