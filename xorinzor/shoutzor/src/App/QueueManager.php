@@ -8,6 +8,8 @@ use Xorinzor\Shoutzor\Model\Request;
 use Xorinzor\Shoutzor\Model\History;
 use Xorinzor\Shoutzor\App\Liquidsoap\LiquidsoapManager;
 
+use Exception;
+
 class QueueManager {
 
     public function getQueueList() {
