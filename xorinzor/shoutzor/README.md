@@ -7,8 +7,11 @@ Comes with an AutoDJ when no music is requested to ensure music keeps playing.
 
 Shoutzor (optionally) uses [AcoustID](https://acoustid.org/) for music fingerprinting to prevent double uploads and to get correct music information.<br />
 
-make sure to install the `x264*`, `swh-plugins`, `festival` and `gstreamer1.0*` packages;<br />
+make sure to install the `x264*`, `swh-plugins`, `festival`, `curl` and `gstreamer1.0*` packages;<br />
 when finished, install `liquidsoap` and `liquidsoap-plugin-all`
+
+Also make sure to have the apache `rewrite` module enabled and allow htaccess to rewrite URL's.
+As well as having the `php5-curl` module installed.
 
 ###Features
 - Liquidsoap for audio stream generation
