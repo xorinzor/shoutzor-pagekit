@@ -136,15 +136,10 @@ class AcoustID {
         //Make sure the group exists in the first element (best-match)
         if(isset($data->releasegroups)) {
             $info['album'] = array();
-            foreach($data as $item) {
-                //Check for every item if the releasegroups element exists to prevent errors
-                if(isset($item->releasegroups)) {
-                    foreach($item->releasegroups as $release) {
-                        if(!isset($release->type)) continue;
-                        if(strtolower($release->type) !== "album") continue;
-                        $info['album'][] = $release->title;
-                    }
-                }
+            foreach($data->releasegroups as $release) {
+                if(!isset($release->type)) continue;
+                if(strtolower($release->type) !== "album") continue;
+                $info['album'][] = $release->title;
             }
         } else {
             //False means no-data for this tag.
