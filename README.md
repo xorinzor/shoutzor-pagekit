@@ -15,6 +15,8 @@ Shoutzor is a central music playing system that allows your LAN-party (or other 
 4. Move any pages you want to be shown in the sidebar to the "main" menu parent
 5. Configure your "main" menu parent to be the "main" menu.
 6. The website's front-end now is configured, next set-up the back-end
-7. Follow the steps in `/shoutzor/readme.md` to install liquidsoap
-8. Visit your admin panel to start shoutzor, everything should be up and running now! (TODO: specify what tab specifically)
-9. optionally visit the ShoutzorVisualizer repository, download the jar, run it on a computer with a beamer for visual effects at your location
+7. Use `Chown +x` on `/shoutzor-requirements/acoustid/fpcalc` to make it executable
+8. Follow the steps in `/shoutzor/readme.md` to install liquidsoap
+9. Make sure you configure the correct directories in the admin panel for Shoutz0r to use
+10. Start shoutzor from the admin panel in the `system` tab, everything should be up and running now!
+11. optionally visit the ShoutzorVisualizer repository, download the jar, run it on a computer with a beamer for visual effects at your location
