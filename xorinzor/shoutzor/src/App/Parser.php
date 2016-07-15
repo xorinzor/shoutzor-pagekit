@@ -12,6 +12,7 @@ use Xorinzor\Shoutzor\App\LastFM;
 use getID3;
 use getid3_lib;
 use getid3_writetags;
+use Exception;
 
 require_once(__DIR__ . '/../Vendor/getid3/getid3.php');
 require_once(__DIR__ . '/../Vendor/getid3/write.php');
@@ -96,6 +97,8 @@ class Parser {
 
         //get the metatags from the media file
         $defaultTags = $this->getID3Tags($media);
+        $defaultTags['artist'] = array_column($defaultTags['artist'], 'name');
+        $defaultTags['album'] = array_column($defaultTags['album'], 'title');
 
         //Check if acoustID is enabled.
         if($acoustid->isEnabled()) {
@@ -251,23 +254,27 @@ class Parser {
         $destName = basename($url);
         $result = false;
 
-        if(ini_get('allow_url_fopen')) {
-            $result = file_put_contents($this->imageDir . '/' . $destName, file_get_contents($url));
-            if($result !== false) {
-                return $destName;
+        try {
+            if(ini_get('allow_url_fopen')) {
+                $result = @file_put_contents($this->imageDir . '/' . $destName, file_get_contents($url));
+                if($result !== false) {
+                    return $destName;
+                }
             }
-        }
 
-        //Either allow_url_fopen is disabled, or file_put_contents failed
-        //Attempting cURL
-        if($result === false) {
-            $ch = curl_init($url);
-            $fp = fopen($this->imageDir . '/'. $destName, 'wb');
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            $result = curl_exec($ch);
-            curl_close($ch);
-            fclose($fp);
+            //Either allow_url_fopen is disabled, or file_put_contents failed
+            //Attempting cURL
+            if($result === false) {
+                $ch = curl_init($url);
+                $fp = fopen($this->imageDir . '/'. $destName, 'wb');
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                $result = curl_exec($ch);
+                curl_close($ch);
+                fclose($fp);
+            }
+        } catch(Exception $e) {
+            $result = false;
         }
 
         return $result;
@@ -279,7 +286,7 @@ class Parser {
 		$this->id3->option_md5_data_source = true;
 
 		// Analyze file
-        $info = $this->id3->analyze($this->tempMediaDir . '/' . $media->filename);
+        $info = $this->id3->analyze($this->mediaDir . '/' . $media->filename);
 		getid3_lib::CopyTagsToComments($info);
 
         //Default values

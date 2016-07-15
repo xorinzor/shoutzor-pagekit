@@ -60,7 +60,7 @@ class AcoustID {
         }
 
         $url = 'http://api.acoustid.org/v2/lookup?client=' . $this->appKey;
-        $url .= '&meta=recordings+releasegroups&duration=' . $duration;
+        $url .= '&meta=compress+recordings+sources+releasegroups&duration=' . $duration;
         $url .= '&fingerprint=' . $fingerprint;
 
         $ch = curl_init();
@@ -93,17 +93,38 @@ class AcoustID {
             return false;
         }
 
+        //Make sure the matching score isn't too low
+        if($data->results[0]->score < 0.5) {
+            return false;
+        }
+
         $data = $data->results[0]->recordings;
+
+        if(count($data) == 0) {
+            return false;
+        }
+
+        $highestScore = 0;
+        $selectedKey = 0;
+
+        foreach($data as $key=>$value) {
+            if($value->sources > $highestScore) {
+                $selectedKey = $key;
+                $highestScore = $value->sources;
+            }
+        }
+
+        $data = $data[$selectedKey];
 
         $info = array();
 
         //Get the media file title
-        $info['title'] = isset($data[0]->title) ? $data[0]->title : false; //False means no-data for this tag.
+        $info['title'] = isset($data->title) ? $data->title : false; //False means no-data for this tag.
 
         //Get the media file artists
-        if(isset($data[0]->artists)) {
+        if(isset($data->artists)) {
             $info['artist'] = array();
-            foreach($data[0]->artists as $artist) {
+            foreach($data->artists as $artist) {
                 $info['artist'][] = $artist->name;
             }
         } else {
@@ -113,7 +134,7 @@ class AcoustID {
 
         //Get the media file albums
         //Make sure the group exists in the first element (best-match)
-        if(isset($data[0]->releasegroups)) {
+        if(isset($data->releasegroups)) {
             $info['album'] = array();
             foreach($data as $item) {
                 //Check for every item if the releasegroups element exists to prevent errors
