@@ -584,8 +584,4 @@ class ApiController
 
         return $this->formatOutput($history);
     }
-
-    public function test() {
-        
-    }
 }
