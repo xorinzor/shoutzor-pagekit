@@ -17,12 +17,14 @@ when finished, install `liquidsoap` and `liquidsoap-plugin-all`
 - LastFM Implementation for Artist / Album information
 
 ###TODO
-- Redirect users that are not authenticated to the login screen
-- Have the admin panel use the JS API
 - Implement Youtube video search & request functionality
 - Check if Media is still on STATUS_PROCESSING after > 15 minutes after uploading (this would safely indicate something has gone wrong)
 
 ###changelog
+#####Since 1.1:
+- Bugfix: forgot `use` statement in QueueManager
+- Bugfix: Leftover `createIndex()` method in Scripts preventing installation
+
 #####Since 1.0:
 - Improved the AutoDJ, it now selects a random track by the same rules as normal users do when requesting (delays per-media object & per-artist).
 - Implemented artist-based request delay (any media files from the same artist now have a configurable delay)
