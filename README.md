@@ -1,5 +1,9 @@
 ![shoutzor-logo](./xorinzor/shoutzor/shoutzor-logo.png)
 
+[![Travis](https://img.shields.io/travis/xorinzor/shoutzor.svg?maxAge=2592000&style=flat)]()
+[![Github All Releases](https://img.shields.io/github/downloads/xorinzor/shoutzor/total.svg?maxAge=2592000&style=flat)]()
+[![GitHub release](https://img.shields.io/github/release/xorinzor/shoutzor.svg?maxAge=2592000&style=flat)]()
+
 This version of shoutzor is built as an module and theme for Pagekit.
 
 Shoutzor is a central music playing system that allows your LAN-party (or other kind of event) to have centralized music!
